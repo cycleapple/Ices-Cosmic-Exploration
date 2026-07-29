@@ -51,19 +51,19 @@ namespace ICE.Ui.MainUi.ModeSelect
                 bool standard = (!relicMode && !provisionalMode);
 
                 if (standard)
-                    modeType = "Standard";
+                    modeType = "標準";
                 else if (relicMode)
                 {
-                    modeType = "Relic Grind";
+                    modeType = "宇宙工具培育";
                     modeIcon = FontAwesomeIcon.ArrowUpRightDots;
                 }
                 else if (provisionalMode)
                 {
-                    modeType = "Provisional";
+                    modeType = "臨時任務";
                     modeIcon = FontAwesomeIcon.Cloud;
                 }
 
-                ImGuiEx.IconWithText(modeIcon, $"{modeType} Mode");
+                ImGuiEx.IconWithText(modeIcon, $"{modeType}模式");
 
                 ImGui.SameLine(0, 10 * scale);
 
@@ -73,46 +73,45 @@ namespace ICE.Ui.MainUi.ModeSelect
                 float yOffset = (textHeight - buttonHeight) / 2f;
                 ImGui.SetCursorPosY(ImGui.GetCursorPosY() + yOffset);
 
-                if (ImGuiEx.IconButtonWithText(FontAwesomeIcon.Play, "Mode Selection"))
+                if (ImGuiEx.IconButtonWithText(FontAwesomeIcon.Play, "選擇模式"))
                 {
                     ImGui.OpenPopup("Mode Select | Select Mode Window");
                 }
                 if (ImGui.BeginPopup("Mode Select | Select Mode Window"))
                 {
-                    ImGui.Text("Select Mode");
+                    ImGui.Text("選擇模式");
                     ImGui.Separator();
 
-                    if (ImGui.RadioButton("Standard", standard))
+                    if (ImGui.RadioButton("標準", standard))
                     {
                         C.XPRelicGrind = false;
                         C.GrindProvisionals = false;
                         C.Save();
                     }
-                    ImGuiEx.HelpMarker("Stand Mode \n" +
-                                       "-> Used to select which missions you want to grind. It'll priortize in the following order:\n" +
-                                       "-> Critical -> Provisional [Sequence/Timed/Weather] -> Standard [A->D]\n" +
-                                       "-> Select which missions you want to do, and go at it.");
-                    if (ImGui.RadioButton("Relic Grind", relicMode))
+                    ImGuiEx.HelpMarker("標準模式\n" +
+                                       "→ 選擇要重複執行的任務，優先順序如下：\n" +
+                                       "→ 關鍵任務 → 臨時任務（連續／限時／天候）→ 標準任務（A→D）\n" +
+                                       "→ 選好任務後即可開始執行。");
+                    if (ImGui.RadioButton("宇宙工具培育", relicMode))
                     {
                         C.XPRelicGrind = true;
                         C.GrindProvisionals = false;
                         C.Save();
                     }
-                    ImGuiEx.HelpMarker("Relic Grind\n" +
-                                       "-> Automatically select which missions that are best to finish up your relic\n" +
-                                       "-> These are weighed based on what is needed to complete the tool to the next step\n" +
-                                       "-> If you want to only do certain missions, enable the option and select which ones you want to do");
-                    if (ImGui.RadioButton("Provisional Grind", provisionalMode))
+                    ImGuiEx.HelpMarker("宇宙工具培育\n" +
+                                       "→ 自動選擇最適合提升宇宙工具的任務。\n" +
+                                       "→ 依照工具進入下一階段所需的條件計算權重。\n" +
+                                       "→ 若只想執行特定任務，可啟用對應選項並自行勾選。");
+                    if (ImGui.RadioButton("臨時任務周回", provisionalMode))
                     {
                         C.XPRelicGrind = false;
                         C.GrindProvisionals = true;
                         C.Save();
                     }
-                    ImGuiEx.HelpMarker("Provisional Grind\n" +
-                                       "-> Grind provisional missions [Weather | Timed | Sequence] that you have enabled\n" +
-                                       "-> Use this to grind all classes. You can set the priority for which classes and " +
-                                       "types of missions that you want to do\n" +
-                                       "-> Useful if you're aiming to grind out score/tokens across all classes, or want to do specific missions at certain times");
+                    ImGuiEx.HelpMarker("臨時任務周回\n" +
+                                       "→ 重複執行已啟用的臨時任務（天候／限時／連續）。\n" +
+                                       "→ 可用於多個職業，並設定職業與任務類型的優先順序。\n" +
+                                       "→ 適合累積各職業分數與代幣，或在特定時間執行指定任務。");
 
                     ImGui.EndPopup();
                 }
@@ -125,7 +124,7 @@ namespace ICE.Ui.MainUi.ModeSelect
 
                 using (ImRaii.Disabled(SchedulerMain.State != IceState.Idle || !usingSupportedJob))
                 {
-                    if (ImGui.Button("Start", new Vector2(150 * scale, 0)))
+                    if (ImGui.Button("開始", new Vector2(150 * scale, 0)))
                     {
                         SchedulerMain.EnablePlugin();
                     }
@@ -139,7 +138,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                     using (ImRaii.PushColor(ImGuiCol.ButtonHovered, new Vector4(0.9f, 0.3f, 0.3f, 1.0f)))
                     using (ImRaii.PushColor(ImGuiCol.ButtonActive, new Vector4(0.7f, 0.1f, 0.1f, 1.0f)))
                     {
-                        if (ImGui.Button("Stop", new Vector2(150 * scale, 0)))
+                        if (ImGui.Button("停止", new Vector2(150 * scale, 0)))
                         {
                             SchedulerMain.DisablePlugin();
                         }
@@ -149,29 +148,29 @@ namespace ICE.Ui.MainUi.ModeSelect
 
             if (ImGui.BeginTable("modeSelect_TableHeader", 4, ImGuiTableFlags.SizingFixedFit, Vector2.Zero))
             {
-                ImGui.TableSetupColumn("Class Selector");
-                ImGui.TableSetupColumn("Other Settings");
+                ImGui.TableSetupColumn("職業選擇");
+                ImGui.TableSetupColumn("其他設定");
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
 
-                bool tableSettingExpanded = modeSelect_Tools.DrawCompactCategoryHeader("Table Settings", FontAwesomeIcon.Table);
+                bool tableSettingExpanded = modeSelect_Tools.DrawCompactCategoryHeader("表格設定", FontAwesomeIcon.Table);
 
                 ImGui.TableNextColumn();
-                bool missionSettingExpanded = modeSelect_Tools.DrawCompactCategoryHeader("Mission Settings", FontAwesomeIcon.UserCog);
+                bool missionSettingExpanded = modeSelect_Tools.DrawCompactCategoryHeader("任務設定", FontAwesomeIcon.UserCog);
 
                 bool relicGrindExpanded = false;
                 if (C.XPRelicGrind)
                 {
                     ImGui.TableNextColumn();
-                    relicGrindExpanded = modeSelect_Tools.DrawCompactCategoryHeader("Relic Grind Settings", FontAwesomeIcon.ArrowUpRightDots);
+                    relicGrindExpanded = modeSelect_Tools.DrawCompactCategoryHeader("宇宙工具培育設定", FontAwesomeIcon.ArrowUpRightDots);
                 }
 
                 bool completionExpanded = false;
                 if (C.ShowCompletionWindow)
                 {
                     ImGui.TableNextColumn();
-                    completionExpanded = modeSelect_Tools.DrawCompactCategoryHeader("Completion Table Settings", FontAwesomeIcon.Trophy);
+                    completionExpanded = modeSelect_Tools.DrawCompactCategoryHeader("完成進度表設定", FontAwesomeIcon.Trophy);
                 }
 
                 bool showNextColumn = tableSettingExpanded || missionSettingExpanded || (relicGrindExpanded && C.XPRelicGrind) || (completionExpanded && C.ShowCompletionWindow);
@@ -196,7 +195,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                         ImGui.TableNextColumn();
 
                         bool relicTurnin = C.TurninRelic;
-                        if (ImGui.Checkbox($"Turnin if relic is complete##RelicTurnin_RelicGrind", ref relicTurnin))
+                        if (ImGui.Checkbox($"宇宙工具完成時交付##RelicTurnin_RelicGrind", ref relicTurnin))
                         {
                             if (relicTurnin)
                                 C.GrindProvisionals = false;
@@ -220,7 +219,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                         ImGui.Separator();
 
                         bool EnableRelicXp = C.XPRelicGrind;
-                        if (ImGui.Checkbox("Auto-Pick For Relic XP", ref EnableRelicXp))
+                        if (ImGui.Checkbox("自動選擇宇宙工具經驗值任務", ref EnableRelicXp))
                         {
                             if (EnableRelicXp)
                             {
@@ -239,7 +238,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                         if (EnableRelicXp)
                         {
                             bool OnlySelected = C.XPRelicOnlyEnabled;
-                            if (ImGui.Checkbox("Only selected missions", ref OnlySelected))
+                            if (ImGui.Checkbox("僅執行選取的任務", ref OnlySelected))
                             {
                                 C.XPRelicOnlyEnabled = OnlySelected;
                                 C.Save();
@@ -247,7 +246,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                             if (C.ShowManualMode)
                             {
                                 bool IgnoreManual = C.XPRelicIgnoreManual;
-                                if (ImGui.Checkbox("Ignore Manual Mode Missions", ref IgnoreManual))
+                                if (ImGui.Checkbox("忽略手動模式任務", ref IgnoreManual))
                                 {
                                     C.XPRelicIgnoreManual = IgnoreManual;
                                     C.Save();
@@ -260,7 +259,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                     {
                         ImGui.TableNextColumn();
                         bool showSelectedJobOnly = C.ShowSelectedJobOnly;
-                        if (ImGui.Checkbox("Show only selected job", ref showSelectedJobOnly))
+                        if (ImGui.Checkbox("僅顯示選取的職業", ref showSelectedJobOnly))
                         {
                             C.ShowSelectedJobOnly = showSelectedJobOnly;
                             if (showSelectedJobOnly)
@@ -269,7 +268,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                         }
 
                         bool nonGold = C.ShowCompletion_MissingGold;
-                        if (ImGui.Checkbox("Show Only Non-Gold Missions", ref nonGold))
+                        if (ImGui.Checkbox("僅顯示尚未取得金級評價的任務", ref nonGold))
                         {
                             C.ShowCompletion_MissingGold = nonGold;
                             C.Save();
@@ -473,7 +472,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                         }
                         else
                         {
-                            ImGui.Text("HEY. ENABLE SOME MISSIONS SO WE CAN DISPLAY SOMETHING HERE");
+                            ImGui.Text("請先啟用任務，才能在此顯示內容。");
                         }
                     }
                     if (enabledTabs["main_Critical"])

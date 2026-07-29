@@ -16,7 +16,7 @@ namespace ICE.Ui
 {
     internal class InfoWindow : Window
     {
-        public InfoWindow() : base($"Ice's Cosmic Exploration - Info")
+        public InfoWindow() : base($"Ice's Cosmic Exploration - 資訊")
         {
             Flags = ImGuiWindowFlags.None;
             SizeConstraints = new()
@@ -39,23 +39,23 @@ namespace ICE.Ui
 
         public override void Draw()
         {
-            ImGui.Text("Hi! Welcome to Ice's Cosmic Exploration [Short form, I.C.E.]");
+            ImGui.Text("歡迎使用 Ice's Cosmic Exploration（簡稱 I.C.E.）");
             ImGui.Bullet();
-            ImGui.TextWrapped("This plugin is meant to help you with your cosmic exploration needs, " +
-                              "from automating the gathering and crafting process, to the buying of shop items or spending those planetary credits away.");
+            ImGui.TextWrapped("本插件可協助處理宇宙探索中的各項需求，" +
+                              "包含自動化採集與製作流程、購買商店物品，以及使用宇宙信用點。");
 
             helpSelect_Required.Draw();
 
             ImGui.Separator();
 
-            ImGuiEx.IconWithText(FontAwesomeIcon.Feather, "Gathering Setup");
+            ImGuiEx.IconWithText(FontAwesomeIcon.Feather, "採集設定");
             ImGui.Dummy(new Vector2(0, 5));
 
-            ImGui.Text("If you would like to auto setup gathering to where all missions have their gathering buffs to what I would recommend");
+            ImGui.Text("可自動套用作者建議的採集增益設定至所有任務。");
 
             if (!HasGatheringSetup)
             {
-                if (ImGui.Button("Setup Gathering Profiles"))
+                if (ImGui.Button("設定採集設定檔"))
                 {
                     foreach (var profile in C.GatherProfiles)
                     {
@@ -95,7 +95,7 @@ namespace ICE.Ui
             }
             else
             {
-                ImGui.Text("All gathering profile have been updated/automatically applied");
+                ImGui.Text("所有採集設定檔均已更新並自動套用。");
             }
         }
     }

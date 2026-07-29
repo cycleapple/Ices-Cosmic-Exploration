@@ -54,40 +54,40 @@ namespace ICE.Ui.MainUi
                     ImGui.Dummy(new Vector2(0, 10));
                 }
 
-                if (ImGui_Tools.DrawCategoryHeader_AutoSize("Cosmic Helper", icon: FontAwesomeIcon.ListAlt))
+                if (ImGui_Tools.DrawCategoryHeader_AutoSize("宇宙探索助手", icon: FontAwesomeIcon.ListAlt))
                 {
-                    DrawSelectableWithIcon(FontAwesomeIcon.List, "Standard", "modeSelect_Standard");
-                    DrawSelectableWithIcon(FontAwesomeIcon.Trophy, "Completion", "modeSelect_Completion");
+                    DrawSelectableWithIcon(FontAwesomeIcon.List, "標準模式", "modeSelect_Standard");
+                    DrawSelectableWithIcon(FontAwesomeIcon.Trophy, "完成進度", "modeSelect_Completion");
                 }
-                if (ImGui_Tools.DrawCategoryHeader_AutoSize("Settings", icon: FontAwesomeIcon.Cog))
+                if (ImGui_Tools.DrawCategoryHeader_AutoSize("設定", icon: FontAwesomeIcon.Cog))
                 {
                     if (C.Show_StopWhen)
-                        DrawSelectableWithIcon(FontAwesomeIcon.Stop, "Stop When...", "setting_StopWhen");
+                        DrawSelectableWithIcon(FontAwesomeIcon.Stop, "停止條件", "setting_StopWhen");
                     if (C.Show_GatheringProfile)
-                        DrawSelectableWithIcon(FontAwesomeIcon.Leaf, "Gathering Profile", "setting_GatheringProfile");
+                        DrawSelectableWithIcon(FontAwesomeIcon.Leaf, "採集設定檔", "setting_GatheringProfile");
                     if (C.Show_MissionPriority)
-                        DrawSelectableWithIcon(FontAwesomeIcon.SortAmountUp, "Mission Priority", "setting_MissionPriority");
+                        DrawSelectableWithIcon(FontAwesomeIcon.SortAmountUp, "任務優先順序", "setting_MissionPriority");
                     if (C.Show_MiscSettings)
-                        DrawSelectableWithIcon(FontAwesomeIcon.UserCog, "Misc Settings", "setting_Misc");
+                        DrawSelectableWithIcon(FontAwesomeIcon.UserCog, "其他設定", "setting_Misc");
 
-                    DrawSelectableWithIcon(FontAwesomeIcon.Cog, "All Settings", "helpSelect_AllSettings");
+                    DrawSelectableWithIcon(FontAwesomeIcon.Cog, "全部設定", "helpSelect_AllSettings");
                 }
                 if (C.Show_HubActivities)
                 {
-                    if (ImGui_Tools.DrawCategoryHeader_AutoSize("Hub Activities", icon: FontAwesomeIcon.Home))
+                    if (ImGui_Tools.DrawCategoryHeader_AutoSize("據點活動", icon: FontAwesomeIcon.Home))
                     {
-                        DrawSelectableWithImage(65112, "Credit Shopping", "hubActivities_CreditShopping");
-                        DrawSelectableWithImage(65127, "Gambling Settings", "hubActivites_GambaSetting");
+                        DrawSelectableWithImage(65112, "宇宙信用點購物", "hubActivities_CreditShopping");
+                        DrawSelectableWithImage(65127, "宇宙轉盤設定", "hubActivites_GambaSetting");
                     }
                 }
                 var currentJob = C.SelectedJob;
-                if (ImGui_Tools.DrawCategoryHeader_AutoSize("Moon Selection", FontAwesomeIcon.Moon))
+                if (ImGui_Tools.DrawCategoryHeader_AutoSize("衛星選擇", FontAwesomeIcon.Moon))
                 {
                     string SinusAsset = "ICE.Resources.Sinus_Ardorum.png";
                     string PhaennaAsset = "ICE.Resources.Phaenna.png";
 
                     bool autoSelectMoon = C.AutoSelectMoon;
-                    if (ImGui.Checkbox("Auto Select Moon", ref autoSelectMoon))
+                    if (ImGui.Checkbox("自動選擇衛星", ref autoSelectMoon))
                     {
                         C.AutoSelectMoon = autoSelectMoon;
                         C.Save();
@@ -148,7 +148,7 @@ namespace ICE.Ui.MainUi
                     C.SelectedJob = Player.JobId;
                     C.Save();
                 }
-                if (ImGui_Tools.DrawCategoryHeader_AutoSize("Class Selection", imageTexture: GreyscaleJob()))
+                if (ImGui_Tools.DrawCategoryHeader_AutoSize("職業選擇", imageTexture: GreyscaleJob()))
                 {
                     float iconSize = 26 * scale;
                     float iconSpacing = 4;
@@ -157,7 +157,7 @@ namespace ICE.Ui.MainUi
                     
                     ImGui.SetCursorPosX(startX);
                     bool autoSelectJob = C.AutoPickCurrentJob;
-                    if (ImGui.Checkbox("Auto Select##AutoSelectJob", ref autoSelectJob))
+                    if (ImGui.Checkbox("自動選擇##AutoSelectJob", ref autoSelectJob))
                     {
                         C.AutoPickCurrentJob = autoSelectJob;
                         C.Save();
@@ -188,7 +188,7 @@ namespace ICE.Ui.MainUi
                     ImGui.SameLine(0, iconSpacing);
                     ImGui_Tools.DrawJobButtons(18, "FSH");
                 }
-                if (ImGui_Tools.DrawCategoryHeader_AutoSize("Tool Relic XP", icon: FontAwesomeIcon.ArrowUpRightDots))
+                if (ImGui_Tools.DrawCategoryHeader_AutoSize("宇宙工具經驗值", icon: FontAwesomeIcon.ArrowUpRightDots))
                 {
                     if (PlayerHelper.IsInCosmicZone())
                     {
@@ -200,13 +200,13 @@ namespace ICE.Ui.MainUi
                     }
                     else
                     {
-                        ImGui.TextWrapped("You have to be in a cosmic area for us to view this info. Blame square for not making it always accesable");
+                        ImGui.TextWrapped("必須位於宇宙探索區域內才能查看這項資訊。");
                     }
                 }
-                if (ImGui_Tools.DrawCategoryHeader_AutoSize("Help", icon: FontAwesomeIcon.QuestionCircle))
+                if (ImGui_Tools.DrawCategoryHeader_AutoSize("說明", icon: FontAwesomeIcon.QuestionCircle))
                 {
-                    DrawSelectableWithIcon(FontAwesomeIcon.Question, "Requirements", "helpSelect_Requirements");
-                    DrawSelectableWithIcon(FontAwesomeIcon.Book, "Ice Logs", "helpSelect_Logs");
+                    DrawSelectableWithIcon(FontAwesomeIcon.Question, "必要插件", "helpSelect_Requirements");
+                    DrawSelectableWithIcon(FontAwesomeIcon.Book, "ICE 紀錄", "helpSelect_Logs");
                 }
             }
             ImGui.EndChild();

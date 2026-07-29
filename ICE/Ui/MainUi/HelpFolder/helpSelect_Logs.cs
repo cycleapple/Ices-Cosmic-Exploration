@@ -20,12 +20,12 @@ namespace ICE.Ui.MainUi.HelpFolder
                 if (!headerChild.Success) return; // Ensures that it was loaded properly before continuing.
                 if (ImGui.BeginTabBar("Ice Log Tabs"))
                 {
-                    if (ImGui.BeginTabItem("Main Logs"))
+                    if (ImGui.BeginTabItem("主要紀錄"))
                     {
                         LogHelperViewer();
                         ImGui.EndTabItem();
                     }
-                    if (ImGui.BeginTabItem("Destination Logs"))
+                    if (ImGui.BeginTabItem("目的地紀錄"))
                     {
                         DestinationLogViewer();
                         ImGui.EndTabItem();
@@ -38,7 +38,7 @@ namespace ICE.Ui.MainUi.HelpFolder
 
         public static void Draw_Debug()
         {
-            if (ImGui.Button("Copy logs to clipboard"))
+            if (ImGui.Button("複製紀錄到剪貼簿"))
             {
                 LogSystem.CopyToClipboard();
             }
@@ -49,10 +49,10 @@ namespace ICE.Ui.MainUi.HelpFolder
         {
             // Search input
             ImGui.SetNextItemWidth(300);
-            ImGui.InputTextWithHint("##LogSearch", "Search logs...", ref searchFilter, 256);
+            ImGui.InputTextWithHint("##LogSearch", "搜尋紀錄…", ref searchFilter, 256);
 
             ImGui.SameLine();
-            if (ImGui.Button("Clear"))
+            if (ImGui.Button("清除"))
             {
                 searchFilter = string.Empty;
             }
@@ -66,10 +66,10 @@ namespace ICE.Ui.MainUi.HelpFolder
 
             if (ImGui.BeginTable("LogTable", 4, flags))
             {
-                ImGui.TableSetupColumn("Time");
-                ImGui.TableSetupColumn("Level");
-                ImGui.TableSetupColumn("Category");
-                ImGui.TableSetupColumn("Message");
+                ImGui.TableSetupColumn("時間");
+                ImGui.TableSetupColumn("等級");
+                ImGui.TableSetupColumn("分類");
+                ImGui.TableSetupColumn("訊息");
                 ImGui.TableHeadersRow();
 
                 // Filter logs based on search input
@@ -122,10 +122,10 @@ namespace ICE.Ui.MainUi.HelpFolder
 
             if (ImGui.BeginTable("Destination Log Viewer", 5, flags))
             {
-                ImGui.TableSetupColumn("Timestamp");
-                ImGui.TableSetupColumn("Start");
-                ImGui.TableSetupColumn("Destination");
-                ImGui.TableSetupColumn("Distance");
+                ImGui.TableSetupColumn("時間");
+                ImGui.TableSetupColumn("起點");
+                ImGui.TableSetupColumn("目的地");
+                ImGui.TableSetupColumn("距離");
 
                 ImGui.TableHeadersRow();
 
@@ -151,13 +151,13 @@ namespace ICE.Ui.MainUi.HelpFolder
                     Table_VertCenterText($"{log.Distance}");
 
                     ImGui.TableNextColumn();
-                    if (ImGui.Button("Copy Info"))
+                    if (ImGui.Button("複製資訊"))
                     {
                         var clipboardText = new StringBuilder();
                         clipboardText.AppendLine($"Start: X: {log.PlayerStart.X:N2}, Y: {log.PlayerStart.Y:N2}, Z: {log.PlayerStart.Z:N2}");
                         clipboardText.Append($"End: X: {log.PlayerDestination.X:N2}, Y: {log.PlayerDestination.Y:N2}, Z: {log.PlayerDestination.Z:N2}");
                         ImGui.SetClipboardText($"{clipboardText}");
-                        Notify.Success("Log copied to clipbard");
+                        Notify.Success("已將紀錄複製到剪貼簿");
                     }
                     ImGui.PopID();
 

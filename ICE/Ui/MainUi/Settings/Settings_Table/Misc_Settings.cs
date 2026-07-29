@@ -34,39 +34,39 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
             PostMissionCommands();
             Separator();
 
-            ImGuiEx.IconWithText(FontAwesomeIcon.ExclamationTriangle, "Safety Settings");
+            ImGuiEx.IconWithText(FontAwesomeIcon.ExclamationTriangle, "安全設定");
             ImGui.Dummy(new Vector2(0, 5));
             SafetySettings.Draw();
         }
 
         private static void OverlaySettings()
         {
-            ImGuiEx.IconWithText(FontAwesomeIcon.WindowMaximize, "Overlay Window");
+            ImGuiEx.IconWithText(FontAwesomeIcon.WindowMaximize, "資訊浮層");
             ImGui.Dummy(new (0, 5));
 
             bool showOverlay = C.ShowOverlay;
-            if (ImGui.Checkbox("Show Overlay", ref showOverlay))
+            if (ImGui.Checkbox("顯示資訊浮層", ref showOverlay))
             {
                 C.ShowOverlay = showOverlay;
                 C.Save();
             }
 
             bool ShowSeconds = C.ShowSeconds;
-            if (ImGui.Checkbox("Show Seconds", ref ShowSeconds))
+            if (ImGui.Checkbox("顯示秒數", ref ShowSeconds))
             {
                 C.ShowSeconds = ShowSeconds;
                 C.Save();
             }
 
             bool showExpOverlay = C.ShowExpBars;
-            if (ImGui.Checkbox("Show Experience Bars on Overlay", ref showExpOverlay))
+            if (ImGui.Checkbox("在浮層顯示經驗值條", ref showExpOverlay))
             {
                 C.ShowExpBars = showExpOverlay;
                 C.Save();
             }
 
             bool showTotalScore = C.ShowTotalScore;
-            if (ImGui.Checkbox("Show Total Score", ref showTotalScore))
+            if (ImGui.Checkbox("顯示總分", ref showTotalScore))
             {
                 C.ShowTotalScore = showTotalScore;
                 C.Save();
@@ -76,25 +76,25 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
         private static void AutoUse()
         {
-            ImGuiEx.IconWithText(FontAwesomeIcon.PersonRays, "Auto-Use");
+            ImGuiEx.IconWithText(FontAwesomeIcon.PersonRays, "自動使用");
             ImGui.Dummy(new Vector2(0, 5));
 
             bool AutoMoonSprint = C.MoonSprint;
-            if (ImGui.Checkbox("Auto-Use Moon Sprint", ref AutoMoonSprint))
+            if (ImGui.Checkbox("自動使用月面衝刺", ref AutoMoonSprint))
             {
                 C.MoonSprint = AutoMoonSprint;
                 C.Save();
             }
 
             bool DisableLunarAura = C.RemoveStellarStatus;
-            if (ImGui.Checkbox("Auto-Remove Stellar Status", ref DisableLunarAura))
+            if (ImGui.Checkbox("自動移除星極狀態", ref DisableLunarAura))
             {
                 C.RemoveStellarStatus = DisableLunarAura;
                 C.Save();
             }
 
             bool DisableRedAlertPathing = C.DisablePathfindingToRedAlert;
-            if (ImGui.Checkbox("Disable Pathfinding to Red Alerts", ref DisableRedAlertPathing))
+            if (ImGui.Checkbox("停用前往紅色警報的尋路", ref DisableRedAlertPathing))
             {
                 C.DisablePathfindingToRedAlert = DisableRedAlertPathing;
                 C.Save();
@@ -103,11 +103,11 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
         private static void RepairSettings()
         {
-            ImGuiEx.IconWithText(FontAwesomeIcon.Hammer, "Repair Settings");
+            ImGuiEx.IconWithText(FontAwesomeIcon.Hammer, "修理設定");
             ImGui.Dummy(new Vector2(0, 5));
 
             bool repairAtVendor = C.RepairAtVendor;
-            if (ImGui.Checkbox("Repair at Vendor", ref repairAtVendor))
+            if (ImGui.Checkbox("在商人處修理", ref repairAtVendor))
             {
                 C.RepairAtVendor = repairAtVendor;
                 C.Save();
@@ -116,14 +116,14 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
             using (ImRaii.Disabled(repairAtVendor))
             {
                 bool selfRepairGather = C.SelfRepairGather;
-                if (ImGui.Checkbox("Self Repair Gather", ref selfRepairGather))
+                if (ImGui.Checkbox("採集職自行修理", ref selfRepairGather))
                 {
                     C.SelfRepairGather = selfRepairGather;
                     C.Save();
                 }
 
                 bool selfRepairCrafter = C.SelfRepairCrafter;
-                if (ImGui.Checkbox("Self Repair Crafter", ref selfRepairCrafter))
+                if (ImGui.Checkbox("製作職自行修理", ref selfRepairCrafter))
                 {
                     C.SelfRepairCrafter= selfRepairCrafter;
                     C.Save();
@@ -144,12 +144,12 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
         private static void TimeRecords()
         {
-            ImGuiEx.IconWithText(FontAwesomeIcon.Clock, "Record Settings");
+            ImGuiEx.IconWithText(FontAwesomeIcon.Clock, "紀錄設定");
             ImGui.Dummy(new Vector2(0, 5));
 
             int TimeHistory = C.TimeHistoryLimit;
             ImGui.SetNextItemWidth(100);
-            if (ImGui.InputInt("Average Time History to keep", ref TimeHistory))
+            if (ImGui.InputInt("保留的平均耗時紀錄數", ref TimeHistory))
             {
                 C.TimeHistoryLimit = TimeHistory;
                 C.Save();
@@ -158,8 +158,8 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
             ImGui.TextDisabled("?");
             if (ImGui.IsItemHovered())
             {
-                ImGui.SetTooltip("Anything below 0 to keep all logs\n" +
-                                 "Above 0 to keep a set limit");
+                ImGui.SetTooltip("設為 0 以下可保留全部紀錄\n" +
+                                 "設為 0 以上則依指定數量保留");
             }
         }
 
@@ -178,10 +178,10 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
             float minMountRange = C.MountRadius;
             float dismountRange = C.DismountRadius;
 
-            ImGuiEx.IconWithText(FontAwesomeIcon.Feather, "Mount Settings");
+            ImGuiEx.IconWithText(FontAwesomeIcon.Feather, "坐騎設定");
             ImGui.Dummy(new Vector2(0, 5));
 
-            if (ImGui.Button("Select Mounting Option"))
+            if (ImGui.Button("選擇坐騎"))
             {
                 availableMounts.Clear();
                 availableMounts[0] = "Mount Roulette";
@@ -206,12 +206,12 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
             }
             ImGui.SameLine();
             ImGui.AlignTextToFramePadding();
-            ImGui.Text($"Mount: {C.MountName}");
+            ImGui.Text($"坐騎：{C.MountName}");
 
             if (ImGui.BeginPopup("Mount Options"))
             {
                 // Search box
-                ImGui.InputText("Search", ref mountSearchText, 100);
+                ImGui.InputText("搜尋", ref mountSearchText, 100);
 
                 // Filter mounts based on search
                 var filteredMounts = availableMounts
@@ -243,16 +243,16 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                 // Navigation buttons
                 ImGui.Separator();
 
-                if (ImGui.Button("Previous") && mountDisplayOffset > 0)
+                if (ImGui.Button("上一頁") && mountDisplayOffset > 0)
                 {
                     mountDisplayOffset = Math.Max(0, mountDisplayOffset - mountItemsPerPage);
                 }
 
                 ImGui.SameLine();
-                ImGui.Text($"{mountDisplayOffset + 1}-{Math.Min(mountDisplayOffset + mountItemsPerPage, totalItems)} of {totalItems}");
+                ImGui.Text($"{mountDisplayOffset + 1}-{Math.Min(mountDisplayOffset + mountItemsPerPage, totalItems)}／{totalItems}");
 
                 ImGui.SameLine();
-                if (ImGui.Button("Next") && mountDisplayOffset < maxOffset)
+                if (ImGui.Button("下一頁") && mountDisplayOffset < maxOffset)
                 {
                     mountDisplayOffset = Math.Min(maxOffset, mountDisplayOffset + mountItemsPerPage);
                 }
@@ -260,34 +260,34 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                 ImGui.EndPopup();
             }
 
-            if (ImGui.Checkbox("Use mount outside mission", ref mountOutsideMission))
+            if (ImGui.Checkbox("任務外使用坐騎", ref mountOutsideMission))
             {
                 C.UseMountOutsideMission = mountOutsideMission;
                 C.Save();
             }
 
-            if (ImGui.Checkbox("Use mount in mission", ref mountInMission))
+            if (ImGui.Checkbox("任務中使用坐騎", ref mountInMission))
             {
                 C.UseMountInMission = mountInMission;
                 C.Save();
             }
 
             ImGui.SetNextItemWidth(100);
-            if (ImGui.DragFloat("Minimum Mounting Range", ref minMountRange, 1))
+            if (ImGui.DragFloat("最小騎乘距離", ref minMountRange, 1))
             {
                 C.MountRadius = minMountRange;
                 C.Save();
             }
             ImGui.SameLine();
-            ImGui.Checkbox("Visualize radius", ref visualizeRadius);
+            ImGui.Checkbox("顯示範圍", ref visualizeRadius);
             ImGui.SetNextItemWidth(100);
-            if (ImGui.DragFloat("Dismount Target Range", ref dismountRange, 1))
+            if (ImGui.DragFloat("下坐騎目標距離", ref dismountRange, 1))
             {
                 C.DismountRadius = dismountRange;
                 C.Save();
             }
             ImGui.SameLine();
-            ImGui.Checkbox("Visualize Dismount Radius", ref visualizeDismountRadius);
+            ImGui.Checkbox("顯示下坐騎範圍", ref visualizeDismountRadius);
 
             using (var drawList = PictoService.Draw())
             {
@@ -305,39 +305,39 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
         private static void ShowSystemButtons()
         {
-            ImGuiEx.IconWithText(FontAwesomeIcon.WindowRestore, "Show / Hide Tabs");
+            ImGuiEx.IconWithText(FontAwesomeIcon.WindowRestore, "顯示／隱藏分頁");
             ImGui.Dummy(new(0, 5));
 
             bool showStopWhen = C.Show_StopWhen;
-            if (ImGui.Checkbox("Show Stop When... Tab", ref showStopWhen))
+            if (ImGui.Checkbox("顯示「停止條件」分頁", ref showStopWhen))
             {
                 C.Show_StopWhen = showStopWhen;
                 C.Save();
             }
 
             bool showGProfile = C.Show_GatheringProfile;
-            if (ImGui.Checkbox("Show Gathering Profile Tab", ref showGProfile))
+            if (ImGui.Checkbox("顯示「採集設定檔」分頁", ref showGProfile))
             {
                 C.Show_GatheringProfile = showGProfile;
                 C.Save();
             }
 
             bool showMissionPrio = C.Show_MissionPriority;
-            if (ImGui.Checkbox("Show Mission Priority Tab", ref showMissionPrio))
+            if (ImGui.Checkbox("顯示「任務優先順序」分頁", ref showMissionPrio))
             {
                 C.Show_MissionPriority = showMissionPrio;
                 C.Save();
             }
 
             bool showMisc = C.Show_MiscSettings;
-            if (ImGui.Checkbox("Show Misc Settings Tab", ref showMisc))
+            if (ImGui.Checkbox("顯示「其他設定」分頁", ref showMisc))
             {
                 C.Show_MiscSettings = showMisc;
                 C.Save();
             }
 
             bool showHubActivities = C.Show_HubActivities;
-            if (ImGui.Checkbox("Show Hub Activities Section", ref showHubActivities))
+            if (ImGui.Checkbox("顯示「據點活動」區段", ref showHubActivities))
             {
                 C.Show_HubActivities = showHubActivities;
                 C.Save();
@@ -345,14 +345,14 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
         }
         private static void PostMissionCommands()
         {
-            ImGuiEx.IconWithText(FontAwesomeIcon.Play, "Post Mission Commands");
+            ImGuiEx.IconWithText(FontAwesomeIcon.Play, "任務完成後指令");
             ImGui.Dummy(new Vector2(0, 5));
 
-            ImGui.TextWrapped("Input below a list of commands that you would like to run after a run has been completed. \n" +
-                              "This is kind of my way of letting you somewhat script/set up a sequence of other things that you would like to do that might not be included in the plugin itself. \n" +
-                              "If you want something more complex, just make an SND script at that point. And have this run that script post lol.");
+            ImGui.TextWrapped("在下方輸入每次任務完成後要執行的指令清單。\n" +
+                              "可用來依序執行本插件未內建的其他操作。\n" +
+                              "若需要更複雜的流程，建議建立 SND 腳本，再由此處於任務完成後執行。");
 
-            if (ImGui.Button("Add New Command"))
+            if (ImGui.Button("新增指令"))
             {
                 C.PostMissionCommands.Add(new Config.MissionCommand 
                 { 
@@ -367,9 +367,9 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
             if (ImGui.BeginTable("Mission Commands", 3, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders))
             {
-                ImGui.TableSetupColumn("Command");
-                ImGui.TableSetupColumn("Delay");
-                ImGui.TableSetupColumn("Remove");
+                ImGui.TableSetupColumn("指令");
+                ImGui.TableSetupColumn("延遲");
+                ImGui.TableSetupColumn("移除");
 
                 ImGui.TableHeadersRow();
 
