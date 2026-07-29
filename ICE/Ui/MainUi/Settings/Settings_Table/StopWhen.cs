@@ -11,12 +11,12 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
     {
         public static void Draw()
         {
-            ImGui.Checkbox("Stop after current mission", ref Mission_Settings.StopAfterCurrent);
+            ImGui.Checkbox("目前任務完成後停止", ref Mission_Settings.StopAfterCurrent);
 
             #region CosmoCredits
 
             bool stopCosmic = C.StopOnceHitCosmoCredits;
-            if (ImGui.Checkbox($"Stop at Cosmic Credits", ref stopCosmic))
+            if (ImGui.Checkbox("宇宙信用點達到指定數量時停止", ref stopCosmic))
             {
                 C.StopOnceHitCosmoCredits = stopCosmic;
                 C.Save();
@@ -41,7 +41,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
             #region Planet Credits
 
             bool stopLunar = C.StopOnceHitLunarCredits;
-            if (ImGui.Checkbox($"Stop at Planetary Credit Amount", ref stopLunar))
+            if (ImGui.Checkbox("星球信用點達到指定數量時停止", ref stopLunar))
             {
                 C.StopOnceHitLunarCredits = stopLunar;
                 C.Save();
@@ -62,7 +62,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
             #region Cosmic Score
 
             bool stopScore = C.StopOnceHitCosmicScore;
-            if (ImGui.Checkbox($"Stop at Cosmic Score", ref stopScore))
+            if (ImGui.Checkbox("宇宙探索分數達到指定值時停止", ref stopScore))
             {
                 C.StopOnceHitCosmicScore = stopScore;
                 C.BuyItems = false;
@@ -84,7 +84,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
             #region Level
 
             bool stopWhenLevel = C.StopWhenLevel;
-            if (ImGui.Checkbox($"Stop at Level", ref stopWhenLevel))
+            if (ImGui.Checkbox("達到指定等級時停止", ref stopWhenLevel))
             {
                 C.StopWhenLevel = stopWhenLevel;
                 C.Save();
@@ -105,7 +105,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
             #region Relic Completed
 
             bool relicStop = C.StopOnceRelicFinished;
-            if (ImGui.Checkbox($"Stop @ Relic Complete", ref relicStop))
+            if (ImGui.Checkbox("宇宙工具完成時停止", ref relicStop))
             {
                 C.StopOnceRelicFinished = relicStop;
                 C.Save();
@@ -116,7 +116,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
             #region Sound Alert
 
             bool playSoundAlert = C.PlaySoundAlert;
-            if (ImGui.Checkbox("Play Sound Alert on Stop", ref playSoundAlert))
+            if (ImGui.Checkbox("停止時播放提示音", ref playSoundAlert))
             {
                 C.PlaySoundAlert = playSoundAlert;
                 C.Save();
@@ -124,14 +124,14 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
             if (playSoundAlert)
             {
                 var soundVolume = C.SoundVolume;
-                ImGui.Text("Sound Volume");
+                ImGui.Text("提示音音量");
                 ImGui.SetNextItemWidth(200);
                 if (ImGui.SliderFloat("##Sound Volume", ref soundVolume, 0f, 1f, "%.2f"))
                 {
                     C.SoundVolume = soundVolume;
                     C.SaveDebounced();
                 }
-                if (ImGui.Button("Test Sound Alert"))
+                if (ImGui.Button("測試提示音"))
                 {
                     _ = SoundPlayer.PlaySoundAsync();
                 }

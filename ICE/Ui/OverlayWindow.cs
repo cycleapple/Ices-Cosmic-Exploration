@@ -35,20 +35,20 @@ namespace ICE.Ui
 
         public override void Draw()
         {
-            ImGui.Text($"Current state: " + SchedulerMain.State.ToString());
+        ImGui.Text($"目前狀態：{SchedulerMain.State}");
             if (CosmicHelper.SheetMissionDict.TryGetValue(CosmicHelper.CurrentLunarMission, out var missionName) && SchedulerMain.State != IceState.AbandonMission)
             {
-                ImGui.Text($"Current Mission: [{CosmicHelper.CurrentLunarMission}] {missionName.Name}");
+            ImGui.Text($"目前任務：[{CosmicHelper.CurrentLunarMission}] {missionName.Name}");
             }
             else
             {
-                ImGui.Text("Current Mission: None");
+            ImGui.Text("目前任務：無");
             }
 #if DEBUG
             if (C.ShowDebugGatherInfo)
             {
-                ImGui.Text($"Current Collectable State: {Mission_Settings.CollectableStep}");
-                ImGui.Text($"Current Node Count: {Mission_Settings.nodeTotal}");
+        ImGui.Text($"目前收藏品狀態：{Mission_Settings.CollectableStep}");
+        ImGui.Text($"目前採集點數量：{Mission_Settings.nodeTotal}");
             }
 #endif
 
@@ -61,7 +61,7 @@ namespace ICE.Ui
             if (currentWeather != null)
             {
                 ImGui.AlignTextToFramePadding();
-                ImGui.Text("Weather Forcast:");
+        ImGui.Text("天候預報：");
                 Svc.Texture.TryGetFromGameIcon(currentWeatherId, out var currentWeatherIcon);
                 ImGui.SameLine(0, 2);
                 ImGui.Image(currentWeatherIcon.GetWrapOrEmpty().Handle, new Vector2(23, 23));
@@ -85,11 +85,11 @@ namespace ICE.Ui
                 }
                 ImGui.SameLine(0, 2);
                 ImGui.AlignTextToFramePadding();
-                ImGui.Text($"Next in: {nextWeatherTime}");
+            ImGui.Text($"距離下一次：{nextWeatherTime}");
             }
 
             ImGui.AlignTextToFramePadding();
-            ImGui.Text($"Timed Mission(s): ");
+        ImGui.Text("限時任務：");
             var currentList = PlayerHandlers.GetMissionsForHour().currentMissions;
             var nextList = PlayerHandlers.GetMissionsForHour().nextMissions;
             foreach (var mission in currentList)
@@ -167,7 +167,7 @@ namespace ICE.Ui
             {
                 (uint TotalScore, uint TotalComplete, uint MaxScore, Dictionary<uint, uint> ClassInfo) = Relic_XP.GetTotalScores();
                 var ScoreBarSize = new Vector2(340, 10);
-                Relic_XP.DrawXPBar($"Total Score | Completed: [{TotalComplete} / 11]", TotalScore, MaxScore, ScoreBarSize);
+        Relic_XP.DrawXPBar($"總分｜完成：[{TotalComplete} / 11]", TotalScore, MaxScore, ScoreBarSize);
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
@@ -179,7 +179,7 @@ namespace ICE.Ui
                         ImGui.Image(jobImage.GetWrapOrEmpty().Handle, new Vector2(23, 23));
                         ImGui.SameLine();
                         ImGui.AlignTextToFramePadding();
-                        ImGui.Text($"Score: {jobScore:N0}");
+            ImGui.Text($"分數：{jobScore:N0}");
                     }
                     ImGui.EndTooltip();
                 }
@@ -189,7 +189,7 @@ namespace ICE.Ui
             ImGui.Separator();
             ImGuiHelpers.ScaledDummy(2);
 
-            if (ImGuiEx.IconButton(FontAwesomeIcon.Home, "Open ICE"))
+        if (ImGuiEx.IconButton(FontAwesomeIcon.Home, "開啟 ICE"))
             {
                 P.mainWindow.IsOpen = true;
             }
@@ -198,7 +198,7 @@ namespace ICE.Ui
             // Start button (disabled while already ticking).
             using (ImRaii.Disabled(SchedulerMain.State != IceState.Idle || !PlayerHelper.UsingSupportedJob()))
             {
-                if (ImGui.Button("Start"))
+            if (ImGui.Button("開始"))
                 {
                     SchedulerMain.EnablePlugin();
                 }
@@ -209,13 +209,13 @@ namespace ICE.Ui
             // Stop button (disabled while not ticking).
             using (ImRaii.Disabled(SchedulerMain.State == IceState.Idle))
             {
-                if (ImGui.Button("Stop"))
+            if (ImGui.Button("停止"))
                 {
                     SchedulerMain.DisablePlugin();
                 }
             }
             ImGui.SameLine();
-            ImGui.Checkbox("Stop after current mission", ref Mission_Settings.StopAfterCurrent);
+        ImGui.Checkbox("目前任務完成後停止", ref Mission_Settings.StopAfterCurrent);
 
             ImGuiHelpers.ScaledDummy(2);
             ImGui.Separator();
@@ -229,7 +229,7 @@ namespace ICE.Ui
 
                 if (CosmicHelper.CrafterJobList.Contains(currentJobId) || CosmicHelper.GatheringJobList.Contains(currentJobId))
                 {
-                    if (ImGui.CollapsingHeader("Relic Tool XP"))
+        if (ImGui.CollapsingHeader("宇宙工具經驗值"))
                     {
                         Relic_XP.DrawRelicXP((uint)currentJobId);
                     }

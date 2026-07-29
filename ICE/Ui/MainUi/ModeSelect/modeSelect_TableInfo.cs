@@ -235,16 +235,16 @@ namespace ICE.Ui.MainUi.ModeSelect
             {
                 #region Table Column Setup
 
-                ImGui.TableSetupColumn("Enabled"); // 0
-                ImGui.TableSetupColumn("Job");
-                ImGui.TableSetupColumn("Manual");
+            ImGui.TableSetupColumn("啟用"); // 0
+            ImGui.TableSetupColumn("職業");
+            ImGui.TableSetupColumn("手動");
                 ImGui.TableSetupColumn("ID");
                 ImGui.TableSetupColumn("✓");
-                ImGui.TableSetupColumn("Mission Name");
-                ImGui.TableSetupColumn("Cosmo");
-                ImGui.TableSetupColumn("Lunar");
-                ImGui.TableSetupColumn("Score");
-                ImGui.TableSetupColumn("Reward Item"); // 9
+            ImGui.TableSetupColumn("任務名稱");
+            ImGui.TableSetupColumn("宇宙");
+            ImGui.TableSetupColumn("星球");
+            ImGui.TableSetupColumn("分數");
+            ImGui.TableSetupColumn("報酬物品"); // 9
 
                 // Xp Columns Here
                 float padding = 10f;
@@ -255,9 +255,9 @@ namespace ICE.Ui.MainUi.ModeSelect
                 ImGui.TableSetupColumn("IV");
                 ImGui.TableSetupColumn("V"); // 14
 
-                ImGui.TableSetupColumn("Turnin Mode"); // 15
-                ImGui.TableSetupColumn("Gathering Profile");
-                ImGui.TableSetupColumn("Mission Notes"); // 17
+            ImGui.TableSetupColumn("繳交模式"); // 15
+            ImGui.TableSetupColumn("採集設定檔");
+            ImGui.TableSetupColumn("任務備註"); // 17
 
                 #endregion
 
@@ -283,7 +283,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                 #region Enabled Column
 
                 ImGui.TableSetColumnIndex(columnIndexCount);
-                ImGui.TableHeader("Enabled");
+        ImGui.TableHeader("啟用");
                 if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
                 {
                     ImGui.OpenPopup("Enabled Options");
@@ -291,13 +291,13 @@ namespace ICE.Ui.MainUi.ModeSelect
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
-                    ImGui.Text("Enable/disable mission for automation");
-                    ImGui.Text($"Left click for options");
+            ImGui.Text("啟用或停用任務自動化");
+            ImGui.Text("按一下左鍵開啟選項");
                     ImGui.EndTooltip();
                 }
                 if (ImGui.BeginPopup("Enabled Options"))
                 {
-                    if (ImGui.Button("Enable All"))
+            if (ImGui.Button("全部啟用"))
                     {
                         foreach (var mission in missions)
                         {
@@ -314,7 +314,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                         C.Save();
                     }
 
-                    if (ImGui.Button("Disable All"))
+            if (ImGui.Button("全部停用"))
                     {
                         foreach (var mission in missions)
                         {
@@ -332,7 +332,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                 #region Jobs
 
                 ImGui.TableSetColumnIndex(columnIndexCount);
-                ImGui.TableHeader("Jobs");
+        ImGui.TableHeader("職業");
                 if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
                 {
                     ImGui.OpenPopup("Jobs Options");
@@ -340,12 +340,12 @@ namespace ICE.Ui.MainUi.ModeSelect
                 if (ImGui.BeginPopup("Jobs Options"))
                 {
                     bool showAllJobs = C.ShowCompletionOnlyJob;
-                    if (ImGui.RadioButton("Show All Jobs", !showAllJobs))
+            if (ImGui.RadioButton("顯示所有職業", !showAllJobs))
                     {
                         C.ShowCompletionOnlyJob = false;
                         C.Save();
                     }
-                    if (ImGui.RadioButton("Show Only Current Job", showAllJobs))
+            if (ImGui.RadioButton("只顯示目前職業", showAllJobs))
                     {
                         C.ShowCompletionOnlyJob = true;
                         C.Save();
@@ -359,11 +359,11 @@ namespace ICE.Ui.MainUi.ModeSelect
                 #region Manual
 
                 ImGui.TableSetColumnIndex(columnIndexCount);
-                ImGui.TableHeader("Manual");
+        ImGui.TableHeader("手動");
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
-                    ImGui.Text("Manual mode - requires manual intervention");
+            ImGui.Text("手動模式－需要使用者操作");
                     ImGui.EndTooltip();
                 }
                 columnIndexCount++;
@@ -377,7 +377,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
-                    ImGui.Text("Mission ID number");
+            ImGui.Text("任務 ID");
                     ImGui.EndTooltip();
                 }
                 columnIndexCount++;
@@ -391,7 +391,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
-                    ImGui.Text("Mission completion status");
+            ImGui.Text("任務完成狀態");
                     ImGui.EndTooltip();
                 }
                 columnIndexCount++;
@@ -401,11 +401,11 @@ namespace ICE.Ui.MainUi.ModeSelect
                 #region Mission Name
 
                 ImGui.TableSetColumnIndex(columnIndexCount);
-                ImGui.TableHeader("Mission Name");
+        ImGui.TableHeader("任務名稱");
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
-                    ImGui.Text("Click mission name to view details");
+            ImGui.Text("點擊任務名稱查看詳細資訊");
                     ImGui.EndTooltip();
                 }
                 columnIndexCount++;
@@ -415,11 +415,11 @@ namespace ICE.Ui.MainUi.ModeSelect
                 #region Cosmocredits
 
                 ImGui.TableSetColumnIndex(columnIndexCount);
-                ImGui.TableHeader("Cosmo");
+        ImGui.TableHeader("宇宙");
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
-                    ImGui.Text("Cosmic Credits reward");
+            ImGui.Text("宇宙信用點報酬");
                     ImGui.EndTooltip();
                 }
                 columnIndexCount++;
@@ -429,11 +429,11 @@ namespace ICE.Ui.MainUi.ModeSelect
                 #region Planetary Credits
 
                 ImGui.TableSetColumnIndex(columnIndexCount);
-                ImGui.TableHeader("Planetary");
+        ImGui.TableHeader("星球");
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
-                    ImGui.Text("Planetary Credits reward");
+            ImGui.Text("星球信用點報酬");
                     ImGui.EndTooltip();
                 }
                 columnIndexCount++;
@@ -443,11 +443,11 @@ namespace ICE.Ui.MainUi.ModeSelect
                 #region Score
 
                 ImGui.TableSetColumnIndex(columnIndexCount);
-                ImGui.TableHeader("Score");
+        ImGui.TableHeader("分數");
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
-                    ImGui.Text("Class Score reward");
+            ImGui.Text("職業分數報酬");
                     ImGui.EndTooltip();
                 }
                 columnIndexCount++;
@@ -457,11 +457,11 @@ namespace ICE.Ui.MainUi.ModeSelect
                 #region Planet Tokens
 
                 ImGui.TableSetColumnIndex(columnIndexCount);
-                ImGui.TableHeader("Token");
+        ImGui.TableHeader("代幣");
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
-                    ImGui.Text("Tokens that can be earned from this mission");
+            ImGui.Text("此任務可獲得的代幣");
                     ImGui.EndTooltip();
                 }
                 columnIndexCount++;
@@ -478,7 +478,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                     if (ImGui.IsItemHovered())
                     {
                         ImGui.BeginTooltip();
-                        ImGui.Text($"Relic XP Type {xpLabels[i]} reward");
+                ImGui.Text($"宇宙工具經驗值類型 {xpLabels[i]} 報酬");
                         ImGui.EndTooltip();
                     }
                     columnIndexCount++;
@@ -489,11 +489,11 @@ namespace ICE.Ui.MainUi.ModeSelect
                 #region Turnin Mode
 
                 ImGui.TableSetColumnIndex(columnIndexCount);
-                ImGui.TableHeader("Turnin Mode");
+        ImGui.TableHeader("繳交模式");
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
-                    ImGui.Text("Configure mission turnin settings");
+            ImGui.Text("設定任務繳交選項");
                     ImGui.EndTooltip();
                 }
                 columnIndexCount++;
@@ -503,11 +503,11 @@ namespace ICE.Ui.MainUi.ModeSelect
                 #region Gathering Profile
 
                 ImGui.TableSetColumnIndex(columnIndexCount);
-                ImGui.TableHeader("Gathering Profile");
+        ImGui.TableHeader("採集設定檔");
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
-                    ImGui.Text("Select gathering profile for gather missions");
+            ImGui.Text("選擇採集任務使用的設定檔");
                     ImGui.EndTooltip();
                 }
                 columnIndexCount++;
@@ -517,11 +517,11 @@ namespace ICE.Ui.MainUi.ModeSelect
                 #region Mission Notes
 
                 ImGui.TableSetColumnIndex(columnIndexCount);
-                ImGui.TableHeader("Mission Notes");
+        ImGui.TableHeader("任務備註");
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
-                    ImGui.Text("Additional mission information and requirements");
+            ImGui.Text("其他任務資訊與需求");
                     ImGui.EndTooltip();
                 }
                 columnIndexCount++;
@@ -650,8 +650,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                     if (unsupported)
                     {
                         ImGui.PushStyleColor(ImGuiCol.Text, new Vector4(1.0f, 0.0f, 0.0f, 1.0f)); // Red color (RGBA)
-                        ImGuiEx.IconWithTooltip(FontAwesomeIcon.ExclamationTriangle, "This is currently not supported yet. I'm working on bringing it over.\n" +
-                                                "It's just taking me time");
+            ImGuiEx.IconWithTooltip(FontAwesomeIcon.ExclamationTriangle, "目前尚未支援，正在開發中。");
                         ImGui.PopStyleColor();
                         ImGui.SameLine();
                     }
@@ -665,9 +664,9 @@ namespace ICE.Ui.MainUi.ModeSelect
                         {
                             var color = EColor.Yellow;
                             ImGuiEx.IconWithTooltip(color, FontAwesomeIcon.ExclamationTriangle, 
-                                                    "This is an expert craft by the games definition, and you don't have manipulation unlocked on this class.\n" +
-                                                    "You can enable this yourself, but do note that artisan will not allow you to craft with it until you've unlocked that skill.\n" +
-                                                    "You can still make a macro if you'd like, but it's either that or go do the class quest up to like... 68");
+                    "依遊戲判定，這是專家製作，但目前職業尚未解鎖掌握。\n" +
+                    "你可以自行啟用，但解鎖該技能前 Artisan 不會允許製作。\n" +
+                    "可改用巨集，或先完成約 68 級的職業任務。");
                         }
                         ImGui.SameLine();
                     }
@@ -741,7 +740,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                     ImGui.TableNextColumn();
                     if (missionInfo.Attributes.HasFlag(MissionAttributes.ScoreTimeRemaining))
                     {
-                        Table_FullCenterText("Auto");
+        Table_FullCenterText("自動");
                         if (missionConfig.AutoTurnin == false)
                         {
                             missionConfig.AutoTurnin = true;
@@ -754,7 +753,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                     }
                     else
                     {
-                        if (Table_CenteredButton("Select Turnin"))
+        if (Table_CenteredButton("選擇繳交方式"))
                         {
                             ImGui.OpenPopup("Mission Turnin Settings");
                         }
@@ -762,15 +761,15 @@ namespace ICE.Ui.MainUi.ModeSelect
                         {
                             ImGui.BeginTooltip();
                             if (missionConfig.AutoTurnin)
-                                ImGui.Text($"Auto Turnin - True");
+            ImGui.Text("自動繳交－啟用");
                             else
                             {
                                 if (missionConfig.TurninGold)
-                                    ImGui.Text($"Gold Enabled");
+            ImGui.Text("已啟用金牌");
                                 if (missionConfig.TurninSilver)
-                                    ImGui.Text($"Silver Enabled");
+            ImGui.Text("已啟用銀牌");
                                 if (missionConfig.TurninBronze)
-                                    ImGui.Text($"Bronze Enabled");
+            ImGui.Text("已啟用銅牌");
                             }
 
                             ImGui.EndTooltip();
@@ -783,10 +782,10 @@ namespace ICE.Ui.MainUi.ModeSelect
                             bool silverTurnin = missionConfig.TurninSilver;
                             bool bronzeTurnin = missionConfig.TurninBronze;
 
-                            ImGui.Text("Select Turnin Options");
+            ImGui.Text("選擇繳交選項");
                             ImGui.Dummy(new Vector2(0, 2));
 
-                            if (ImGui.Checkbox("Auto", ref anyTurnin))
+            if (ImGui.Checkbox("自動", ref anyTurnin))
                             {
                                 if (anyTurnin)
                                 {
@@ -806,11 +805,11 @@ namespace ICE.Ui.MainUi.ModeSelect
 
                                 C.Save();
                             }
-                            ImGuiEx.HelpMarker("This option will strive to get the best result, but will turn in any result if necessary without stopping.");
+            ImGuiEx.HelpMarker("此選項會盡量取得最佳成果，但必要時會繳交任何成果且不停止。");
 
                             ImGui.Separator();
 
-                            if (ImGui.Checkbox("Gold", ref goldTurnin))
+            if (ImGui.Checkbox("金牌", ref goldTurnin))
                             {
                                 if (anyTurnin && goldTurnin)
                                     missionConfig.AutoTurnin = false;
@@ -818,7 +817,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                                 missionConfig.TurninGold = goldTurnin;
                                 C.Save();
                             }
-                            if (ImGui.Checkbox("Silver", ref silverTurnin))
+            if (ImGui.Checkbox("銀牌", ref silverTurnin))
                             {
                                 if (anyTurnin && silverTurnin)
                                     missionConfig.AutoTurnin = false;
@@ -826,7 +825,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                                 missionConfig.TurninSilver = silverTurnin;
                                 C.Save();
                             }
-                            if (ImGui.Checkbox("Bronze", ref bronzeTurnin))
+            if (ImGui.Checkbox("銅牌", ref bronzeTurnin))
                             {
                                 if (anyTurnin && bronzeTurnin)
                                     missionConfig.AutoTurnin = false;
@@ -866,12 +865,12 @@ namespace ICE.Ui.MainUi.ModeSelect
                         if (ImGui.IsItemHovered())
                         {
                             ImGui.BeginTooltip();
-                            ImGui.Text("Select profile to use");
+        ImGui.Text("選擇要使用的設定檔");
                             ImGui.EndTooltip();
                         }
                         if (ImGui.BeginPopup("Selecting Gathering Profile"))
                         {
-                            ImGui.Text($"Currently Selected: {profileName}");
+            ImGui.Text($"目前選擇：{profileName}");
                             ImGui.Separator();
 
                             foreach (var profile in C.GatherProfiles)
@@ -892,31 +891,31 @@ namespace ICE.Ui.MainUi.ModeSelect
                     }
                     else if (gatherProfile && collectable)
                     {
-                        Table_FullCenterText("Auto");
+        Table_FullCenterText("自動");
                     }
                     else if (missionInfo.Attributes.HasFlag(MissionAttributes.Fish))
                     {
-                        if (Table_CenteredButton($"Select Profile"))
+        if (Table_CenteredButton("選擇設定檔"))
                         {
                             ImGui.OpenPopup("Select Fishing Profile");
                         }
                         if (ImGui.BeginPopup("Select Fishing Profile"))
                         {
-                            ImGui.Text($"Fishing profile: {missionInfo.Name}");
+            ImGui.Text($"捕魚設定檔：{missionInfo.Name}");
                             ImGui.Separator();
                             bool builtInPreset = missionConfig.Use_BuildinPreset;
-                            if (ImGui.Checkbox("Use Built In Preset", ref builtInPreset))
+            if (ImGui.Checkbox("使用內建預設", ref builtInPreset))
                             {
                                 missionConfig.Use_BuildinPreset = builtInPreset;
                                 C.Save();
                             }
-                            ImGuiEx.HelpMarker("Having this enabled means it will use the default preset that is included with the plugin for autohook. \n" +
-                                               "If you would like to use one that you already have in autohook, you can un-checkmark this and type the name of it below");
+            ImGuiEx.HelpMarker("啟用後，AutoHook 會使用插件隨附的預設。\n" +
+                "若要使用 AutoHook 中已有的預設，請取消勾選並在下方輸入名稱。");
                             using (ImRaii.Disabled(builtInPreset))
                             {
                                 string presetName = missionConfig.AutoHookPresetName;
                                 ImGui.SetNextItemWidth(200);
-                                if (ImGui.InputText("Preset Name", ref presetName))
+            if (ImGui.InputText("預設名稱", ref presetName))
                                 {
                                     missionConfig.AutoHookPresetName = presetName;
                                     C.Save();
@@ -953,7 +952,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                             var prevMissions = GetOnlyPreviousMissionsRecursive(Id);
 
                             ImGui.BeginTooltip();
-                            ImGui.Text("Sequence Missions");
+        ImGui.Text("連續任務");
                             ImGui.Separator();
                             for (int i = 0; i < prevMissions.Count; i++)
                             {
@@ -983,7 +982,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                         if (ImGui.IsItemHovered())
                         {
                             ImGui.BeginTooltip();
-                            ImGui.Text($"Weather: {missionInfo.Weather}");
+            ImGui.Text($"天候：{missionInfo.Weather}");
                             ImGui.EndTooltip();
                         }
                         notesCount++;
@@ -1003,7 +1002,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                         if (ImGui.IsItemHovered())
                         {
                             ImGui.BeginTooltip();
-                            ImGui.Text("The following missions are required to have gold before you can do this one");
+            ImGui.Text("必須先在下列任務取得金牌，才能執行此任務：");
                             foreach (var mission in unlock)
                             {
                                 CompletionStatus_Normal(mission);
@@ -1038,7 +1037,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                         {
                             ImGui.BeginTooltip();
                             ImGui.Text(notes.NoteInfo);
-                            ImGui.Text($"Average Score Per Minute: {notes.SPM:N2}");
+            ImGui.Text($"每分鐘平均分數：{notes.SPM:N2}");
 
                             ImGui.EndTooltip();
                         }
@@ -1078,7 +1077,7 @@ namespace ICE.Ui.MainUi.ModeSelect
 
                 #region Mission Name
 
-                ImGui.Text($"Mission:");
+        ImGui.Text("任務：");
                 ImGui.SameLine(0, 5);
                 ImGui.TextDisabled($"[{id}]");
                 ImGui.SameLine(0, 5);
@@ -1088,27 +1087,27 @@ namespace ICE.Ui.MainUi.ModeSelect
 
                 if (ImGui.BeginTable("Detailed Mission Info", 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders))
                 {
-                    ImGui.TableSetupColumn("Name");
-                    ImGui.TableSetupColumn("Info");
+            ImGui.TableSetupColumn("名稱");
+            ImGui.TableSetupColumn("資訊");
 
                     // Row 1
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    ImGui.Text("Cosmocredits");
+            ImGui.Text("宇宙信用點");
 
                     ImGui.TableNextColumn();
                     ImGui.Text($"{mission.CosmoCredit}");
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    ImGui.Text($"Planetary Credits");
+            ImGui.Text("星球信用點");
 
                     ImGui.TableNextColumn();
                     ImGui.Text($"{mission.LunarCredit}");
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    ImGui.Text($"Class Score:");
+            ImGui.Text("職業分數：");
 
                     ImGui.TableNextColumn();
                     ImGui.Text($"{mission.ClassScore}");
@@ -1116,7 +1115,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     ImGui.AlignTextToFramePadding();
-                    ImGui.Text($"Job(s)");
+            ImGui.Text("職業");
 
                     ImGui.TableNextColumn();
                     foreach (var job in mission.Jobs)
@@ -1130,17 +1129,17 @@ namespace ICE.Ui.MainUi.ModeSelect
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
                     ImGui.AlignTextToFramePadding();
-                    ImGui.Text($"Completed:");
+            ImGui.Text("已完成：");
 
                     ImGui.TableNextColumn();
                     CompletionStatus_Normal(selectedMission);
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    ImGui.Text($"Relic XP Kind");
+            ImGui.Text("宇宙工具經驗值類型");
 
                     ImGui.TableNextColumn();
-                    ImGui.Text("Amounts");
+            ImGui.Text("數量");
 
                     foreach (var xp in mission.RelicXpInfo.OrderByDescending(x => x.Key))
                     {
@@ -1178,7 +1177,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                     {
                         ImGui.TableNextRow();
                         ImGui.TableSetColumnIndex(0);
-                        ImGui.Text($"Bronze Requirement");
+            ImGui.Text("銅牌需求");
 
                         ImGui.TableNextColumn();
                         ImGui.Text($"{mission.BronzeScore}");
@@ -1188,7 +1187,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                     {
                         ImGui.TableNextRow();
                         ImGui.TableSetColumnIndex(0);
-                        ImGui.Text($"Silver Requirement");
+            ImGui.Text("銀牌需求");
 
                         ImGui.TableNextColumn();
                         ImGui.Text($"{mission.SilverScore}");
@@ -1198,7 +1197,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                     {
                         ImGui.TableNextRow();
                         ImGui.TableSetColumnIndex(0);
-                        ImGui.Text("Gold Requirement");
+            ImGui.Text("金牌需求");
 
                         ImGui.TableNextColumn();
                         ImGui.Text($"{mission.GoldScore}");
@@ -1208,7 +1207,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                     {
                         ImGui.TableNextRow();
                         ImGui.TableSetColumnIndex(0);
-                        ImGui.Text("Gathering Zone");
+            ImGui.Text("採集區域");
 
                         ImGui.TableNextColumn();
 
@@ -1225,7 +1224,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                     {
                         ImGui.TableNextRow();
                         ImGui.TableSetColumnIndex(0);
-                        ImGui.Text("Critical Area");
+            ImGui.Text("緊急任務區域");
 
                         ImGui.TableNextColumn();
                         ImGuiEx.Icon(FontAwesomeIcon.Flag);
@@ -1244,7 +1243,7 @@ namespace ICE.Ui.MainUi.ModeSelect
 
                     var craftCount = 0;
                     var job = mission.Jobs.First(x => CosmicHelper.CrafterJobList.Contains(x));
-                    ImGui.Text("Recipe Detailed Info");
+            ImGui.Text("配方詳細資訊");
                     foreach (var craft in mission.Crafts_Main)
                     {
                         craftCount++;
@@ -1259,21 +1258,21 @@ namespace ICE.Ui.MainUi.ModeSelect
 
                                     ImGui.TableNextRow();
                                     ImGui.TableSetColumnIndex(0);
-                                    ImGui.Text("Durability");
+                ImGui.Text("耐久度");
 
                                     ImGui.TableNextColumn();
                                     ImGui.Text($"{recipeInfo.Durability}");
 
                                     ImGui.TableNextRow();
                                     ImGui.TableSetColumnIndex(0);
-                                    ImGui.Text("Progress");
+                ImGui.Text("作業精度");
 
                                     ImGui.TableNextColumn();
                                     ImGui.Text($"{recipeInfo.Progress}");
 
                                     ImGui.TableNextRow();
                                     ImGui.TableSetColumnIndex(0);
-                                    ImGui.Text("Max Quality");
+                ImGui.Text("最高品質");
 
                                     ImGui.TableNextColumn();
                                     ImGui.Text($"{recipeInfo.Quality}");
@@ -1287,10 +1286,10 @@ namespace ICE.Ui.MainUi.ModeSelect
 
                 WindowSpacer();
 
-                ImGui.Text("Mission Atributes");
+            ImGui.Text("任務屬性");
                 if (mission.Attributes == MissionAttributes.None)
                 {
-                    ImGui.Text("None");
+                ImGui.Text("無");
                     return;
                 }
                 else
@@ -1306,7 +1305,7 @@ namespace ICE.Ui.MainUi.ModeSelect
 
                 if (CosmicHelper.MissionUnlock.TryGetValue(selectedMission, out var unlock))
                 {
-                    ImGui.Text("The following missions are required to have gold before you can do this one");
+            ImGui.Text("必須先在下列任務取得金牌，才能執行此任務：");
                     foreach (var lockedMission in unlock)
                     {
                         CompletionStatus_Normal(lockedMission);
@@ -1317,7 +1316,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                 }
 
                 WindowSpacer();
-                ImGui.Text($"Mission Times!");
+        ImGui.Text("任務時間統計");
 
                 if (C.MissionConfig.TryGetValue(selectedMission, out var config))
                 {
@@ -1325,7 +1324,7 @@ namespace ICE.Ui.MainUi.ModeSelect
 
                     using (ImRaii.Disabled(!allowDelete))
                     {
-                        if (ImGui.Button("Reset Stats"))
+        if (ImGui.Button("重設統計"))
                         {
                             P.MissionTimer.ResetTimers(selectedMission);
                         }
@@ -1333,23 +1332,23 @@ namespace ICE.Ui.MainUi.ModeSelect
                     if (ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
                     {
                         ImGui.BeginTooltip();
-                        ImGui.Text("Hold Shift + Control");
+            ImGui.Text("按住 Shift＋Ctrl");
                         ImGui.EndTooltip();
                     }
 
                     if (config.TurninRecords.Count > 0)
                     {
-                        ImGui.Text($"Best Time: {TimeSpan.FromSeconds(config.BestTime):mm\\:ss\\.ff}");
-                        ImGui.Text($"Average Time: {TimeSpan.FromSeconds(config.AverageTime):mm\\:ss\\.ff}");
+            ImGui.Text($"最佳時間：{TimeSpan.FromSeconds(config.BestTime):mm\\:ss\\.ff}");
+            ImGui.Text($"平均時間：{TimeSpan.FromSeconds(config.AverageTime):mm\\:ss\\.ff}");
                     }
                     else
                     {
-                        ImGui.Text("Best Time: --:--:--");
-                        ImGui.Text("Average Time: --:--:--");
+            ImGui.Text("最佳時間：--:--:--");
+            ImGui.Text("平均時間：--:--:--");
                     }
 
-                    ImGui.Text($"Amount of times completed: {config.TotalCompletions}");
-                    ImGui.Text($"Amount of timed abandoned: {config.FailedCounters}");
+        ImGui.Text($"完成次數：{config.TotalCompletions}");
+        ImGui.Text($"限時任務放棄次數：{config.FailedCounters}");
 
                     if (CosmicHelper.SheetMissionDict.TryGetValue(selectedMission, out var missionInfo))
                     {
@@ -1358,16 +1357,16 @@ namespace ICE.Ui.MainUi.ModeSelect
                         var planetCredit = missionInfo.LunarCredit;
 
                         ImGui.Separator();
-                        ImGui.Text("Estimated Score Per Hour:");
+        ImGui.Text("每小時預估分數：");
                         ImGui.SameLine();
                         ImGui.TextDisabled("?");
                         if (ImGui.IsItemHovered())
                         {
                             ImGui.BeginTooltip();
-                            ImGui.Text("This is ASSUMING:");
+        ImGui.Text("估算前提：");
                             ImGui.Text("1: You have immaculate rng of getting the mission you want every time");
                             ImGui.Text("2: You're hitting the threshold every time");
-                            ImGui.Text("This is based on your average time. \nSo get a good couple of runs to get a good feel for the timing");
+        ImGui.Text("此數值以平均時間計算；請先完成數次任務，讓時間估算更準確。");
                             ImGui.EndTooltip();
                         }
 
@@ -1414,18 +1413,18 @@ namespace ICE.Ui.MainUi.ModeSelect
                             if (!C.ShowSPM)
                                 criticalScore *= 60;
 
-                            string showingX = ShowScorePerMinute ? "Per Minute" : "Per Hour";
-                            if (ImGui.Checkbox($"Showing score {showingX} currently", ref ShowScorePerMinute))
+        string showingX = ShowScorePerMinute ? "每分鐘" : "每小時";
+        if (ImGui.Checkbox($"目前顯示：{showingX}分數", ref ShowScorePerMinute))
                             {
                                 C.ShowSPM = ShowScorePerMinute;
                                 C.Save();
                             }
                             if (ImGui.BeginTable("Critical Scoring Info", 4, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders))
                             {
-                                ImGui.TableSetupColumn("Turnin");
-                                ImGui.TableSetupColumn("Score");
-                                ImGui.TableSetupColumn("Cosmo Credits");
-                                ImGui.TableSetupColumn("Planet Credits");
+            ImGui.TableSetupColumn("繳交");
+            ImGui.TableSetupColumn("分數");
+            ImGui.TableSetupColumn("宇宙信用點");
+            ImGui.TableSetupColumn("星球信用點");
 
                                 ImGui.TableHeadersRow();
 
@@ -1433,7 +1432,7 @@ namespace ICE.Ui.MainUi.ModeSelect
 
                                 ImGui.TableNextRow();
                                 ImGui.TableSetColumnIndex(0);
-                                ImGui.TextColored(new Vector4(1.0f, 0.84f, 0.0f, 1.0f), "Critical");
+            ImGui.TextColored(new Vector4(1.0f, 0.84f, 0.0f, 1.0f), "緊急");
 
                                 ImGui.TableNextColumn();
                                 ImGui.Text($"{entry.Score:N2}");
@@ -1455,27 +1454,34 @@ namespace ICE.Ui.MainUi.ModeSelect
                                 new() { type = "Silver", color = new Vector4(0.7f, 0.7f, 0.7f, 1.0f)},
                                 new() { type = "Gold", color = new Vector4(1.0f, 0.84f, 0.0f, 1.0f)}
                             };
-                            string showingX = ShowScorePerMinute ? "Per Minute" : "Per Hour";
-                            if (ImGui.Checkbox($"Showing Score {showingX} Currently", ref ShowScorePerMinute))
+        string showingX = ShowScorePerMinute ? "每分鐘" : "每小時";
+        if (ImGui.Checkbox($"目前顯示：{showingX}分數", ref ShowScorePerMinute))
                             {
                                 C.ShowSPM = ShowScorePerMinute;
                                 C.Save();
                             }
                             if (ImGui.BeginTable("Critical Scoring Info", 4, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders))
                             {
-                                ImGui.TableSetupColumn("Turnin");
-                                ImGui.TableSetupColumn("Score");
-                                ImGui.TableSetupColumn("Cosmo Credits");
-                                ImGui.TableSetupColumn("Planet Credits");
+            ImGui.TableSetupColumn("繳交");
+            ImGui.TableSetupColumn("分數");
+            ImGui.TableSetupColumn("宇宙信用點");
+            ImGui.TableSetupColumn("星球信用點");
 
                                 ImGui.TableHeadersRow();
 
                                 foreach (var type in turninTypes)
                                 {
                                     var entry = MissionScores[type.type];
+                                    var displayType = type.type switch
+                                    {
+                                        "Bronze" => "銅牌",
+                                        "Silver" => "銀牌",
+                                        "Gold" => "金牌",
+                                        _ => type.type,
+                                    };
                                     ImGui.TableNextRow();
                                     ImGui.TableSetColumnIndex(0);
-                                    ImGui.TextColored(type.color, $"{type.type} [{entry.TotalCompleted}]");
+                                    ImGui.TextColored(type.color, $"{displayType} [{entry.TotalCompleted}]");
 
                                     ImGui.TableNextColumn();
                                     ImGui.Text($"{entry.Score:N2}");
@@ -1489,15 +1495,13 @@ namespace ICE.Ui.MainUi.ModeSelect
 
                                 ImGui.TableNextRow();
                                 ImGui.TableSetColumnIndex(0);
-                                ImGui.Text("Average");
+                ImGui.Text("平均");
                                 ImGui.SameLine();
                                 ImGui.TextDisabled("?");
                                 if (ImGui.IsItemHovered())
                                 {
-                                    ImGui.SetTooltip("This is judged based off your current completion rate of bronze/silver/gold.\n" +
-                                                     "It calculates the average score you get across all, and assuming you get that you were to consistently get that average across the hour, \n" +
-                                                     "then it will tell you what it would be for that one mission. \n" +
-                                                     "This is just really nerdy way of getting a more accurate average based off your completion rate");
+                ImGui.SetTooltip("依目前銅牌／銀牌／金牌的完成比例估算。\n" +
+                    "系統會計算所有成果的平均分數，並假設一小時內持續取得相同平均成果，藉此估算單一任務的每小時收益。");
                                 }
 
                                 ImGui.TableNextColumn();
@@ -1530,32 +1534,30 @@ namespace ICE.Ui.MainUi.ModeSelect
                                 silverScore *= 60;
                                 goldScore *= 60;
                             }
-                            string timeUnit = C.ShowSPM ? "pts/minute" : "pts/hr";
-                            string actualTimeUnit = C.ShowSPM ? "Actual pts/minute" : "Actual pts/hr";
+        string timeUnit = C.ShowSPM ? "分／分鐘" : "分／小時";
+        string actualTimeUnit = C.ShowSPM ? "實際分／分鐘" : "實際分／小時";
 
-                            ImGui.Text($"Actual {timeUnit}: {ActualSPM:F2}");
+        ImGui.Text($"實際{timeUnit}：{ActualSPM:F2}");
                             ImGui.SameLine();
                             ImGui.TextDisabled("?");
                             if (ImGui.IsItemHovered())
                             {
                                 ImGui.BeginTooltip();
-                                ImGui.Text("This is judged based off your current completion rate of bronze/silver/gold");
-                                ImGui.Text("It calculates the average score you get across all, and assuming you get that you were to consistently get that average across the hour, then it will tell you what it would be for that one mission");
-                                ImGui.Text("This is just really nerdy way of getting a more accurate average based off your completion rate");
+            ImGui.Text("此估算依目前銅牌／銀牌／金牌的完成比例計算。");
+            ImGui.Text("系統會計算所有成果的平均分數，並假設一小時內持續取得相同平均成果。");
                                 ImGui.EndTooltip();
                             }
                             if (missionInfo.Attributes.HasFlag(MissionAttributes.ProvisionalSequential))
                             {
-                                string averageSequenceScore = $"Average pts/minute [Sequence]: {MissionStatsCalculator.CalculateAverageSequenceScorePerMinute(id, 5):N2}";
+        string averageSequenceScore = $"連續任務每分鐘平均分數：{MissionStatsCalculator.CalculateAverageSequenceScorePerMinute(id, 5):N2}";
                                 ImGui.Text(averageSequenceScore);
                                 ImGui.SameLine();
                                 ImGui.TextDisabled("?");
                                 if (ImGui.IsItemHovered())
                                 {
                                     ImGui.BeginTooltip();
-                                    ImGui.Text("This is ASSUMING: You're getting gold across all prior missions (Because you have to do this one)");
-                                    ImGui.Text("This is really only here for people who are debating on doing sequential missions, \nso they can get the average and compare against just normal mission spamming");
-                                    ImGui.Text("For example, I found out it was ~30 points per minute worse than if I were to just spam the single mission for one series \n(not using food/pots, but also saving on resources)");
+            ImGui.Text("估算前提：先前所有任務均取得金牌，才能執行此任務。");
+            ImGui.Text("此數值方便比較連續任務與重複單一普通任務的平均收益。");
                                     ImGui.EndTooltip();
                                 }
                             }
@@ -1565,14 +1567,14 @@ namespace ICE.Ui.MainUi.ModeSelect
                             ImGui.TextColored(new Vector4(1.0f, 0.84f, 0.0f, 1.0f), $"Gold: {goldScore:F0} {timeUnit} [{config.GoldCompletions}/{config.TotalCompletions}]");
 #if DEBUG
                             var creditPerMinute = MissionStatsCalculator.CalculateCurrencyPerMinute(config.AverageGoldTime, mission.CosmoCredit, 5.0);
-                            ImGui.Text($"Credit/minute: {creditPerMinute:N2}");
+        ImGui.Text($"每分鐘信用點：{creditPerMinute:N2}");
 #endif
                             */
                         }
                     }
 
 
-                    if (config.TurninRecords.Count > 0 && ImGui.CollapsingHeader("View All Completed Times"))
+        if (config.TurninRecords.Count > 0 && ImGui.CollapsingHeader("查看所有完成時間"))
                     {
                         for (int i = 0; i < config.TurninRecords.Count; i++)
                         {

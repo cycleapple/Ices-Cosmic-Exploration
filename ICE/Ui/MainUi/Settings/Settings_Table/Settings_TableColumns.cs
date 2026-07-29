@@ -10,12 +10,12 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table;
 
 public static class Settings_TableColumns
 {
-    private static string[] missionSortOptions = ["Id", "Name", "Cosmo Credits", "Lunar Credits", "Exp I", "Exp II", "Exp III", "Exp IV", "Exp V", "Map Location", "Class Score"];
+    private static string[] missionSortOptions = ["ID", "名稱", "宇宙信用點", "星球信用點", "經驗值 I", "經驗值 II", "經驗值 III", "經驗值 IV", "經驗值 V", "地圖位置", "職業分數"];
 
     public static void ColumnSettings()
     {
         int missionSelectedOption = C.TableSortOption;
-        if (ImGui.BeginCombo("Sort By", missionSortOptions[missionSelectedOption]))
+        if (ImGui.BeginCombo("排序方式", missionSortOptions[missionSelectedOption]))
         {
             for (int i = 0; i < missionSortOptions.Length; i++)
             {
@@ -38,21 +38,21 @@ public static class Settings_TableColumns
         }
 
         bool hideUnsupported = C.HideUnsupportedMissions;
-        if (ImGui.Checkbox("Hide Unsupported Missions", ref hideUnsupported))
+        if (ImGui.Checkbox("隱藏不支援的任務", ref hideUnsupported))
         {
             C.HideUnsupportedMissions = hideUnsupported;
             C.Save();
         }
 
         bool showExtraInfo = C.ShowExtraMissionInfo;
-        if (ImGui.Checkbox("Show Extra Mission Info Side-Window", ref showExtraInfo))
+        if (ImGui.Checkbox("顯示額外任務資訊側欄", ref showExtraInfo))
         {
             C.ShowExtraMissionInfo = showExtraInfo;
             C.Save();
         }
 
         bool autoShowToken = C.Auto_ShowTokens;
-        if (ImGui.Checkbox("Auto Hide/Show Planet Tokens", ref autoShowToken))
+        if (ImGui.Checkbox("自動隱藏／顯示星球代幣", ref autoShowToken))
         {
             C.Auto_ShowTokens = autoShowToken;
             C.Save();
@@ -61,7 +61,7 @@ public static class Settings_TableColumns
 
 
         bool showManualMode = C.ShowManualMode;
-        if (ImGui.Checkbox("Show Manual Mode Column", ref showManualMode))
+        if (ImGui.Checkbox("顯示手動模式欄", ref showManualMode))
         {
             C.ShowManualMode = showManualMode;
             if (!showManualMode)
@@ -73,8 +73,7 @@ public static class Settings_TableColumns
             }
             C.Save();
         }
-        ImGuiEx.HelpMarker("Only enable this if you want plan on doing missions YOURSELF. AND NOT AUTOMATING IT. " +
-                           "Or if you're letting a different plugin do all the automating of turning in, craftings, gathering... and not letting I.C.E. handle interacting with those plugins");
+        ImGuiEx.HelpMarker("只有打算自行執行任務、不使用自動化時才啟用；或由其他插件負責繳交、製作與採集，不讓 ICE 控制這些插件時使用。");
     }
 
     private static bool ApplyToAllClasses = true;
@@ -84,17 +83,17 @@ public static class Settings_TableColumns
 
     private static readonly string[] classOptions = new[]
     {
-        "Carpenter (CRP)",      // 0
-        "Blacksmith (BSM)",     // 1
-        "Armorer (ARM)",        // 2
-        "Goldsmith (GSM)",      // 3
-        "Leatherworker (LTW)",  // 4
-        "Weaver (WVR)",         // 5
-        "Alchemist (ALC)",      // 6
-        "Culinarian (CUL)",     // 7
-        "Miner (MIN)",          // 8
-        "Botanist (BTN)",       // 9
-        "Fisher (FSH)"          // 10
+        "刻木匠（CRP）",      // 0
+        "鍛鐵匠（BSM）",     // 1
+        "鑄甲匠（ARM）",        // 2
+        "雕金匠（GSM）",       // 3
+        "製革匠（LTW）",  // 4
+        "裁衣匠（WVR）",         // 5
+        "鍊金術士（ALC）",      // 6
+        "烹調師（CUL）",     // 7
+        "採礦工（MIN）",          // 8
+        "園藝工（BTN）",       // 9
+        "捕魚人（FSH）"          // 10
     };
 
     private static readonly int[] classIds = new[]
@@ -120,22 +119,22 @@ public static class Settings_TableColumns
     public static void GeneralMissionSettings()
     {
         bool onlyGrabMission = C.OnlyGrabMission;
-        if (ImGui.Checkbox($"Only grab mission", ref onlyGrabMission))
+        if (ImGui.Checkbox("只領取任務", ref onlyGrabMission))
         {
             C.OnlyGrabMission = onlyGrabMission;
             C.Save();
         }
 
         bool removeGold = C.RemoveAfterGold;
-        if (ImGui.Checkbox("Remove Mission Upon Gold Completion", ref removeGold))
+        if (ImGui.Checkbox("取得金牌後移除任務", ref removeGold))
         {
             C.RemoveAfterGold = removeGold;
             C.Save();
         }
 
-        ImGui.Checkbox("Stop after current mission", ref Mission_Settings.StopAfterCurrent);
+        ImGui.Checkbox("目前任務完成後停止", ref Mission_Settings.StopAfterCurrent);
         bool relicTurnin = C.TurninRelic;
-        if (ImGui.Checkbox($"Turnin if relic is complete##RelicTurnin_GeneralSetting", ref relicTurnin))
+        if (ImGui.Checkbox("宇宙工具完成時繳交##RelicTurnin_GeneralSetting", ref relicTurnin))
         {
             if (relicTurnin)
                 C.GrindProvisionals = false;
@@ -147,28 +146,26 @@ public static class Settings_TableColumns
         ImGui.TextDisabled("?");
         if (ImGui.IsItemHovered())
         {
-            ImGui.SetTooltip("THIS IS YOUR HEADS UP ON HOW THIS WORKS. If I change this in the future, this tooltip will also change.\n" +
-                             "1: This will check for your current CLASS [not menu class, actual current class] for relic turnin.\n" +
-                             "2: You must not have the tool eqipped for this to run full auto. \n" +
-                             "\t- This is due to the fact that I cba coding this in at this time. (might change my mind in the future *shrugs*)\n" +
-                             "3: This will take prio over \"Stop @ Relic Turnin\", in the sense that if you have both enabled, it will turnin vs stop. And continue about it's day\n" +
-                             "4: If you're on a crafting class, it will return you back to the stop you were crafting post turnin. \n" +
-                             "\t- This is optional, you can disable it at your own free will, I just like this so I can just go back to an isolated area of my choosing");
+            ImGui.SetTooltip("以下說明此功能的運作方式：\n" +
+                             "1：會檢查角色目前實際使用的職業，而非選單中選取的職業。\n" +
+                             "2：若要全自動執行，不能裝備該宇宙工具。\n" +
+                             "3：此功能的優先度高於「宇宙工具完成時停止」；兩者同時啟用時會繳交並繼續。\n" +
+                             "4：若目前為製作職業，繳交後可返回原先進行製作的位置。");
         }
-        if (ImGui.Button("Quick Apply Turnins"))
+        if (ImGui.Button("快速套用繳交設定"))
         {
             ImGui.OpenPopup("Quick Apply_Mission Turnins");
         }
 
         if (ImGui.BeginPopup("Quick Apply_Mission Turnins"))
         {
-            if (ImGui.RadioButton("Apply to all classes", ApplyToAllClasses))
+            if (ImGui.RadioButton("套用至所有職業", ApplyToAllClasses))
             {
                 ApplyToAllClasses = true;
                 ApplyToSpecicClass = false;
             }
 
-            if (ImGui.RadioButton("Apply to specific class", ApplyToSpecicClass))
+            if (ImGui.RadioButton("套用至指定職業", ApplyToSpecicClass))
             {
                 ApplyToAllClasses = false;
                 ApplyToSpecicClass = true;
@@ -180,10 +177,10 @@ public static class Settings_TableColumns
                 IceLogging.Debug($"Selected class: {classOptions[selectedClassIndex]}, ID: {SpecificClass}");
             }
             ImGui.Separator();
-            ImGui.Text("Select Turnin Options");
+            ImGui.Text("選擇繳交選項");
             ImGui.Dummy(new Vector2(0, 2));
 
-            if (ImGui.Checkbox("Auto", ref AnyTurnin))
+            if (ImGui.Checkbox("自動", ref AnyTurnin))
             {
                 if (AnyTurnin)
                 {
@@ -203,23 +200,23 @@ public static class Settings_TableColumns
 
                 C.Save();
             }
-            ImGuiEx.HelpMarker("This option will strive to get the best result, but will turn in any result if necessary without stopping.");
+            ImGuiEx.HelpMarker("此選項會盡量取得最佳成果，但必要時會繳交任何成果且不停止。");
 
             ImGui.Separator();
 
-            if (ImGui.Checkbox("Gold", ref TurninGold))
+            if (ImGui.Checkbox("金牌", ref TurninGold))
             {
                 if (AnyTurnin && TurninGold)
                     AnyTurnin = false;
 
             }
-            if (ImGui.Checkbox("Silver", ref TurninSilver))
+            if (ImGui.Checkbox("銀牌", ref TurninSilver))
             {
                 if (AnyTurnin && TurninSilver)
                     AnyTurnin = false;
 
             }
-            if (ImGui.Checkbox("Bronze", ref TurninBronze))
+            if (ImGui.Checkbox("銅牌", ref TurninBronze))
             {
                 if (AnyTurnin && TurninBronze)
                     AnyTurnin = false;
@@ -231,7 +228,7 @@ public static class Settings_TableColumns
 
             ImGui.Separator();
 
-            if (ImGui.Button("Apply"))
+            if (ImGui.Button("套用"))
             {
                 var amountApplied = 0;
                 foreach (var mission in C.MissionConfig)
@@ -256,7 +253,7 @@ public static class Settings_TableColumns
                 }
                 C.SaveDebounced();
 
-                Notify.Success($"Applied settings to: {amountApplied} missions, just for you buddy.");
+                Notify.Success($"已將設定套用至 {amountApplied} 個任務。");
                 ImGui.CloseCurrentPopup();
             }
 

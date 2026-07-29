@@ -15,7 +15,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
         {
             bool BuyItems = C.BuyItems;
 
-            if (ImGui.Checkbox("Buy Items", ref BuyItems))
+            if (ImGui.Checkbox("購買物品", ref BuyItems))
             {
                 C.BuyItems = BuyItems;
                 C.StopOnceHitCosmoCredits = false;
@@ -24,7 +24,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
             int buyAtAmount = C.CosmoBuyAtAmount;
             ImGui.SetNextItemWidth(150);
-            if (ImGui.InputInt("Go buy items when you reach", ref buyAtAmount, 1))
+            if (ImGui.InputInt("信用點達到此數量時前往購買", ref buyAtAmount, 1))
             {
                 if (buyAtAmount < 0)
                     buyAtAmount = 0;
@@ -37,14 +37,14 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
             CheckConfigState();
             if (Task_BuyCosmoItems.CanPurchaseAnyItem())
             {
-                ImGui.Text("You can buy cosmocredit items from the list!");
+                ImGui.Text("目前可購買清單中的宇宙信用點物品。");
             }
             else
             {
-                ImGui.Text("You can't buy any items with your current credit value/items (tis fine, this just a test)");
+                ImGui.Text("目前信用點或物品數量不足，無法購買清單中的任何物品。");
             }
 
-            if (ImGui.Button("Add Items to List"))
+            if (ImGui.Button("新增物品至清單"))
             {
                 ImGui.OpenPopup("CosmocreditMateriaPopup");
             }
@@ -61,8 +61,8 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                 // Remove BeginChild and use table scrolling instead
                 if (ImGui.BeginTable("Cosmo Materia Shop", 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.ScrollY | ImGuiTableFlags.RowBg, new Vector2(0, 250)))
                 {
-                    ImGui.TableSetupColumn("Icons", ImGuiTableColumnFlags.WidthFixed, 20);
-                    ImGui.TableSetupColumn("Names", ImGuiTableColumnFlags.WidthStretch);
+                    ImGui.TableSetupColumn("圖示", ImGuiTableColumnFlags.WidthFixed, 20);
+                    ImGui.TableSetupColumn("名稱", ImGuiTableColumnFlags.WidthStretch);
 
                     foreach (var item in Shop_Cosmocredits.CosmocreditShop)
                     {
@@ -99,20 +99,20 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                 ImGui.EndPopup();
             }
 
-            ImGui.Text($"Order Count {C.CosmoShoppingOrder.Count}");
+            ImGui.Text($"清單項目數：{C.CosmoShoppingOrder.Count}");
 
             if (ImGui.BeginTable("Current Shopping List", 10, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders))
             {
-                ImGui.TableSetupColumn("Up");
-                ImGui.TableSetupColumn("Down");
-                ImGui.TableSetupColumn("Name");
-                ImGui.TableSetupColumn("Have");
-                ImGui.TableSetupColumn("Cost");
-                ImGui.TableSetupColumn("Kind");
-                ImGui.TableSetupColumn("Keep");
-                ImGui.TableSetupColumn("Buy");
-                ImGui.TableSetupColumn("Keep Buying");
-                ImGui.TableSetupColumn("Remove");
+                ImGui.TableSetupColumn("上移");
+                ImGui.TableSetupColumn("下移");
+                ImGui.TableSetupColumn("名稱");
+                ImGui.TableSetupColumn("持有");
+                ImGui.TableSetupColumn("價格");
+                ImGui.TableSetupColumn("類型");
+                ImGui.TableSetupColumn("保留");
+                ImGui.TableSetupColumn("購買");
+                ImGui.TableSetupColumn("持續購買");
+                ImGui.TableSetupColumn("移除");
 
                 ImGui.TableHeadersRow();
 
@@ -165,7 +165,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
                     // Kind (you can add logic for this)
                     ImGui.TableNextColumn();
-                    ImGui.Text("Material"); // Replace with actual kind logic
+                    ImGui.Text("材料"); // Replace with actual kind logic
 
                     // Keep Amount
                     ImGui.TableNextColumn();

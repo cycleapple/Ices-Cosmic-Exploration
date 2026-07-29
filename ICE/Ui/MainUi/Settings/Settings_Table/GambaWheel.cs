@@ -15,20 +15,20 @@ namespace ICE.Ui.SettingTabs
 
         public static void Draw()
         {
-            if (ImGui.Checkbox("Enable Auto Gamba", ref gambaEnabled))
+            if (ImGui.Checkbox("啟用自動宇宙轉盤", ref gambaEnabled))
             {
                 C.GambaEnabled = gambaEnabled;
                 C.Save();
             }
-            ImGuiEx.HelpMarker("If you want to let it auto select the wheels and gamba, enable this. If you want to not auto run when you're running the gamble wheel, disable this.");
+            ImGuiEx.HelpMarker("啟用後會自動選擇轉盤並執行；若想手動操作宇宙轉盤，請停用。");
             ImGui.SetNextItemWidth(150);
-            if (ImGui.SliderInt("Mininum credits to keep", ref gambaCreditsMinimum, 0, 10000))
+            if (ImGui.SliderInt("最低保留信用點", ref gambaCreditsMinimum, 0, 10000))
             {
                 C.GambaCreditsMinimum = gambaCreditsMinimum;
                 C.SaveDebounced();
             }
             bool gambaBetween = C.GambaBetweenRuns;
-            if (ImGui.Checkbox("Gamble Between Runs", ref gambaBetween))
+            if (ImGui.Checkbox("任務之間操作轉盤", ref gambaBetween))
             {
                 C.GambaBetweenRuns = gambaBetween;
                 C.Save();
@@ -36,20 +36,20 @@ namespace ICE.Ui.SettingTabs
             ImGui.SameLine();
             GambaSlider();
             ImGui.SetNextItemWidth(150);
-            if (ImGui.SliderInt("Gamba Delay", ref gambaDelay, 50, 2000))
+            if (ImGui.SliderInt("轉盤操作延遲", ref gambaDelay, 50, 2000))
             {
                 C.GambaDelay = gambaDelay;
                 C.SaveDebounced();
             }
 
-            if (ImGui.Checkbox("Prefer smaller wheel", ref gambaPreferSmallerWheel))
+            if (ImGui.Checkbox("優先選擇較小的轉盤", ref gambaPreferSmallerWheel))
             {
                 C.GambaPreferSmallerWheel = gambaPreferSmallerWheel;
                 C.Save();
             }
-            ImGuiEx.HelpMarker("This will make the Gamba prefer wheels with less items.");
+            ImGuiEx.HelpMarker("讓自動轉盤優先選擇物品較少的轉盤。");
             ImGui.Separator();
-            ImGui.TextUnformatted("Configure the weights for each item in the Gamba. Higher weight = more desirable.");
+            ImGui.TextUnformatted("設定宇宙轉盤各物品的權重；權重越高，越優先選擇。");
             ImGui.Spacing();
             foreach (GambaType type in Enum.GetValues(typeof(GambaType)))
             {
@@ -73,7 +73,7 @@ namespace ICE.Ui.SettingTabs
                     ImGui.TreePop();
                 }
             }
-            if (ImGui.Button("Reset Weights"))
+            if (ImGui.Button("重設權重"))
             {
                 Task_Gamba.EnsureGambaWeightsInitialized(true);
             }
@@ -91,7 +91,7 @@ namespace ICE.Ui.SettingTabs
             }
 
             ImGui.SetNextItemWidth(150);
-            if (ImGui.SliderInt("Start Gambling @", ref currentIndex, 0, allowedValues.Length - 1,
+            if (ImGui.SliderInt("信用點達到此數量時開始", ref currentIndex, 0, allowedValues.Length - 1,
                 allowedValues[currentIndex].ToString()))
             {
                 C.GambaAtAmount = allowedValues[currentIndex];

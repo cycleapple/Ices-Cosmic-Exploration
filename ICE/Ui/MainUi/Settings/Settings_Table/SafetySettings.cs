@@ -16,25 +16,24 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
         public static void Draw()
         {
-            if (ImGui.Checkbox("Ignore non-Cosmic prompts", ref rejectUnknownYesNo))
+            if (ImGui.Checkbox("忽略非宇宙探索的確認視窗", ref rejectUnknownYesNo))
             {
                 C.RejectUnknownYesno = rejectUnknownYesNo;
                 C.Save();
             }
             ImGuiEx.HelpMarker(
-                "Warning! This is a safety feature to avoid joining random parties!\n" +
-                "If you you uncheck this, YOU WILL JOIN random party invites.\n" +
-                "You have been warned. Disable at your own risk."
+                "警告：這是避免誤加入陌生小隊的安全功能。\n" +
+                "取消勾選後，插件可能會接受隨機的小隊邀請。\n" +
+                "停用此選項的風險由使用者自行承擔。"
             );
-            if (ImGui.Checkbox("Add delay to mission menu", ref delayGrabMission))
+            if (ImGui.Checkbox("在任務選單加入延遲", ref delayGrabMission))
             {
                 C.DelayGrabMission = delayGrabMission;
                 C.Save();
             }
             ImGuiEx.HelpMarker(
-                "This is here for safety! If you want to decrease the delay between missions be my guest.\n" +
-                "Safety is around... 250? If you're having animation locks you can absolutely increase it higher\n" +
-                "Or if you're feeling daredevil. Lower it. I'm not your dad (will tell dad jokes though.");
+                "這項延遲用於提高安全性。若想縮短任務之間的等待時間，可自行降低。\n" +
+                "建議值約為 250 ms；若遇到動畫鎖定，可提高此值。");
             if (delayGrabMission)
             {
                 ImGui.SetNextItemWidth(150);
@@ -48,15 +47,14 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                     }
                 }
             }
-            if (ImGui.Checkbox("Add delay to crafting menu", ref delayCraft))
+            if (ImGui.Checkbox("在製作選單加入延遲", ref delayCraft))
             {
                 C.DelayCraft = delayCraft;
                 C.Save();
             }
             ImGuiEx.HelpMarker(
-                "This is here for safety! If you want to decrease the delay before turnin be my guest.\n" +
-                "Safety is around... 2500? If you're having animation locks you can absolutely increase it higher\n" +
-                "Or if you're feeling daredevil. Lower it. I'm not your dad (will tell dad jokes though.");
+                "這項延遲用於提高安全性。若想縮短繳交前的等待時間，可自行降低。\n" +
+                "建議值約為 2500 ms；若遇到動畫鎖定，可提高此值。");
             if (delayCraft)
             {
                 ImGui.SetNextItemWidth(150);
@@ -71,15 +69,14 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                 }
             }
             bool jumpIfStuck = C.JumpIfStuck;
-            if (ImGui.Checkbox("Jump if stuck during nav movement", ref jumpIfStuck))
+            if (ImGui.Checkbox("導航移動卡住時跳躍", ref jumpIfStuck))
             {
                 C.JumpIfStuck = jumpIfStuck;
                 C.Save();
             }
             ImGuiEx.HelpMarker(
-                "If you get stuck while navmesh moving, this will allow you to jump after a certain time has passed (3s currently)\n" +
-                "NOTE: THIS IS EXPERIMENTAL. IT WORKS, BUT IT STILL LOOKS SUS. IF YOU SEE A POINT AND YOUR STUCK, REPORT IT PLEASE\n" +
-                "through the logs function, and give info about it so we can fix it.");
+                "使用 navmesh 移動卡住時，經過一段時間（目前為 3 秒）會嘗試跳躍。\n" +
+                "注意：這是實驗性功能。若在特定位置卡住，請透過紀錄功能回報位置與相關資訊。");
         }
     }
 }

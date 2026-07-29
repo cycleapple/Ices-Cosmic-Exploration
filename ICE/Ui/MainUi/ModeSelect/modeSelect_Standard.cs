@@ -207,13 +207,11 @@ namespace ICE.Ui.MainUi.ModeSelect
                         ImGui.TextDisabled("?");
                         if (ImGui.IsItemHovered())
                         {
-                            ImGui.SetTooltip("THIS IS YOUR HEADS UP ON HOW THIS WORKS. If I change this in the future, this tooltip will also change.\n" +
-                                             "1: This will check for your current CLASS [not menu class, actual current class] for relic turnin.\n" +
-                                             "2: You must not have the tool eqipped for this to run full auto. \n" +
-                                             "\t- This is due to the fact that I cba coding this in at this time. (might change my mind in the future *shrugs*)\n" +
-                                             "3: This will take prio over \"Stop @ Relic Turnin\", in the sense that if you have both enabled, it will turnin vs stop. And continue about it's day\n" +
-                                             "4: If you're on a crafting class, it will return you back to the stop you were crafting post turnin. \n" +
-                                             "\t- This is optional, you can disable it at your own free will, I just like this so I can just go back to an isolated area of my choosing");
+                            ImGui.SetTooltip("以下說明此功能的運作方式；若未來行為變更，此提示也會同步更新。\n" +
+                                             "1：會檢查角色目前實際使用的職業，而非選單中選取的職業，以判斷宇宙工具繳交。\n" +
+                                             "2：若要全自動執行，不能裝備該宇宙工具。\n" +
+                                             "3：此功能的優先度高於「宇宙工具繳交時停止」。兩者同時啟用時會繳交並繼續，而非停止。\n" +
+                                             "4：若目前為製作職業，繳交後可返回原先進行製作的位置；此行為可自行停用。");
                         }
 
                         ImGui.Separator();
@@ -232,8 +230,8 @@ namespace ICE.Ui.MainUi.ModeSelect
                         ImGui.TextDisabled("?");
                         if (ImGui.IsItemHovered())
                         {
-                            ImGui.SetTooltip("Please note. This will ONLY grind for relic Exp under the basic mission tab. \n" +
-                                               "This will NOT work (even with missions selected) on the Sequence/Timed/Weather/Critical Missions");
+                            ImGui.SetTooltip("請注意：這只會在基本任務分頁培育宇宙工具經驗值。\n" +
+                                             "連續／限時／天候／緊急任務即使已選取也不會套用。");
                         }
                         if (EnableRelicXp)
                         {
