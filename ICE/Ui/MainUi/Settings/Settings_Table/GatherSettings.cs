@@ -478,7 +478,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
                 #region Boon Increase 2
 
-                if (ImGui.CollapsingHeader("Pioneer's | Mountaineer's Gift II"))
+                if (ImGui.CollapsingHeader("沃土的饋贈II/富礦的饋贈II"))
                 {
                     string buffName = "BoonIncrease2";
 
@@ -488,7 +488,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                     int minUseGp = entry.GatherBuffs.Buffs[buffName].MinGp;
                     int minActionGp = GatheringUtil.GathActionDict[buffName].RequiredGp;
                     int maxActionUsage = entry.GatherBuffs.Buffs[buffName].MaxUse;
-                string ActionInfo = "採集恩惠發生率提高 30%。";
+                string ActionInfo = "額外採集獎勵發生率提升30%。";
 
                 ImGui.Text("技能資訊：");
                     ImGuiEx.HelpMarker(ActionInfo);
@@ -520,7 +520,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
                 #region Boon Increase 1
 
-                if (ImGui.CollapsingHeader("Pioneer's | Mountaineer's Gift I"))
+                if (ImGui.CollapsingHeader("沃土的饋贈I/富礦的饋贈I"))
                 {
                     string buffName = "BoonIncrease1";
 
@@ -530,7 +530,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                     int minUseGp = entry.GatherBuffs.Buffs[buffName].MinGp;
                     int minActionGp = GatheringUtil.GathActionDict[buffName].RequiredGp;
                     int maxActionUsage = entry.GatherBuffs.Buffs[buffName].MaxUse;
-                string ActionInfo = "採集恩惠發生率提高 10%。";
+                string ActionInfo = "額外採集獎勵發生率提升10%。";
 
                 ImGui.Text("技能資訊：");
                     ImGuiEx.HelpMarker(ActionInfo);
@@ -564,7 +564,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
                 #region Nophica's / Nald'thal's Tidings
 
-                if (ImGui.CollapsingHeader("Nophica's / Nald'thal's Tidings Buff"))
+                if (ImGui.CollapsingHeader("諾菲卡福音/納爾札爾福音"))
                 {
                     string buffName = "Tidings";
 
@@ -574,7 +574,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                     int minUseGp = entry.GatherBuffs.Buffs[buffName].MinGp;
                     int minActionGp = GatheringUtil.GathActionDict[buffName].RequiredGp;
                     int maxActionUsage = entry.GatherBuffs.Buffs[buffName].MaxUse;
-                string ActionInfo = "採集恩惠的獲得數量增加 1。";
+                string ActionInfo = "額外採集獎勵發生時的獲得數增加1個。";
 
                 ImGui.Text("技能資訊：");
                     ImGuiEx.HelpMarker(ActionInfo);
@@ -608,7 +608,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
                 #region Blessed / Kings Yield II
 
-                if (ImGui.CollapsingHeader("Blessed / Kings Yield II"))
+                if (ImGui.CollapsingHeader("天賜收成II/莫非王土II"))
                 {
                     string buffName = "YieldII";
 
@@ -618,7 +618,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                     int minUseGp = entry.GatherBuffs.Buffs[buffName].MinGp;
                     int minActionGp = GatheringUtil.GathActionDict[buffName].RequiredGp;
                     int maxActionUsage = entry.GatherBuffs.Buffs[buffName].MaxUse;
-                string ActionInfo = "採集獲得數量增加 2。\n" +
+                string ActionInfo = "令獲得數增加2個。\n" +
                     "只會在採集點耐久度全滿時使用。";
 
                 ImGui.Text("技能資訊：");
@@ -653,7 +653,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
                 #region Blessed / Kings Yield I
 
-                if (ImGui.CollapsingHeader("Blessed / Kings Yield I"))
+                if (ImGui.CollapsingHeader("天賜收成/莫非王土"))
                 {
                     string buffName = "YieldI";
 
@@ -663,7 +663,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                     int minUseGp = entry.GatherBuffs.Buffs[buffName].MinGp;
                     int minActionGp = GatheringUtil.GathActionDict[buffName].RequiredGp;
                     int maxActionUsage = entry.GatherBuffs.Buffs[buffName].MaxUse;
-                string ActionInfo = "採集獲得數量增加 1。\n" +
+                string ActionInfo = "令獲得數增加1個\n" +
                     "只會在採集點耐久度全滿時使用。";
 
                 ImGui.Text("技能資訊：");
@@ -698,7 +698,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
                 #region Bonus Integrity
 
-                if (ImGui.CollapsingHeader("Ageless Words / Solid Reason"))
+                if (ImGui.CollapsingHeader("農夫之智/石工之理"))
                 {
                     string buffName = "BonusIntegrity";
 
@@ -709,7 +709,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                     int minActionGp = GatheringUtil.GathActionDict[buffName].RequiredGp;
                     int maxActionUsage = entry.GatherBuffs.Buffs[buffName].MaxUse;
                 string ActionInfo = "採集點耐久度恢復 1。\n" +
-                                        "有 50% 機率獲得「靈光一現」。";
+                                        "有 50% 機率獲得「理智同興預備」狀態。";
 
                 ImGui.Text("技能資訊：");
                     ImGuiEx.HelpMarker(ActionInfo);
@@ -743,7 +743,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
                 #region Bountiful Yield II
 
-                if (ImGui.CollapsingHeader("Bountiful Yield II / Bountiful Harvest II"))
+                if (ImGui.CollapsingHeader("高產II/豐收II"))
                 {
                     string buffName = "BountifulYieldII";
 
@@ -799,7 +799,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
                 #region Field Mastery III
 
-                if (ImGui.CollapsingHeader("Field Mastery | Sharp Vision III"))
+                if (ImGui.CollapsingHeader("環境探知/敏銳視野III"))
                 {
                     string buffName = "FieldMasteryIII";
 
@@ -844,7 +844,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
                 #region Field Mastery II
 
-                if (ImGui.CollapsingHeader("Field Mastery | Sharp Vision II"))
+                if (ImGui.CollapsingHeader("環境探知/敏銳視野II"))
                 {
                     string buffName = "FieldMasteryII";
 
@@ -889,7 +889,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
                 #region Field Mastery I
 
-                if (ImGui.CollapsingHeader("Field Mastery | Sharp Vision I"))
+                if (ImGui.CollapsingHeader("環境探知/敏銳視野I"))
                 {
                     string buffName = "FieldMasteryI";
 
@@ -934,7 +934,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
                 #region Field Mastery [Temp]
 
-                if (ImGui.CollapsingHeader("Flora Mastery | Clear Vision [Temp]"))
+                if (ImGui.CollapsingHeader("植被專精/明晰視野 [單次]"))
                 {
                     string buffName = "FieldMasteryTemp";
 
