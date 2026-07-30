@@ -373,6 +373,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                 float scrollbarSize = ImGui.GetStyle().ScrollbarSize;
                 float buttonRowHeight = (ImGui.GetTextLineHeight() + 8 * scale + 4 * scale) + scrollbarSize;
 
+                ImGui.TextDisabled("顯示分類（可同時展開多個）");
                 using (var missionButtons = ImRaii.Child("##tab_scroll", new Vector2(0, buttonRowHeight), false, ImGuiWindowFlags.HorizontalScrollbar))
                 {
                     if (!missionButtons.Success)
