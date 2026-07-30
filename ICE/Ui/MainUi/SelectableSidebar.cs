@@ -77,7 +77,7 @@ namespace ICE.Ui.MainUi
                     if (ImGui_Tools.DrawCategoryHeader_AutoSize("據點活動", icon: FontAwesomeIcon.Home))
                     {
                         DrawSelectableWithImage(65112, "宇宙信用點購物", "hubActivities_CreditShopping");
-                        DrawSelectableWithImage(65127, "宇宙轉盤設定", "hubActivites_GambaSetting");
+                        DrawSelectableWithImage(65126, "宇宙轉盤設定", "hubActivites_GambaSetting");
                     }
                 }
                 var currentJob = C.SelectedJob;
