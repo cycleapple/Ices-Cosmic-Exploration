@@ -90,9 +90,20 @@ namespace ICE.Scheduler.Tasks
                 }
             }
 
-            var researchId = NpcData.MoonNpcs[Player.Territory].Where(x => x.type == NpcData.NpcType.Relic).FirstOrDefault().NpcId;
+            var npcEntry = NpcData.MoonNpcs[Player.Territory].First(x => x.type == NpcData.NpcType.Relic);
+            if (!Utils.TryGetNpcObject(npcEntry, out var researchNpc))
+            {
+                if (EzThrottler.Throttle("Researchingway object not found", 5000))
+                {
+                    IceLogging.Warning(
+                        $"Unable to find the relic NPC near {npcEntry.NpcLocation}; " +
+                        $"configured NPC ID: {npcEntry.NpcId}.",
+                        "[Relic Turnin]");
+                }
 
-            Utils.TryGetObjectByDataId(researchId, out var researchNpc);
+                return false;
+            }
+
             if (EzThrottler.Throttle("Interacting with researchingway"))
             {
                 Utils.TargetgameObject(researchNpc);
