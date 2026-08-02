@@ -90,7 +90,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                     }
                     ImGuiEx.HelpMarker("標準模式\n" +
                                        "→ 選擇要重複執行的任務，優先順序如下：\n" +
-                                       "→ 關鍵任務 → 臨時任務（連續／限時／天候）→ 標準任務（A→D）\n" +
+                                       "→ 緊急任務 → 臨時任務（連續／限時／天氣）→ 標準任務（A→D）\n" +
                                        "→ 選好任務後即可開始執行。");
                     if (ImGui.RadioButton("宇宙工具培育", relicMode))
                     {
@@ -373,6 +373,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                 float scrollbarSize = ImGui.GetStyle().ScrollbarSize;
                 float buttonRowHeight = (ImGui.GetTextLineHeight() + 8 * scale + 4 * scale) + scrollbarSize;
 
+                ImGui.TextDisabled("顯示分類（可同時展開多個）");
                 using (var missionButtons = ImRaii.Child("##tab_scroll", new Vector2(0, buttonRowHeight), false, ImGuiWindowFlags.HorizontalScrollbar))
                 {
                     if (!missionButtons.Success)
@@ -380,23 +381,23 @@ namespace ICE.Ui.MainUi.ModeSelect
 
                     if (C.GrindProvisionals)
                     {
-                        ImGui_Tools.DrawCategoryButton($"All Enabled [{allEnabled}]", "main_AllEnabled");
-                        ImGui_Tools.DrawCategoryButton($"Sequence [{sequenceEnabled}]", "main_Sequence");
-                        ImGui_Tools.DrawCategoryButton($"Weather [{weatherEnabled}]", "main_Weather");
-                        ImGui_Tools.DrawCategoryButton($"Timed [{timedEnabled}]", "main_Timed");
+                        ImGui_Tools.DrawCategoryButton($"已啟用 [{allEnabled}]", "main_AllEnabled");
+                        ImGui_Tools.DrawCategoryButton($"連續 [{sequenceEnabled}]", "main_Sequence");
+                        ImGui_Tools.DrawCategoryButton($"天氣 [{weatherEnabled}]", "main_Weather");
+                        ImGui_Tools.DrawCategoryButton($"限時 [{timedEnabled}]", "main_Timed");
                         ImGui_Tools.EndCategoryButtonRow();
                     }
                     else
                     {
-                        ImGui_Tools.DrawCategoryButton($"All Enabled [{allEnabled}]", "main_AllEnabled");
-                        ImGui_Tools.DrawCategoryButton($"Critical [{criticalEnabled}]", "main_Critical");
-                        ImGui_Tools.DrawCategoryButton($"Sequence [{sequenceEnabled}]", "main_Sequence");
-                        ImGui_Tools.DrawCategoryButton($"Weather [{weatherEnabled}]", "main_Weather");
-                        ImGui_Tools.DrawCategoryButton($"Timed [{timedEnabled}]", "main_Timed");
-                        ImGui_Tools.DrawCategoryButton($"A Rank [{aRankEnabled}]", "main_ARank");
-                        ImGui_Tools.DrawCategoryButton($"B Rank [{bRankEnabled}]", "main_BRank");
-                        ImGui_Tools.DrawCategoryButton($"C Rank [{cRankEnabled}]", "main_CRank");
-                        ImGui_Tools.DrawCategoryButton($"D Rank [{dRankEnabled}]", "main_DRank", spacingAfter: 0);
+                        ImGui_Tools.DrawCategoryButton($"已啟用 [{allEnabled}]", "main_AllEnabled");
+                        ImGui_Tools.DrawCategoryButton($"緊急 [{criticalEnabled}]", "main_Critical");
+                        ImGui_Tools.DrawCategoryButton($"連續 [{sequenceEnabled}]", "main_Sequence");
+                        ImGui_Tools.DrawCategoryButton($"天氣 [{weatherEnabled}]", "main_Weather");
+                        ImGui_Tools.DrawCategoryButton($"限時 [{timedEnabled}]", "main_Timed");
+                        ImGui_Tools.DrawCategoryButton($"A 級 [{aRankEnabled}]", "main_ARank");
+                        ImGui_Tools.DrawCategoryButton($"B 級 [{bRankEnabled}]", "main_BRank");
+                        ImGui_Tools.DrawCategoryButton($"C 級 [{cRankEnabled}]", "main_CRank");
+                        ImGui_Tools.DrawCategoryButton($"D 級 [{dRankEnabled}]", "main_DRank", spacingAfter: 0);
                         ImGui_Tools.EndCategoryButtonRow();
                     }
                 }
@@ -452,13 +453,13 @@ namespace ICE.Ui.MainUi.ModeSelect
                         .ToList();
 
                     if (enabledTabs["main_AllEnabled"])
-                        modeSelect_TableInfo.DrawMissionTablev2("All Enabled", "All_Enabled", modeSelect_TableInfo.missionList["All Enabled"]);
+                        modeSelect_TableInfo.DrawMissionTablev2("已啟用", "All_Enabled", modeSelect_TableInfo.missionList["All Enabled"]);
                     if (enabledTabs["main_Sequence"])
-                        modeSelect_TableInfo.DrawMissionTablev2("Sequence", "Sequence_Missions", modeSelect_TableInfo.missionList["Sequence"]);
+                        modeSelect_TableInfo.DrawMissionTablev2("連續", "Sequence_Missions", modeSelect_TableInfo.missionList["Sequence"]);
                     if (enabledTabs["main_Weather"])
-                        modeSelect_TableInfo.DrawMissionTablev2("Weather", "Weather_Missions", modeSelect_TableInfo.missionList["Weather"]);
+                        modeSelect_TableInfo.DrawMissionTablev2("天氣", "Weather_Missions", modeSelect_TableInfo.missionList["Weather"]);
                     if (enabledTabs["main_Timed"])
-                        modeSelect_TableInfo.DrawMissionTablev2("Timed", "Timed_Missions", modeSelect_TableInfo.missionList["Timed"]);
+                        modeSelect_TableInfo.DrawMissionTablev2("限時", "Timed_Missions", modeSelect_TableInfo.missionList["Timed"]);
                 }
                 else
                 {
@@ -466,7 +467,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                     {
                         if (modeSelect_TableInfo.missionList["All Enabled"].Count > 0)
                         {
-                            modeSelect_TableInfo.DrawMissionTablev2("All Enabled", "All_Enabled", modeSelect_TableInfo.SortMissionList(modeSelect_TableInfo.missionList["All Enabled"]));
+                            modeSelect_TableInfo.DrawMissionTablev2("已啟用", "All_Enabled", modeSelect_TableInfo.SortMissionList(modeSelect_TableInfo.missionList["All Enabled"]));
                         }
                         else
                         {
@@ -474,21 +475,21 @@ namespace ICE.Ui.MainUi.ModeSelect
                         }
                     }
                     if (enabledTabs["main_Critical"])
-                        modeSelect_TableInfo.DrawMissionTablev2("Critical", "Critical_Missions", modeSelect_TableInfo.SortMissionList(modeSelect_TableInfo.missionList["Critical"]));
+                        modeSelect_TableInfo.DrawMissionTablev2("緊急", "Critical_Missions", modeSelect_TableInfo.SortMissionList(modeSelect_TableInfo.missionList["Critical"]));
                     if (enabledTabs["main_Sequence"])
-                        modeSelect_TableInfo.DrawMissionTablev2("Sequence", "Sequence_Missions", modeSelect_TableInfo.SortMissionList(modeSelect_TableInfo.missionList["Sequence"]));
+                        modeSelect_TableInfo.DrawMissionTablev2("連續", "Sequence_Missions", modeSelect_TableInfo.SortMissionList(modeSelect_TableInfo.missionList["Sequence"]));
                     if (enabledTabs["main_Weather"])
-                        modeSelect_TableInfo.DrawMissionTablev2("Weather", "Weather_Missions", modeSelect_TableInfo.SortMissionList(modeSelect_TableInfo.missionList["Weather"]));
+                        modeSelect_TableInfo.DrawMissionTablev2("天氣", "Weather_Missions", modeSelect_TableInfo.SortMissionList(modeSelect_TableInfo.missionList["Weather"]));
                     if (enabledTabs["main_Timed"])
-                        modeSelect_TableInfo.DrawMissionTablev2("Timed", "Timed_Missions", modeSelect_TableInfo.SortMissionList(modeSelect_TableInfo.missionList["Timed"]));
+                        modeSelect_TableInfo.DrawMissionTablev2("限時", "Timed_Missions", modeSelect_TableInfo.SortMissionList(modeSelect_TableInfo.missionList["Timed"]));
                     if (enabledTabs["main_ARank"])
-                        modeSelect_TableInfo.DrawMissionTablev2("A Rank", "A_RankMissions", modeSelect_TableInfo.SortMissionList(modeSelect_TableInfo.missionList["ARank"]));
+                        modeSelect_TableInfo.DrawMissionTablev2("A 級", "A_RankMissions", modeSelect_TableInfo.SortMissionList(modeSelect_TableInfo.missionList["ARank"]));
                     if (enabledTabs["main_BRank"])
-                        modeSelect_TableInfo.DrawMissionTablev2("B Rank", "B_RankMissions", modeSelect_TableInfo.SortMissionList(modeSelect_TableInfo.missionList["BRank"]));
+                        modeSelect_TableInfo.DrawMissionTablev2("B 級", "B_RankMissions", modeSelect_TableInfo.SortMissionList(modeSelect_TableInfo.missionList["BRank"]));
                     if (enabledTabs["main_CRank"])
-                        modeSelect_TableInfo.DrawMissionTablev2("C Rank", "C_RankMissions", modeSelect_TableInfo.SortMissionList(modeSelect_TableInfo.missionList["CRank"]));
+                        modeSelect_TableInfo.DrawMissionTablev2("C 級", "C_RankMissions", modeSelect_TableInfo.SortMissionList(modeSelect_TableInfo.missionList["CRank"]));
                     if (enabledTabs["main_DRank"])
-                        modeSelect_TableInfo.DrawMissionTablev2("D Rank", "D_RankMissions", modeSelect_TableInfo.SortMissionList(modeSelect_TableInfo.missionList["DRank"]));
+                        modeSelect_TableInfo.DrawMissionTablev2("D 級", "D_RankMissions", modeSelect_TableInfo.SortMissionList(modeSelect_TableInfo.missionList["DRank"]));
                 }
             }
         }

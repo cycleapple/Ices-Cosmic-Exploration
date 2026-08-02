@@ -17,19 +17,19 @@ namespace ICE.Ui.MainUi.HelpFolder
 
             ImGui.Separator();
             ImGuiEx.IconWithText(FontAwesomeIcon.Hammer, "製作");
-            HasPlugin("https://love.puni.sh/ment.json", "Artisan");
+            HasPlugin("https://raw.githubusercontent.com/cycleapple/DalamudPlugins-TW-API13-Extended/refs/heads/main/repo.json", "Artisan");
 
             ImGui.Separator();
             ImGuiEx.IconWithText(FontAwesomeIcon.Feather, "採集");
             ImGui.Text("園藝工／採礦工／捕魚人適用");
-            HasPlugin("https://puni.sh/api/repository/veyn", "vnavmesh");
+            HasPlugin("https://raw.githubusercontent.com/cycleapple/DalamudPlugins-TW-API13-Extended/refs/heads/main/repo.json", "vnavmesh");
             ImGui.Dummy(new Vector2(0, 10));
             ImGui.Text("僅限捕魚人");
-            HasPlugin("https://love.puni.sh/ment.json", "AutoHook");
+            HasPlugin("https://raw.githubusercontent.com/cycleapple/DalamudPlugins-TW-API13-Extended/refs/heads/main/repo.json", "AutoHook");
 
             ImGui.Separator();
             ImGuiEx.IconWithText(FontAwesomeIcon.Running, "自動執行據點活動");
-            HasPlugin("https://puni.sh/api/repository/veyn", "vnavmesh");
+            HasPlugin("https://raw.githubusercontent.com/cycleapple/DalamudPlugins-TW-API13-Extended/refs/heads/main/repo.json", "vnavmesh");
         }
 
         public static void HasPlugin(string repo, string pluginName)

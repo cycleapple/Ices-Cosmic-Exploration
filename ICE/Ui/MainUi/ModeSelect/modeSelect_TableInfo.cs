@@ -205,7 +205,7 @@ namespace ICE.Ui.MainUi.ModeSelect
 
                 ImGui.SetCursorPosY(headerPadding.Y);
                 ImGui.SetCursorPosX(centeredPosX);
-                ImGui.Text($"{headerName} Missions");
+                ImGui.Text($"{headerName} 任務");
             }
 
             // Table settings, just so I can sort it out visibly vs... being shoved in the table
@@ -443,11 +443,11 @@ namespace ICE.Ui.MainUi.ModeSelect
                 #region Score
 
                 ImGui.TableSetColumnIndex(columnIndexCount);
-        ImGui.TableHeader("分數");
+        ImGui.TableHeader("技巧點");
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
-            ImGui.Text("職業分數報酬");
+            ImGui.Text("職業技巧點報酬");
                     ImGui.EndTooltip();
                 }
                 columnIndexCount++;
@@ -1107,7 +1107,7 @@ namespace ICE.Ui.MainUi.ModeSelect
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-            ImGui.Text("職業分數：");
+            ImGui.Text("職業技巧點：");
 
                     ImGui.TableNextColumn();
                     ImGui.Text($"{mission.ClassScore}");

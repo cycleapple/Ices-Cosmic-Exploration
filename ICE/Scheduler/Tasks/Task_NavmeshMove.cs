@@ -12,7 +12,7 @@ namespace ICE.Scheduler.Tasks
         {
             bool usingCosmoliner = Svc.Condition[ConditionFlag.Unknown101];
             bool mounted = Player.Mounted;
-            bool inMission = CosmicHelper.CurrentLunarMission == 0;
+            bool inMission = CosmicHelper.CurrentLunarMission != 0;
             float minMountDistance = C.MountRadius;
             float dismountDistance = C.DismountRadius;
 
@@ -132,7 +132,7 @@ namespace ICE.Scheduler.Tasks
         {
             bool usingCosmoliner = Svc.Condition[ConditionFlag.Unknown101];
             bool mounted = Player.Mounted;
-            bool inMission = CosmicHelper.CurrentLunarMission == 0;
+            bool inMission = CosmicHelper.CurrentLunarMission != 0;
             float minMountDistance = C.MountRadius;
             float dismountDistance = C.DismountRadius;
 

@@ -55,7 +55,7 @@ namespace ICE.Ui
 
             bool MaxStage = XPTable.Where(x => x.Value.NeededXP != 0).Count() == 0;
 
-            ImGui.Text($"Stage: {stage}");
+            ImGui.Text($"階段: {stage}");
             if (MaxStage)
             {
                 ImGui.SameLine();
@@ -86,11 +86,11 @@ namespace ICE.Ui
 
                 if (stage != 14)
                 {
-                    DrawXPBar($"Type: {xpType}", current, needed, size, max);
+                    DrawXPBar($"宇宙資料{xpType}", current, needed, size, max);
                 }
                 else
                 {
-                    DrawXPBar($"Type: {xpType}", current, max, size, max);
+                    DrawXPBar($"宇宙資料{xpType}", current, max, size, max);
                 }
             }
         }
@@ -98,7 +98,7 @@ namespace ICE.Ui
         public static void DrawScoreBar(Vector2 size, bool useSelectedJob = false, uint jobId = 0)
         {
             var (classScore, cappedClassScore, totalScores, classId) = CosmicHelper.GetCosmicClassScores(useSelectedJob, jobId);
-            DrawXPBar("Score", (uint)classScore, 0, size, 500_000);
+            DrawXPBar("技巧點", (uint)classScore, 0, size, 500_000);
         }
 
         public static void DrawXPBar(string label, uint currentXP, uint neededXP, Vector2 size, uint maxXP = 0)

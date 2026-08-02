@@ -167,7 +167,7 @@ namespace ICE.Ui
             {
                 (uint TotalScore, uint TotalComplete, uint MaxScore, Dictionary<uint, uint> ClassInfo) = Relic_XP.GetTotalScores();
                 var ScoreBarSize = new Vector2(340, 10);
-        Relic_XP.DrawXPBar($"總分｜完成：[{TotalComplete} / 11]", TotalScore, MaxScore, ScoreBarSize);
+        Relic_XP.DrawXPBar($"總技巧點｜完成：[{TotalComplete} / 11]", TotalScore, MaxScore, ScoreBarSize);
                 if (ImGui.IsItemHovered())
                 {
                     ImGui.BeginTooltip();
@@ -179,7 +179,7 @@ namespace ICE.Ui
                         ImGui.Image(jobImage.GetWrapOrEmpty().Handle, new Vector2(23, 23));
                         ImGui.SameLine();
                         ImGui.AlignTextToFramePadding();
-            ImGui.Text($"分數：{jobScore:N0}");
+            ImGui.Text($"技巧點：{jobScore:N0}");
                     }
                     ImGui.EndTooltip();
                 }

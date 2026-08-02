@@ -262,10 +262,12 @@ public static partial class ImGui_Tools
         if (isExpanded)
             headerColor = ImGui.GetColorU32(ImGuiCol.TabActive);
         if (isHovered)
-            headerColor = ImGui.GetColorU32(ImGuiCol.HeaderHovered);
+            headerColor = ImGui.GetColorU32(isExpanded ? ImGuiCol.TabHovered : ImGuiCol.ButtonHovered);
 
         // Draw background rectangle with rounded corners (scaled)
-        drawList.AddRectFilled(cursorPos, new Vector2(cursorPos.X + contentWidth, cursorPos.Y + contentHeight), headerColor, 5.0f * scale);
+        var buttonRect = new Vector2(cursorPos.X + contentWidth, cursorPos.Y + contentHeight);
+        drawList.AddRectFilled(cursorPos, buttonRect, headerColor, 5.0f * scale);
+        drawList.AddRect(cursorPos, buttonRect, ImGui.GetColorU32(isExpanded ? ImGuiCol.CheckMark : ImGuiCol.Border), 5.0f * scale, ImDrawFlags.None, isExpanded ? 2.0f * scale : 1.0f * scale);
 
         // Position cursor with padding
         ImGui.SetCursorScreenPos(new Vector2(cursorPos.X + horizontalPadding, cursorPos.Y + verticalPadding));
