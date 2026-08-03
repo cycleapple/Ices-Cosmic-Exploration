@@ -1,4 +1,5 @@
 ﻿using ICE.Config;
+using ICE.Utilities.Cosmic_Helper;
 using System.Collections.Generic;
 using System.Diagnostics;
 using static ICE.Ui.MainUi.ModeSelect.modeSelect_TableInfo;
@@ -18,6 +19,12 @@ public class MissionTimer
 
     public void StartMission(uint missionId)
     {
+        if (missionId == 0)
+        {
+            IceLogging.Warning("Ignoring an attempt to start the mission timer with mission ID 0", "Mission Timer");
+            return;
+        }
+
         currentMission = missionId;
         stopwatch.Restart();
         isRunning = true;
@@ -42,6 +49,12 @@ public class MissionTimer
 
     private void UpdateMissionStats(uint missionId, TimeSpan duration)
     {
+        if (missionId == 0)
+        {
+            IceLogging.Warning("Ignoring mission statistics for mission ID 0", "Mission Timer");
+            return;
+        }
+
         if (!C.MissionConfig.ContainsKey(missionId))
         {
             C.MissionConfig[missionId] = new();
@@ -109,6 +122,9 @@ public class MissionTimer
 
     public void ResetTimers(uint missionId)
     {
+        if (missionId == 0)
+            return;
+
         if (!C.MissionConfig.ContainsKey(missionId))
         {
             C.MissionConfig[missionId] = new();
@@ -226,6 +242,12 @@ public class MissionTimer
         stopwatch.Stop();
         stopwatch.Reset();
         isRunning = false;
+
+        if (currentMission == 0)
+        {
+            IceLogging.Warning("Ignoring an abandoned mission with no active mission timer", "Mission Timer");
+            return;
+        }
 
         if (!C.MissionConfig.ContainsKey(currentMission))
         {

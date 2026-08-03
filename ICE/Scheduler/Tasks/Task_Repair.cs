@@ -25,8 +25,11 @@ namespace ICE.Scheduler.Tasks
                         new(CloseRepair, "Closing Self Repair")
                     );
                 }
-                P.TaskManager.Enqueue(() =>  SchedulerMain.State = IceState.GrabMission);
             }
+
+            // The equipment may have been repaired by another plugin between the
+            // state check and this enqueue. Always leave the Repair state.
+            P.TaskManager.Enqueue(() => SchedulerMain.State = IceState.GrabMission);
         }
         public static unsafe bool? HubCheck()
         {
@@ -173,12 +176,12 @@ namespace ICE.Scheduler.Tasks
                     ActionManager.Instance()->UseAction(ActionType.GeneralAction, 9);
                 }
             }
-            else if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("SelectYesno", out var addon) && GenericHelpers.IsAddonReady(addon))
+            else if (GenericHelpers.TryGetAddonMaster<SelectYesno>("SelectYesno", out var yesNo) && yesNo.IsAddonReady)
             {
                 if (FrameThrottler.Throttle("SelectYesnoThrottle", 300))
                 {
-                    IceLogging.Debug("SelectYesno Callback", "Self Repair Task");
-                    ECommons.Automation.Callback.Fire(addon, true, 0);
+                    IceLogging.Debug("Confirming self repair", "Self Repair Task");
+                    yesNo.Yes();
                 }
             }
             else if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("Repair", out var addon2) && GenericHelpers.IsAddonReady(addon2))
@@ -193,12 +196,14 @@ namespace ICE.Scheduler.Tasks
         }
         public unsafe static bool CloseRepair()
         {
-            if (GenericHelpers.TryGetAddonMaster<SelectYesno>("SelectYesno", out var Yesno) && Yesno.IsAddonReady)
+            if (GenericHelpers.TryGetAddonMaster<SelectYesno>("SelectYesno", out var yesNo) && yesNo.IsAddonReady)
             {
                 if (FrameThrottler.Throttle("Closing surprise repair window"))
                 {
-                    ECommons.Automation.Callback.Fire(Yesno.Base, true, -1);
+                    yesNo.No();
                 }
+
+                return false;
             }
             else if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("Repair", out var repairWindow))
             {
@@ -209,6 +214,8 @@ namespace ICE.Scheduler.Tasks
                         IceLogging.Debug("Closing the repair window", "[Repair Task]");
                         ECommons.Automation.Callback.Fire(repairWindow, true, -1);
                     }
+
+                    return false;
                 }
                 else
                 {
@@ -216,7 +223,9 @@ namespace ICE.Scheduler.Tasks
                 }
             }
 
-            return false;
+            // Both windows are gone, so the repair sequence is complete. Returning
+            // false here leaves this task running until NeoTaskManager times out.
+            return true;
         }
     }
 }

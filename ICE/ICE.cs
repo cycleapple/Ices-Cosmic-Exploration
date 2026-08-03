@@ -103,7 +103,10 @@ public sealed partial class ICE : IDalamudPlugin
         Init();
         Svc.Framework.Update += Tick;
 
-        TaskManager = new(new(showDebug: false));
+        var taskManagerConfiguration = new TaskManagerConfiguration(showDebug: false);
+        taskManagerConfiguration.OnTaskTimeout = (TaskManagerTask task, ref long remainingTimeMS) =>
+            IceLogging.Error($"Task timed out: {task.Name}@{task.Location}", "Task Manager");
+        TaskManager = new(taskManagerConfiguration);
         Svc.PluginInterface.UiBuilder.Draw += windowSystem.Draw;
         Svc.PluginInterface.UiBuilder.OpenMainUi += () =>
         {

@@ -83,37 +83,11 @@ namespace ICE.Scheduler.Tasks
                             }
                         }
                     }
-                    else
+                    else if (EzThrottler.Throttle("Unexpected Abandon Window...", 5000))
                     {
-                        IceLogging.Debug($"Actual text: '{select.Text}'");
-                        IceLogging.Debug($"Actual text length: {select.Text.Length}");
-                        IceLogging.Debug($"Trimmed text: '{select.Text.Trim()}'");
-                        IceLogging.Debug($"Trimmed length: {select.Text.Trim().Length}");
-
-                        if (EzThrottler.Throttle("Unexpected Abandon Window..."))
-                        {
-                            var actualText = select.Text.Trim();
-                            var expectedFrench = "Êtes-vous sûre de vouloir abandonner la mission en cours ?";
-
-                            // Debug the ACTUAL text character by character
-                            IceLogging.Error("=== ACTUAL TEXT BREAKDOWN ===");
-                            for (int i = 0; i < actualText.Length; i++)
-                            {
-                                IceLogging.Error($"Actual char {i}: '{actualText[i]}' (Unicode: {(int)actualText[i]})");
-                            }
-
-                            // Debug the EXPECTED text character by character
-                            IceLogging.Error("=== EXPECTED TEXT BREAKDOWN ===");
-                            IceLogging.Error($"Expected: '{expectedFrench}'");
-                            IceLogging.Error($"Expected length: {expectedFrench.Length}");
-                            for (int i = 0; i < expectedFrench.Length; i++)
-                            {
-                                IceLogging.Error($"Expected char {i}: '{expectedFrench[i]}' (Unicode: {(int)expectedFrench[i]})");
-                            }
-
-                            IceLogging.Error($"Unexpected abandon window??? {select.Text}", "[Abandon Mission]");
-                            select.No();
-                        }
+                        // This can be a repair or another plugin's confirmation. Do
+                        // not consume a SelectYesno window this task does not own.
+                        IceLogging.Warning($"Waiting for an unrelated confirmation window to close: {NormalizeWhitespace(select.Text)}", "[Abandon Mission]");
                     }
                 }
                 else if(GenericHelpers.TryGetAddonMaster<WKSMissionInfomation>("WKSMissionInfomation", out var addon) && addon.IsAddonReady)

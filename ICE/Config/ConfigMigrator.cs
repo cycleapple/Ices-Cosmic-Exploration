@@ -433,6 +433,14 @@ namespace ICE.Config
 
         public static void UpdateConfigMissionList()
         {
+            // Older repair/abandon timeout loops could persist a synthetic mission
+            // with ID 0. It is not a sheet row and breaks mission selection scans.
+            if (C.MissionConfig.Remove(0))
+            {
+                Svc.Log.Warning("Removed invalid mission ID 0 from Mission Config");
+                C.Save();
+            }
+
             foreach (var entry in CosmicHelper.SheetMissionDict)
             {
                 var id = entry.Key;

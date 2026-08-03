@@ -54,11 +54,15 @@ namespace ICE.Scheduler.Tasks
 
         private static void InsertArtisanWait(ushort craftId, int amount)
         {
+            throttleCounter = 0;
+            artisanRequestSent = false;
             P.TaskManager.InsertMulti(
-                new(() => ThrottleArtisanTask(craftId, amount), "Telling artisan to craft"),
-                new(() => WaitingForArtisan(), "Waiting for artisan")
+                new(() => ThrottleArtisanTask(craftId, amount), "Telling artisan to craft", Utils.TaskConfig),
+                new(() => WaitingForArtisan(), "Waiting for artisan", Utils.TaskConfig)
             );
         }
+
+        private static bool artisanRequestSent;
 
         private static bool? ThrottleArtisanTask(ushort craftId, int amount)
         {
@@ -71,15 +75,19 @@ namespace ICE.Scheduler.Tasks
             }
             if (throttleCounter >= 2)
             {
-                if (EzThrottler.Throttle("Artisan Crafting Task"))
+                if (!artisanRequestSent && EzThrottler.Throttle("Artisan Crafting Task"))
                 {
                     IceLogging.Debug($"Telling Artisan to craft: {craftId} -> {amount} times");
                     P.Artisan.CraftItem(craftId, amount);
+                    artisanRequestSent = true;
                 }
 
-                if (P.TaskManager.IsBusy)
+                // CraftItem is asynchronous. Do not advance merely because ICE's
+                // own task manager is busy; wait until Artisan confirms the job.
+                if (artisanRequestSent && P.Artisan.IsBusy())
                 {
                     throttleCounter = 0;
+                    artisanRequestSent = false;
                     return true;
                 }
             }
@@ -125,7 +133,6 @@ namespace ICE.Scheduler.Tasks
                         else
                         {
                             // you have enough of the main hand item. But you still are crafting. So time to just craft 1 more
-                            P.Artisan.CraftItem(mainCraft.Key, 1);
                             InsertArtisanWait(mainCraft.Key, 1);
                             IceLogging.Info($"Current item count of: {mainCraft.Value.ItemId} | {mainItemCount}");
                             IceLogging.Info($"Telling artisan to craft: {mainCraft.Value.ItemId} -> 1", "[Task Craft: Check Materials]");
@@ -145,7 +152,6 @@ namespace ICE.Scheduler.Tasks
                         if (craftAmount < 1)
                             craftAmount = 1;
 
-                        P.Artisan.CraftItem(preCraft.Key, craftAmount);
                         InsertArtisanWait(preCraft.Key, craftAmount);
                         IceLogging.Info($"Found a material that still needed to be crafted", "[Task Craft: Check Materials]");
                         return true;
