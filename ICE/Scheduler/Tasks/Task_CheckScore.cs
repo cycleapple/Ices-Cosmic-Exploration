@@ -351,6 +351,7 @@ namespace ICE.Scheduler.Tasks
                                 Mission_Settings.TurninState = TurninState.Critical;
                             else
                                 MedalChecker(missionInfo.CurrentScore, mission.SilverScore, mission.GoldScore);
+                        IceLogging.Debug($"Mission is timed out, {(canTurnin ? "turning in" : "abandoning")}", tag);
                         }
                         P.TaskManager.Tasks.Clear();
                         return true;
@@ -546,6 +547,8 @@ namespace ICE.Scheduler.Tasks
                         {
                             if (mission.Attributes.HasFlag(MissionAttributes.Critical))
                                 Mission_Settings.TurninState = TurninState.Critical;
+                            else if (mission.Attributes.HasFlag(MissionAttributes.ScoreTimeRemaining))
+                                Mission_Settings.TurninState = DetermineTurninState();
                             else
                                 MedalChecker(missionInfo.CurrentScore, mission.SilverScore, mission.GoldScore);
                         }
@@ -748,7 +751,20 @@ namespace ICE.Scheduler.Tasks
                 {
                     if (CosmicHandler.IsMissionTimedOut())
                     {
-                        SchedulerMain.State = IceState.AbandonMission;
+                        var id = CosmicHelper.CurrentLunarMission;
+                        var timeoutMission = CosmicHelper.SheetMissionDict[id];
+                        var canTurnin = timeoutMission.Attributes.HasFlag(MissionAttributes.Critical)
+                            ? missionInfo.CriticalScore == 1
+                            : timeoutMission.BronzeScore == 0 || missionInfo.CurrentScore >= timeoutMission.BronzeScore;
+
+                        SchedulerMain.State = canTurnin ? IceState.TurninMission : IceState.AbandonMission;
+                        if (canTurnin)
+                        {
+                            if (timeoutMission.Attributes.HasFlag(MissionAttributes.Critical))
+                                Mission_Settings.TurninState = TurninState.Critical;
+                            else
+                                MedalChecker(missionInfo.CurrentScore, timeoutMission.SilverScore, timeoutMission.GoldScore);
+                        }
                         P.TaskManager.Tasks.Clear();
                         return true;
                     }

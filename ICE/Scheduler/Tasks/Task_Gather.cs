@@ -264,6 +264,7 @@ namespace ICE.Scheduler.Tasks
             }
             else
             {
+                approachNodeId = 0;
                 if (CosmicHandler.IsMissionTimedOut())
                 {
                     IceLogging.Info("Mission timed out, checking score before turning in or abandoning", "[Gathering: Open Gathering Menu]");
