@@ -1129,13 +1129,21 @@ namespace ICE.Scheduler.Tasks
                 var mapId = missionEntry.MapPosition;
                 var gatherInfo = GatheringRouteLoader.GetRoute(missionTerritory, mapId);
 
-                if (gatherInfo.Count == 0)
+                if (gatherInfo == null || gatherInfo.Count == 0)
                 {
                     IceLogging.Info("HEY. This gathering location hasn't been set to gather, and should honestly be set to a manual state. Cause things are about to bug out. If it's a new area please let me know o/");
                     return true;
                 }
 
-                Vector3 closestNode = gatherInfo[0].LandZone;
+                var selectionOrigin = missionEntry.Attributes.HasFlag(MissionAttributes.Critical) &&
+                    GatheringUtil.CriticalLocations.TryGetValue(missionId, out var criticalLocation)
+                    ? criticalLocation.RawLocation
+                    : Player.Position;
+                var closestGatherNode = gatherInfo
+                    .OrderBy(node => Vector3.Distance(selectionOrigin, node.Position))
+                    .First();
+                var closestNode = Task_Gather.GetGatherApproachPosition(closestGatherNode, closestGatherNode.Position);
+                IceLogging.Info($"Mission {missionId}: node {closestGatherNode.NodeId}, center {closestGatherNode.Position}, approach {closestNode}", "[TravelProbe]");
 
                 if (!P.Navmesh.IsRunning())
                 {
@@ -1149,7 +1157,10 @@ namespace ICE.Scheduler.Tasks
                     }
                 }
                 
-                if (!Task_NavmeshMove.NavToDestination(closestNode))
+                var reachedMissionArea = missionEntry.Attributes.HasFlag(MissionAttributes.Critical)
+                    ? Task_NavmeshMove.NavToCriticalDestination(closestNode, missionId)
+                    : Task_NavmeshMove.NavToDestination(closestNode);
+                if (!reachedMissionArea)
                 {
                     return false;
                 }

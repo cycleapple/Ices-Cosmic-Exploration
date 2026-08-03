@@ -18,6 +18,7 @@ public class NavmeshIPC
     [EzIPC("Nav.%m")] public readonly Func<bool> Reload;
     [EzIPC("Nav.%m")] public readonly Func<bool> Rebuild;
     [EzIPC("Nav.%m")] public readonly Func<Vector3, Vector3, bool, Task<List<Vector3>>> Pathfind;
+    [EzIPC("Nav.%m")] public readonly Func<Vector3, Vector3, bool, Task<float>> PathfindScore;
 
     [EzIPC("SimpleMove.%m")] public readonly Func<Vector3, bool, bool> PathfindAndMoveTo;
     [EzIPC("SimpleMove.%m")] public readonly Func<bool> PathfindInProgress;

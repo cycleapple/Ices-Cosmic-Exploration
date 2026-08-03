@@ -75,6 +75,10 @@ namespace ICE.Scheduler.Tasks
                         P.Navmesh.Stop();
                 }
             }
+            else if (P.Navmesh.PathfindInProgress())
+            {
+                return false;
+            }
             else if (!P.Navmesh.IsReady())
             {
                 if (EzThrottler.Throttle("Waiting on navmesh", 1000))
@@ -129,6 +133,12 @@ namespace ICE.Scheduler.Tasks
         }
 
         public static bool NavToDestination(Vector3 pos, bool waitForBusy = true, float distance = 2.0f, bool stayMounted = false)
+            => CosmicTravelPlanner.Move(pos, waitForBusy, distance, stayMounted);
+
+        public static bool NavToCriticalDestination(Vector3 pos, uint missionId, float distance = 2.0f)
+            => CosmicTravelPlanner.Move(pos, true, distance, false, missionId);
+
+        internal static bool NavToDestinationDirect(Vector3 pos, bool waitForBusy = true, float distance = 2.0f, bool stayMounted = false)
         {
             bool usingCosmoliner = Svc.Condition[ConditionFlag.Unknown101];
             bool mounted = Player.Mounted;
@@ -194,6 +204,10 @@ namespace ICE.Scheduler.Tasks
                     if (EzThrottler.Throttle("Telling navmesh to stop"))
                         P.Navmesh.Stop();
                 }
+            }
+            else if (P.Navmesh.PathfindInProgress())
+            {
+                return false;
             }
             else if (!P.Navmesh.IsReady())
             {

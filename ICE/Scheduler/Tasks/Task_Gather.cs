@@ -20,6 +20,11 @@ namespace ICE.Scheduler.Tasks
         private static uint activeGatherNodeId;
         private static uint activeGatherMissionId;
         private static bool activeGatherWindowOpened;
+        private const float GatheringRange = 3.5f;
+        private const float GatherApproachTolerance = 0.5f;
+        private static uint approachNodeId;
+        private static Vector3 approachCenter;
+        private static Vector3 approachPosition;
 
         public static void Enqueue()
         {
@@ -62,24 +67,16 @@ namespace ICE.Scheduler.Tasks
             var missionEntry = CosmicHelper.CurrentMissionInfo;
             var missionFlag = missionEntry.MapPosition;
             var gatherInfo = GatheringRouteLoader.GetRoute(zoneId, missionFlag);
+            var selectionOrigin = Player.Position;
 
             if (gatherInfo != null)
             {
                 if (Mission_Settings.previousMap != missionFlag)
                 {
-                    // We're currently at a whole new area. So going to check the gathering nodes to see which one we're closest to
+                    // We're currently at a whole new area. Pick the nearest currently available route node.
                     Mission_Settings.previousMap = missionFlag;
-                    var closestNodeIndex = gatherInfo.Select((node, index) => new { Node = node, Index = index })
-                                                     .Where(x => Svc.Objects.Any(obj => obj.ObjectKind == ObjectKind.GatheringPoint && obj.IsTargetable && obj.DataId == x.Node.NodeId))
-                                                     .OrderBy(x =>
-                                                     {
-                                                         var gameObject = Svc.Objects.First(obj => obj.DataId == x.Node.NodeId);
-                                                         return Player.DistanceTo(gameObject.Position);
-                                                     })
-                                                     .Select(x => x.Index)
-                                                     .FirstOrDefault(0);
-
-                    Mission_Settings.nodeCounter = closestNodeIndex;
+                    if (!SelectClosestTargetableNode(gatherInfo, selectionOrigin))
+                        Mission_Settings.nodeCounter = 0;
                 }
                 else
                 {
@@ -87,8 +84,8 @@ namespace ICE.Scheduler.Tasks
                     var closestDistance = gatherInfo.Where(x => Player.DistanceTo(x.Position) < 5).FirstOrDefault();
                     if (closestDistance == null)
                     {
-                        // We're currently to far from any node. going to rely on the index to tell us where we should be
-                        if (Mission_Settings.nodeCounter >= gatherInfo.Count)
+                        // We're currently too far from any route node. Prefer a loaded, targetable node.
+                        if (!SelectClosestTargetableNode(gatherInfo, selectionOrigin) && Mission_Settings.nodeCounter >= gatherInfo.Count)
                         {
                             // resetting it back to 0 because we're outside the normal index array
                             Mission_Settings.nodeCounter = 0;
@@ -114,13 +111,16 @@ namespace ICE.Scheduler.Tasks
                         }
                         else
                         {
-                            // Node is not targetable, increment to next node
-                            Mission_Settings.nodeCounter++;
-
-                            // Check if we're out of bounds and wrap back to 0
-                            if (Mission_Settings.nodeCounter >= gatherInfo.Count)
+                            // Node is not targetable. Prefer another loaded, targetable route node.
+                            if (!SelectClosestTargetableNode(gatherInfo, selectionOrigin))
                             {
-                                Mission_Settings.nodeCounter = 0;
+                                Mission_Settings.nodeCounter++;
+
+                                // Check if we're out of bounds and wrap back to 0
+                                if (Mission_Settings.nodeCounter >= gatherInfo.Count)
+                                {
+                                    Mission_Settings.nodeCounter = 0;
+                                }
                             }
                             return true;
                         }
@@ -130,6 +130,85 @@ namespace ICE.Scheduler.Tasks
 
             return false;
         }
+
+        private static bool SelectClosestTargetableNode(List<Resources.GatheringRoutes.GathNodeInfo> gatherInfo, Vector3 selectionOrigin)
+        {
+            var closestNodeIndex = gatherInfo
+                .Select((node, index) => new
+                {
+                    Index = index,
+                    Object = Svc.Objects.FirstOrDefault(obj =>
+                        obj.ObjectKind == ObjectKind.GatheringPoint &&
+                        obj.IsTargetable &&
+                        obj.DataId == node.NodeId)
+                })
+                .Where(x => x.Object != null)
+                .OrderBy(x => Player.DistanceTo(x.Object!.Position))
+                .Select(x => x.Index)
+                .FirstOrDefault(-1);
+
+            if (closestNodeIndex < 0)
+            {
+                closestNodeIndex = gatherInfo
+                    .Select((node, index) => new
+                    {
+                        Index = index,
+                        Object = Svc.Objects.FirstOrDefault(obj =>
+                            obj.ObjectKind == ObjectKind.GatheringPoint && obj.DataId == node.NodeId)
+                    })
+                    .Where(x => x.Object == null || x.Object.IsTargetable)
+                    .OrderBy(x => Vector3.Distance(selectionOrigin, gatherInfo[x.Index].Position))
+                    .Select(x => x.Index)
+                    .FirstOrDefault(-1);
+            }
+
+            if (closestNodeIndex < 0)
+                return false;
+
+            Mission_Settings.nodeCounter = closestNodeIndex;
+            return true;
+        }
+
+        internal static Vector3 GetGatherApproachPosition(Resources.GatheringRoutes.GathNodeInfo node, Vector3 center)
+        {
+            if (approachNodeId == node.NodeId && Vector3.DistanceSquared(approachCenter, center) <= 0.25f)
+                return approachPosition;
+
+            var angle = GetClosestAllowedAngle(center, node.RadiusStart, node.RadiusEnd);
+            var maxDistance = MathF.Min(node.MaxDistance, GatheringRange - GatherApproachTolerance);
+            var minDistance = MathF.Min(node.MinDistance, maxDistance);
+            var distance = minDistance + Random.Shared.NextSingle() * (maxDistance - minDistance);
+            var radians = (180f - angle) * (MathF.PI / 180f);
+
+            approachNodeId = node.NodeId;
+            approachCenter = center;
+            approachPosition = new Vector3(
+                center.X + distance * MathF.Sin(radians),
+                center.Y,
+                center.Z + distance * MathF.Cos(radians));
+            return approachPosition;
+        }
+
+        private static float GetClosestAllowedAngle(Vector3 center, float minAngle, float maxAngle)
+        {
+            var playerAngle = 180f - MathF.Atan2(Player.Position.X - center.X, Player.Position.Z - center.Z) * (180f / MathF.PI);
+            playerAngle = NormalizeAngle(playerAngle);
+            minAngle = NormalizeAngle(minAngle);
+            maxAngle = NormalizeAngle(maxAngle);
+
+            if (MathF.Abs(minAngle - maxAngle) < 0.01f || IsAngleInRange(playerAngle, minAngle, maxAngle))
+                return playerAngle;
+
+            return AngularDistance(playerAngle, minAngle) <= AngularDistance(playerAngle, maxAngle) ? minAngle : maxAngle;
+        }
+
+        private static float NormalizeAngle(float angle) => (angle % 360f + 360f) % 360f;
+
+        private static bool IsAngleInRange(float angle, float minAngle, float maxAngle)
+            => minAngle <= maxAngle ? angle >= minAngle && angle <= maxAngle : angle >= minAngle || angle <= maxAngle;
+
+        private static float AngularDistance(float first, float second)
+            => MathF.Abs((second - first + 540f) % 360f - 180f);
 
         public static bool? PathandCheckNode()
         {
@@ -163,7 +242,21 @@ namespace ICE.Scheduler.Tasks
             }
 
             var location = gatherInfo[Mission_Settings.nodeCounter];
-            if (!Task_NavmeshMove.NavToDestination(location.LandZone, distance: 1))
+            var matchingNodes = Svc.Objects
+                .Where(obj => obj.ObjectKind == ObjectKind.GatheringPoint && obj.DataId == location.NodeId)
+                .OrderBy(PlayerHelper.GetDistanceToPlayer)
+                .ToList();
+            var node = matchingNodes.FirstOrDefault(obj => obj.IsTargetable);
+            var nodeCenter = node?.Position ?? location.Position;
+            var approach = GetGatherApproachPosition(location, nodeCenter);
+            var verticalDifference = Player.Position.Y - approach.Y;
+            var isWithinInteractionRange = Vector2.Distance(
+                new Vector2(Player.Position.X, Player.Position.Z),
+                new Vector2(nodeCenter.X, nodeCenter.Z)) <= GatheringRange;
+            var approachTolerance = MathF.Sqrt(verticalDifference * verticalDifference + GatherApproachTolerance * GatherApproachTolerance);
+            var reachedNode = isWithinInteractionRange ||
+                Task_NavmeshMove.NavToDestinationDirect(approach, distance: approachTolerance);
+            if (!reachedNode)
             {
                 UseCordial();
                 ThrottleMessage("Currently in the process of moving, so going to wait", "Task_Gather: NavmeshMovement");
@@ -190,23 +283,19 @@ namespace ICE.Scheduler.Tasks
                 }
                 else
                 {
-                    Utils.TryGetObjectByDataId(location.NodeId, out var node);
                     if (node != null && !Player.IsJumping)
                     {
-                        if (node.IsTargetable)
+                        if (EzThrottler.Throttle("Target + Interacting w/ node"))
                         {
-                            if (EzThrottler.Throttle("Target + Interacting w/ node"))
-                            {
-                                Utils.TargetgameObject(node);
-                                Utils.InteractWithObject(node);
-                            }
+                            Utils.TargetgameObject(node);
+                            Utils.InteractWithObject(node);
                         }
-                        else
-                        {
-                            MarkLimitedNodeExhausted(location.NodeId, gatherInfo);
-                            IceLogging.Info($"The current node doesn't exist, continuing onto the next", "[Gathering: OpenGatheringMenu]");
-                            return true;
-                        }
+                    }
+                    else if (matchingNodes.Count != 0)
+                    {
+                        MarkLimitedNodeExhausted(location.NodeId, gatherInfo);
+                        IceLogging.Info("The current node is no longer targetable, selecting the next node", "[Gathering: OpenGatheringMenu]");
+                        return true;
                     }
                 }
             }

@@ -32,6 +32,13 @@ public class PlayerHelper
     private static unsafe float AnimationLock => *(float*)((nint)ActionManager.Instance() + 8);
     public static bool IsAnimationLocked => AnimationLock > 0;
     public static bool CustomIsBusy => GenericHelpers.IsOccupied() || Object.IsCasting || IsAnimationLocked;
+    public static bool IsScreenReady() =>
+        GenericHelpers.IsScreenReady()
+        && !Svc.Condition[ConditionFlag.BetweenAreas]
+        && !Svc.Condition[ConditionFlag.BetweenAreas51]
+        && !Svc.Condition[ConditionFlag.OccupiedInCutSceneEvent]
+        && !Svc.Condition[ConditionFlag.WatchingCutscene]
+        && !Svc.Condition[ConditionFlag.WatchingCutscene78];
 
     public static unsafe bool HasStatusId(params uint[] statusIDs)
     {

@@ -142,23 +142,8 @@ namespace ICE.Scheduler.Tasks
                                 if (collectionPoint == null)
                                 {
                                     // We still need to get within range of it. So just going to tell it to pathfind and moveto if it wasn't already.
-                                    if (!P.Navmesh.IsRunning())
-                                    {
-                                        if (EzThrottler.Throttle("Telling navmesh to move to the spot"))
-                                        {
-                                            IceLogging.Debug("We're not close enough to the turnin point to find out where one's at. So going to the location where it might be at");
-                                            IceLogging.DestinationLogs.Log(location.RawLocation);
-                                            P.Navmesh.PathfindAndMoveTo(location.RawLocation, false);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (C.UseMountInMission && !Player.IsBusy && Player.DistanceTo(location.RawLocation) > C.MountRadius && !Svc.Condition[ConditionFlag.Mounted])
-                                        {
-                                            if (EzThrottler.Throttle("Mounting the mount"))
-                                                Utils.MountAction();
-                                        }
-                                    }
+                                    if (!Task_NavmeshMove.NavToDestinationDirect(location.RawLocation, distance: 75))
+                                        return false;
                                 }
                                 else if (!C.DisablePathfindingToRedAlert)
                                 {
