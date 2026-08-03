@@ -392,6 +392,7 @@ namespace ICE.Config
         public int CriticalCompletions { get; set; } = 0;
         public int FailedCounters { get; set; } = 0;
         public Dictionary<ushort, ArtisanRecipeSettings> CraftSettings { get; set; } = new();
+        public int ConsecutiveGoldFailures { get; set; } = 0;
         public List<TurninData> TurninRecords { get; set; } = new();
         // Old References to time below for migration
         [YamlIgnore]

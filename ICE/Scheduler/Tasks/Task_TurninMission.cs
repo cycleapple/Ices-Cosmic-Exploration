@@ -17,6 +17,7 @@ namespace ICE.Scheduler.Tasks
         private static int PreviousScore = 0;
         private static bool HasInteracted = false;
         private static int TickRate = 0;
+        private static TurninState PreviousTurninState = TurninState.None;
 
         public static void Enqueue()
         {
@@ -36,6 +37,7 @@ namespace ICE.Scheduler.Tasks
                 P.Artisan.ClearAppliedMissionSettings();
                 PathfoundToRed = false;
                 HasInteracted = false;
+                PreviousTurninState = Mission_Settings.TurninState;
 
                 // Complete the timer and get duration
                 var duration = P.MissionTimer.CompleteMission();
@@ -70,6 +72,7 @@ namespace ICE.Scheduler.Tasks
             }
             else
             {
+                PreviousTurninState = TurninState.None;
                 var critical = CosmicHelper.SheetMissionDict[id].Attributes.HasFlag(MissionAttributes.Critical);
                 PreviousMissionId = id;
 
@@ -271,6 +274,28 @@ namespace ICE.Scheduler.Tasks
                         C.Save();
                     }
                 }
+            }
+
+            if (C.RemoveAfterThreeGoldFailures && C.MissionConfig.TryGetValue(PreviousMissionId, out var missionConfig))
+            {
+                var isCritical = CosmicHelper.SheetMissionDict.TryGetValue(PreviousMissionId, out var missionInfo)
+                    && missionInfo.Attributes.HasFlag(MissionAttributes.Critical);
+                if (isCritical || missionConfig.TurninSilver || missionConfig.TurninBronze)
+                {
+                    missionConfig.ConsecutiveGoldFailures = 0;
+                }
+                else if (PreviousTurninState == TurninState.Gold)
+                {
+                    missionConfig.ConsecutiveGoldFailures = 0;
+                }
+                else if (++missionConfig.ConsecutiveGoldFailures >= 3)
+                {
+                    missionConfig.Enabled = false;
+                    missionConfig.ConsecutiveGoldFailures = 0;
+                    IceLogging.Info($"Mission [{PreviousMissionId}] did not earn gold three times in a row, disabling it.", "[Gold Check]");
+                }
+
+                C.Save();
             }
 
             IceLogging.Info("Gold Check is complete, and checking to see what state we need to be in post cleanup");

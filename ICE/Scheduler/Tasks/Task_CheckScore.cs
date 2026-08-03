@@ -171,15 +171,13 @@ namespace ICE.Scheduler.Tasks
                         {
                             CheckMedalStatus(id, missionInfo);
                             SchedulerMain.State = IceState.TurninMission;
-                            P.TaskManager.Tasks.Clear();
-                            return true;
                         }
                         else
                         {
                             SchedulerMain.State = IceState.AbandonMission;
-                            P.TaskManager.Tasks.Clear();
-                            return true;
                         }
+                        P.TaskManager.Tasks.Clear();
+                        return true;
                     }
 
                     if (CosmicHelper.SheetMissionDict.TryGetValue(id, out var missionEntry))

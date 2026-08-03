@@ -146,6 +146,7 @@ public class MissionTimer
         stats.GoldCompletions = 0;
         stats.CriticalCompletions = 0;
         stats.FailedCounters = 0;
+        stats.ConsecutiveGoldFailures = 0;
 
         C.Save();
     }
