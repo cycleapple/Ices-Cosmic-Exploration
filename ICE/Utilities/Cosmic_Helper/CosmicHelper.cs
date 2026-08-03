@@ -1,6 +1,7 @@
 ﻿using Dalamud.Interface.Textures;
 using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using FFXIVClientStructs.FFXIV.Client.Game.WKS;
 using ICE.Enums;
 using Lumina.Excel.Sheets;
 using System.Collections.Generic;
@@ -38,7 +39,21 @@ public static unsafe partial class CosmicHelper
     public static readonly int MinimumLevel = 10;
     public static readonly int MaximumLevel = Player.MaxLevel;
 
-    public static readonly int MaxRelicLevel = 14;
+    public const int DefaultRelicStageTarget = 9;
+
+    public static bool IsRelicAtMaxStage(WKSResearchModule* research, byte toolClassId)
+    {
+        var hasAvailableAnalysis = false;
+        for (byte type = 1; type < 6; type++)
+        {
+            if (!research->IsTypeAvailable(toolClassId, type)) break;
+
+            hasAvailableAnalysis = true;
+            if (research->GetNeededAnalysis(toolClassId, type) != 0) return false;
+        }
+
+        return hasAvailableAnalysis;
+    }
 
     #region Dictionaries
 

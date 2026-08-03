@@ -57,6 +57,7 @@ namespace ICE.Ui.MainUi
                 if (ImGui_Tools.DrawCategoryHeader_AutoSize("宇宙探索助手", icon: FontAwesomeIcon.ListAlt))
                 {
                     DrawSelectableWithIcon(FontAwesomeIcon.List, "標準模式", "modeSelect_Standard");
+                    DrawSelectableWithIcon(FontAwesomeIcon.ClipboardList, "宇宙計畫", "modeSelect_Agenda");
                     DrawSelectableWithIcon(FontAwesomeIcon.Trophy, "完成進度", "modeSelect_Completion");
                 }
                 if (ImGui_Tools.DrawCategoryHeader_AutoSize("設定", icon: FontAwesomeIcon.Cog))
@@ -143,7 +144,7 @@ namespace ICE.Ui.MainUi
                         ImGui.SetTooltip("Phaenna");
                     }
                 }
-                if (C.AutoPickCurrentJob && (CosmicHelper.CrafterJobList.Contains(Player.JobId) || CosmicHelper.GatheringJobList.Contains(Player.JobId)) && C.SelectedJob != Player.JobId)
+                if (!C.CosmicAgendaMode && C.AutoPickCurrentJob && (CosmicHelper.CrafterJobList.Contains(Player.JobId) || CosmicHelper.GatheringJobList.Contains(Player.JobId)) && C.SelectedJob != Player.JobId)
                 {
                     C.SelectedJob = Player.JobId;
                     C.Save();
@@ -157,7 +158,7 @@ namespace ICE.Ui.MainUi
                     
                     ImGui.SetCursorPosX(startX);
                     bool autoSelectJob = C.AutoPickCurrentJob;
-                    if (ImGui.Checkbox("自動選擇##AutoSelectJob", ref autoSelectJob))
+                    if (ImGui.Checkbox("自動選擇當前職業##AutoSelectJob", ref autoSelectJob))
                     {
                         C.AutoPickCurrentJob = autoSelectJob;
                         C.Save();

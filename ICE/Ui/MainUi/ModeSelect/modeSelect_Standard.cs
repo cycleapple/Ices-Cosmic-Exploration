@@ -48,7 +48,8 @@ namespace ICE.Ui.MainUi.ModeSelect
 
                 bool relicMode = C.XPRelicGrind;
                 bool provisionalMode = C.GrindProvisionals;
-                bool standard = (!relicMode && !provisionalMode);
+                bool agendaMode = C.CosmicAgendaMode;
+                bool standard = (!relicMode && !provisionalMode && !agendaMode);
 
                 if (standard)
                     modeType = "標準";
@@ -61,6 +62,11 @@ namespace ICE.Ui.MainUi.ModeSelect
                 {
                     modeType = "臨時任務";
                     modeIcon = FontAwesomeIcon.Cloud;
+                }
+                else if (agendaMode)
+                {
+                    modeType = "宇宙計畫";
+                    modeIcon = FontAwesomeIcon.ClipboardList;
                 }
 
                 ImGuiEx.IconWithText(modeIcon, $"{modeType}模式");
@@ -86,6 +92,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                     {
                         C.XPRelicGrind = false;
                         C.GrindProvisionals = false;
+                        C.CosmicAgendaMode = false;
                         C.Save();
                     }
                     ImGuiEx.HelpMarker("標準模式\n" +
@@ -96,6 +103,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                     {
                         C.XPRelicGrind = true;
                         C.GrindProvisionals = false;
+                        C.CosmicAgendaMode = false;
                         C.Save();
                     }
                     ImGuiEx.HelpMarker("宇宙工具培育\n" +
@@ -106,12 +114,23 @@ namespace ICE.Ui.MainUi.ModeSelect
                     {
                         C.XPRelicGrind = false;
                         C.GrindProvisionals = true;
+                        C.CosmicAgendaMode = false;
                         C.Save();
                     }
                     ImGuiEx.HelpMarker("臨時任務周回\n" +
                                        "→ 重複執行已啟用的臨時任務（天候／限時／連續）。\n" +
                                        "→ 可用於多個職業，並設定職業與任務類型的優先順序。\n" +
                                        "→ 適合累積各職業分數與代幣，或在特定時間執行指定任務。");
+                    if (ImGui.RadioButton("宇宙計畫", agendaMode))
+                    {
+                        C.XPRelicGrind = false;
+                        C.GrindProvisionals = false;
+                        C.CosmicAgendaMode = true;
+                        C.Save();
+                    }
+                    ImGuiEx.HelpMarker("依序完成設定的職業目標。可在左側「宇宙計畫」編輯目標。\n" +
+                                       "→ 每次任務結束後會重新判定下一個未完成目標。\n" +
+                                       "→ 計畫模式不套用一般停止條件。");
 
                     ImGui.EndPopup();
                 }
@@ -122,7 +141,7 @@ namespace ICE.Ui.MainUi.ModeSelect
                 ImGui.SameLine(0, 10 * scale);
                 ImGui.SetCursorPosY(ImGui.GetCursorPosY() + yOffset);
 
-                using (ImRaii.Disabled(SchedulerMain.State != IceState.Idle || !usingSupportedJob))
+                using (ImRaii.Disabled(SchedulerMain.State != IceState.Idle || !usingSupportedJob || (C.CosmicAgendaMode && C.CosmicAgenda.Count == 0)))
                 {
                     if (ImGui.Button("開始", new Vector2(150 * scale, 0)))
                     {

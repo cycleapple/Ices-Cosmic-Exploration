@@ -1,4 +1,5 @@
 ﻿using ICE.Sounds;
+using ICE.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -113,6 +114,36 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
             #endregion
 
+            #region Standard Missions Golded
+
+            bool stopStandardGold = C.StopOnceStandardMissionsGolded;
+            if (ImGui.Checkbox("選定職業的所有普通任務獲得金評時停止", ref stopStandardGold))
+            {
+                C.StopOnceStandardMissionsGolded = stopStandardGold;
+                C.Save();
+            }
+
+            if (stopStandardGold || C.CosmicAgenda.Any(x => x.Goal == AgendaGoal.StandardMissionsGolded))
+            {
+                ImGui.Indent();
+                ImGui.TextDisabled("納入等級：");
+                ImGui.SameLine();
+                var aRank = C.StopStandardGoldARank;
+                if (ImGui.Checkbox("A 級", ref aRank)) { C.StopStandardGoldARank = aRank; C.Save(); }
+                ImGui.SameLine();
+                var bRank = C.StopStandardGoldBRank;
+                if (ImGui.Checkbox("B 級", ref bRank)) { C.StopStandardGoldBRank = bRank; C.Save(); }
+                ImGui.SameLine();
+                var cRank = C.StopStandardGoldCRank;
+                if (ImGui.Checkbox("C 級", ref cRank)) { C.StopStandardGoldCRank = cRank; C.Save(); }
+                ImGui.SameLine();
+                var dRank = C.StopStandardGoldDRank;
+                if (ImGui.Checkbox("D 級", ref dRank)) { C.StopStandardGoldDRank = dRank; C.Save(); }
+                ImGui.Unindent();
+            }
+
+            #endregion
+
             #region Sound Alert
 
             bool playSoundAlert = C.PlaySoundAlert;
@@ -139,5 +170,6 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
             #endregion
         }
+
     }
 }

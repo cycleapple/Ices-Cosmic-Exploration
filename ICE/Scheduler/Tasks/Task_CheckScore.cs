@@ -188,11 +188,14 @@ namespace ICE.Scheduler.Tasks
                         {
                             if (MinRequirementsMet(id, missionInfo))
                             {
+                                var turninState = DetermineTurninState();
+                                if (Task_CheckState.IsStandardMissionsGoldAgendaActive() && turninState != TurninState.Gold)
+                                    return true;
+
                                 IceLogging.Info("We have enough unique fish to turnin for this mission. Proceeding to the mission turnin", handle);
                                 SchedulerMain.State = IceState.TurninMission;
                                 P.TaskManager.Tasks.Clear();
-
-                                Mission_Settings.TurninState = DetermineTurninState();
+                                Mission_Settings.TurninState = turninState;
                                 return true;
                             }
                             else
@@ -230,7 +233,11 @@ namespace ICE.Scheduler.Tasks
                                         bool SilverGoal = silverScore <= currentScore;
                                         bool TurninBronze = config.TurninBronze;
 
-                                        if (config.AutoTurnin)
+                                        if (Task_CheckState.IsStandardMissionsGoldAgendaActive())
+                                        {
+                                            shouldTurnin = GoldGoal;
+                                        }
+                                        else if (config.AutoTurnin)
                                         {
                                             // AutoTurnin enabled, going to check for gold only since we have materials/time still
                                             if (GoldGoal)
@@ -410,7 +417,11 @@ namespace ICE.Scheduler.Tasks
                             bool SilverGoal = silverScore <= currentScore;
                             bool TurninBronze = config.TurninBronze;
 
-                            if (config.AutoTurnin)
+                            if (Task_CheckState.IsStandardMissionsGoldAgendaActive())
+                            {
+                                shouldTurnin = GoldGoal;
+                            }
+                            else if (config.AutoTurnin)
                             {
                                 // AutoTurnin enabled, going to check for gold only since we have materials/time still
                                 if (GoldGoal)
@@ -591,12 +602,14 @@ namespace ICE.Scheduler.Tasks
                             }
                         }
 
+                        var turninState = DetermineTurninState();
+                        if (Task_CheckState.IsStandardMissionsGoldAgendaActive() && turninState != TurninState.Gold)
+                            return true;
+
                         // if we've gotten here, that means that we actually have all the items. Proceeding to turnin item
                         SchedulerMain.State = IceState.TurninMission;
                         P.TaskManager.Tasks.Clear();
-
-                        Mission_Settings.TurninState = DetermineTurninState();
-
+                        Mission_Settings.TurninState = turninState;
                         return true;
                     }
                     else
@@ -666,7 +679,11 @@ namespace ICE.Scheduler.Tasks
 
                             bool shouldTurnin = false;
 
-                            if (config.AutoTurnin)
+                            if (Task_CheckState.IsStandardMissionsGoldAgendaActive())
+                            {
+                                shouldTurnin = GoldGoal;
+                            }
+                            else if (config.AutoTurnin)
                             {
                                 // AutoTurnin enabled, going to check for gold only since we have materials/time still
                                 if (GoldGoal)
@@ -795,7 +812,11 @@ namespace ICE.Scheduler.Tasks
                         bool SilverGoal = silverScore <= currentScore;
                         bool TurninBronze = config.TurninBronze;
 
-                        if (config.AutoTurnin)
+                        if (Task_CheckState.IsStandardMissionsGoldAgendaActive())
+                        {
+                            shouldTurnin = GoldGoal;
+                        }
+                        else if (config.AutoTurnin)
                         {
                             // AutoTurnin enabled, going to check for gold only since we have materials/time still
                             if (GoldGoal)

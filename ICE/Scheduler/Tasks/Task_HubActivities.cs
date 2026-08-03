@@ -51,7 +51,7 @@ namespace ICE.Scheduler
                 new(() => ResetAll(), "Setting all task to false"),
                 new(() => IceLogging.Info("Checking to see if we need to path back to the spot")),
                 new(PathBackToCraftingSpot, "Pathing back to our crafting spot", Utils.TaskConfig),
-                new(() => SchedulerMain.State = IceState.GrabMission, "Swapping back to start")
+                new(() => SchedulerMain.State = C.CosmicAgendaMode ? IceState.Start : IceState.GrabMission, "Swapping back to start")
             );
         }
 

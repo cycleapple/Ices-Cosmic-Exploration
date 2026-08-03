@@ -227,6 +227,9 @@ namespace ICE.Scheduler.Tasks
 
         public static bool? JobSwapCheck()
         {
+            if (C.CosmicAgendaMode)
+                return true;
+
             if (C.GrindProvisionals)
             {
                 IceLogging.Info("We're currently grinding out provisionals, and that means swapping jobs constantly would be... hella bad LOL. So just continuing on like normal");

@@ -132,6 +132,24 @@ public static class Settings_TableColumns
             C.Save();
         }
 
+        bool removeAfterThreeGoldFailures = C.RemoveAfterThreeGoldFailures;
+        if (ImGui.Checkbox("連續三次未獲金牌後移除任務", ref removeAfterThreeGoldFailures))
+        {
+            C.RemoveAfterThreeGoldFailures = removeAfterThreeGoldFailures;
+            C.Save();
+        }
+        ImGui.SameLine();
+        ImGui.TextDisabled("?");
+        if (ImGui.IsItemHovered())
+            ImGui.SetTooltip("僅計算以自動或金牌繳交完成的任務；設定為銀牌或銅牌繳交的任務不會被移除。取得金牌會重設計數。");
+
+        bool skipHubDuringRedAlert = C.SkipHubActivitiesDuringRedAlert;
+        if (ImGui.Checkbox("緊急任務期間跳過維護與 Hub 活動", ref skipHubDuringRedAlert))
+        {
+            C.SkipHubActivitiesDuringRedAlert = skipHubDuringRedAlert;
+            C.Save();
+        }
+
         ImGui.Checkbox("目前任務完成後停止", ref Mission_Settings.StopAfterCurrent);
         bool relicTurnin = C.TurninRelic;
         if (ImGui.Checkbox("宇宙工具完成時繳交##RelicTurnin_GeneralSetting", ref relicTurnin))

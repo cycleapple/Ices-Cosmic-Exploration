@@ -1,6 +1,7 @@
 ﻿using Dalamud.Game.ClientState.Conditions;
 using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game.WKS;
+using ICE.Config;
 using ICE.Sounds;
 using ICE.Utilities.Cosmic;
 using ICE.Utilities.Cosmic_Helper;
@@ -13,6 +14,8 @@ namespace ICE.Scheduler.Tasks
 {
     internal static class Task_CheckState
     {
+        private static readonly uint[] PlanetCreditItems = [45691, 48146, 48147, 48148];
+
         public static void Enqueue()
         {
             P.TaskManager.Enqueue(() => CheckState(), "Checking to see what state we should be in");
@@ -22,7 +25,6 @@ namespace ICE.Scheduler.Tasks
         {
             string tag = "Task: Check State";
             var currentMissionId = CosmicHelper.CurrentLunarMission;
-            int maxStage = 14;
 
             if (AddonHelper.IsAddonActive("WKSLottery"))
             {
@@ -32,10 +34,20 @@ namespace ICE.Scheduler.Tasks
             }
             else
             {
-                RelicInfo(out var allComplete, out var currentStage, out var XPTable);
-                bool canTurnin = allComplete && currentStage != maxStage && C.TurninRelic;
+                RelicInfo(out var allComplete, out _, out var XPTable, out var isMaxStage);
+                var agendaRelicTurnin = ShouldTurninAgendaRelic(allComplete, isMaxStage);
+                bool canTurnin = allComplete && !isMaxStage && (C.TurninRelic || agendaRelicTurnin);
 
-                if (C.StopWhenLevel && Player.Level >= C.TargetLevel)
+                if (C.CosmicAgendaMode && currentMissionId == 0 && !agendaRelicTurnin)
+                {
+                    var agendaReady = PrepareAgenda();
+                    if (agendaReady != true)
+                    {
+                        return agendaReady;
+                    }
+                }
+
+                if (!C.CosmicAgendaMode && C.StopWhenLevel && Player.Level >= C.TargetLevel)
                 {
                     SchedulerMain.State = IceState.Idle;
                     IceLogging.ChatInfo("Stop At Player Level is enabled. \n" +
@@ -47,7 +59,7 @@ namespace ICE.Scheduler.Tasks
 
                     return true;
                 }
-                if (C.StopOnceHitCosmicScore)
+                if (!C.CosmicAgendaMode && C.StopOnceHitCosmicScore)
                 {
                     var scores = CosmicHelper.GetCosmicClassScores();
 
@@ -63,15 +75,9 @@ namespace ICE.Scheduler.Tasks
                         return true;
                     }
                 }
-                if (C.StopOnceHitLunarCredits)
+                if (!C.CosmicAgendaMode && C.StopOnceHitLunarCredits)
                 {
-                    uint[] currencies = [45691, 48146, 48147, 48148];
-                    var manager = WKSManager.Instance();
-                    var zoneId = *((byte*)manager + 0x5D);
-                    var itemId = currencies[zoneId];
-
-                    PlayerHelper.GetItemCount(itemId, out var credits);
-                    if (credits >= C.LunarCreditsCap)
+                    if (TryGetPlanetCredits(out var credits) && credits >= C.LunarCreditsCap)
                     {
                         IceLogging.ChatInfo($"You've either hit the Lunar Credit threshold, or gone above it.\n" +
                                             $"Stopping I.C.E.", "[I.C.E.]");
@@ -83,7 +89,7 @@ namespace ICE.Scheduler.Tasks
                         return true;
                     }
                 }
-                if (C.StopOnceHitCosmoCredits && !C.BuyItems)
+                if (!C.CosmicAgendaMode && C.StopOnceHitCosmoCredits && !C.BuyItems)
                 {
                     if (GenericHelpers.TryGetAddonMaster<WKSHud>("WKSHud", out var hud) && hud.IsAddonReady && (hud.CosmoCredit >= C.CosmoCreditsCap))
                     {
@@ -96,7 +102,7 @@ namespace ICE.Scheduler.Tasks
                         return true;
                     }
                 }
-                if (C.StopOnceRelicFinished)
+                if (!C.CosmicAgendaMode && C.StopOnceRelicFinished)
                 {
                     if (allComplete && !canTurnin)
                     {
@@ -128,11 +134,11 @@ namespace ICE.Scheduler.Tasks
                     if (allComplete)
                     {
 
-                        if (C.TurninRelic && currentStage != maxStage)
+                        if (C.TurninRelic && !isMaxStage)
                         {
                             IceLogging.Info("We've hit a point where we can turnin the relic! Going to add a thing to check for that later");
                         }
-                        else if (C.TurninRelic && currentStage == maxStage && C.StopOnceRelicFinished)
+                        else if (C.TurninRelic && isMaxStage && C.StopOnceRelicFinished)
                         {
                             IceLogging.Info("You have met all necessary relic xp, and you have \"Stop on Relic Completion\" enabled, so stopping for now");
                             SchedulerMain.State = IceState.Idle;
@@ -143,6 +149,10 @@ namespace ICE.Scheduler.Tasks
                             return true;
                         }
                     }
+                }
+                if (!C.CosmicAgendaMode && TryStopWhenStandardMissionsGolded())
+                {
+                    return true;
                 }
                 if (currentMissionId != 0)
                 {
@@ -226,6 +236,13 @@ namespace ICE.Scheduler.Tasks
                 }
                 else
                 {
+                    if (C.SkipHubActivitiesDuringRedAlert && CosmicHandler.IsRedAlertInProgress() && !agendaRelicTurnin)
+                    {
+                        IceLogging.Info("Red alert is in progress; skipping maintenance and hub activities to grab a mission.", "[Task: Check State]");
+                        SchedulerMain.State = IceState.GrabMission;
+                        return true;
+                    }
+
                     var currentJob = Player.JobId;
 
                     bool repairVendor = C.RepairAtVendor && PlayerHelper.NeedsRepair(C.RepairPercent);
@@ -287,6 +304,205 @@ namespace ICE.Scheduler.Tasks
             }
         }
 
+        private static unsafe bool TryStopWhenStandardMissionsGolded()
+        {
+            if (!C.StopOnceStandardMissionsGolded || !PlayerHelper.IsInCosmicZone())
+            {
+                return false;
+            }
+
+            CountStandardMissionGold(C.SelectedJob, null, out var golded, out var total);
+
+            if (total == 0 || golded != total)
+            {
+                return false;
+            }
+
+            IceLogging.ChatInfo($"所有普通任務皆已獲得金評（{golded}/{total}），停止 ICE。", "[I.C.E.]");
+            SchedulerMain.State = IceState.Idle;
+            P.TaskManager.Tasks.Clear();
+            if (C.PlaySoundAlert)
+            {
+                _ = SoundPlayer.PlaySoundAsync();
+            }
+
+            return true;
+        }
+
+        private static unsafe void CountStandardMissionGold(uint jobId, AgendaEntry? agendaEntry, out int golded, out int total)
+        {
+            golded = 0;
+            total = 0;
+
+            var manager = WKSManager.Instance();
+            if (manager == null)
+            {
+                return;
+            }
+
+            foreach (var mission in SheetMissionDict)
+            {
+                var info = mission.Value;
+                if (info.TerritoryId != Player.Territory || !info.Jobs.Contains(jobId))
+                {
+                    continue;
+                }
+
+                var attributes = info.Attributes;
+                if (attributes.HasFlag(MissionAttributes.Critical)
+                    || attributes.HasFlag(MissionAttributes.ProvisionalTimed)
+                    || attributes.HasFlag(MissionAttributes.ProvisionalWeather)
+                    || attributes.HasFlag(MissionAttributes.ProvisionalSequential)
+                    || !IsStandardGoldRankSelected(info.Rank, agendaEntry))
+                {
+                    continue;
+                }
+
+                total++;
+                if (((WKSManagerCustom*)manager)->IsMissionGolded(mission.Key))
+                {
+                    golded++;
+                }
+            }
+        }
+
+        private static unsafe bool? PrepareAgenda()
+        {
+            foreach (var entry in C.CosmicAgenda)
+            {
+                if (IsAgendaGoalComplete(entry))
+                {
+                    continue;
+                }
+
+                C.SelectedJob = entry.Job;
+                C.XPRelicGrind = entry.Goal == AgendaGoal.RelicStage;
+                C.GrindProvisionals = false;
+
+                if (Player.JobId != entry.Job)
+                {
+                    GearsetHandler.TaskClassChange((Job)entry.Job);
+                    return false;
+                }
+
+                return true;
+            }
+
+            IceLogging.ChatInfo("宇宙計畫的所有目標皆已完成，停止 ICE。", "[I.C.E.]");
+            SchedulerMain.State = IceState.Idle;
+            P.TaskManager.Tasks.Clear();
+            if (C.PlaySoundAlert)
+            {
+                _ = SoundPlayer.PlaySoundAsync();
+            }
+
+            return null;
+        }
+
+        private static bool ShouldTurninAgendaRelic(bool allComplete, bool isMaxStage)
+        {
+            if (!C.CosmicAgendaMode || !allComplete || isMaxStage)
+                return false;
+
+            foreach (var entry in C.CosmicAgenda)
+            {
+                if (IsAgendaGoalComplete(entry))
+                    continue;
+
+                return entry.Goal == AgendaGoal.RelicStage && entry.Job == Player.JobId;
+            }
+
+            return false;
+        }
+
+        private static unsafe bool IsAgendaGoalComplete(AgendaEntry entry)
+        {
+            return entry.Goal switch
+            {
+                AgendaGoal.RelicStage => IsRelicStageGoalComplete(entry),
+                AgendaGoal.CosmoCredits => PlayerHelper.GetItemCount(45690, out var credits) && credits >= entry.Target,
+                AgendaGoal.LunarCredits => TryGetPlanetCredits(out var lunarCredits) && lunarCredits >= entry.Target,
+                AgendaGoal.ClassLevel => Player.GetUnsyncedLevel((Job)entry.Job) >= entry.Target,
+                AgendaGoal.ClassScore => GetAgendaClassScore(entry.Job) >= entry.Target,
+                AgendaGoal.StandardMissionsGolded => IsStandardMissionsGolded(entry),
+                _ => true,
+            };
+        }
+
+        private static unsafe bool IsRelicStageGoalComplete(AgendaEntry entry)
+        {
+            RelicInfo(out _, out var stage, out _, out _, entry.Job);
+            return stage >= entry.Target;
+        }
+
+        private static unsafe bool TryGetPlanetCredits(out int credits)
+        {
+            credits = 0;
+            var manager = WKSManager.Instance();
+            if (manager == null)
+                return false;
+
+            var zoneId = *((byte*)manager + 0x5D);
+            return zoneId < PlanetCreditItems.Length && PlayerHelper.GetItemCount(PlanetCreditItems[zoneId], out credits);
+        }
+
+        private static unsafe bool IsStandardMissionsGolded(AgendaEntry entry)
+        {
+            CountStandardMissionGold(entry.Job, entry, out var golded, out var total);
+            return total > 0 && golded == total;
+        }
+
+        internal static bool IsStandardMissionsGoldAgendaActive()
+        {
+            if (!C.CosmicAgendaMode && C.StopOnceStandardMissionsGolded)
+            {
+                return true;
+            }
+
+            if (!C.CosmicAgendaMode)
+            {
+                return false;
+            }
+
+            foreach (var entry in C.CosmicAgenda)
+            {
+                if (!IsAgendaGoalComplete(entry))
+                {
+                    return entry.Goal == AgendaGoal.StandardMissionsGolded;
+                }
+            }
+
+            return false;
+        }
+
+        private static unsafe int GetAgendaClassScore(uint jobId)
+        {
+            var manager = WKSManager.Instance();
+            return manager == null || jobId is < 8 or > 18 ? 0 : manager->Scores[(int)jobId - 8];
+        }
+
+        internal static bool IsStandardGoldRankSelected(uint rank)
+        {
+            if (C.CosmicAgendaMode)
+            {
+                foreach (var entry in C.CosmicAgenda)
+                {
+                    if (!IsAgendaGoalComplete(entry))
+                        return entry.Goal == AgendaGoal.StandardMissionsGolded && IsStandardGoldRankSelected(rank, entry);
+                }
+            }
+
+            return IsStandardGoldRankSelected(rank, null);
+        }
+
+        private static bool IsStandardGoldRankSelected(uint rank, AgendaEntry? entry) => rank switch
+        {
+            1 => entry?.StandardGoldDRank ?? C.StopStandardGoldDRank,
+            2 => entry?.StandardGoldCRank ?? C.StopStandardGoldCRank,
+            3 => entry?.StandardGoldBRank ?? C.StopStandardGoldBRank,
+            _ => entry?.StandardGoldARank ?? C.StopStandardGoldARank,
+        };
+
         private static void UpdateMissionState(uint missionId)
         {
             // Clearing the current mission modifiers.
@@ -299,13 +515,12 @@ namespace ICE.Scheduler.Tasks
             SchedulerMain.MissionState = missionDictInfo.Attributes;
         }
 
-        private static unsafe bool RelicInfo(out bool isComplete, out int currentStage, out Dictionary<int, XPType> XPTable)
+        private static unsafe bool RelicInfo(out bool isComplete, out int currentStage, out Dictionary<int, XPType> XPTable, out bool isMaxStage, uint jobId = 0)
         {
-            var maxStage = CosmicHelper.MaxRelicLevel;
-
             string tag = "Relic Info Check";
             currentStage = 0; // Must initialize out parameters
             isComplete = false; // Must initialize out parameters
+            isMaxStage = false;
             XPTable = new();
 
             var wksManager = WKSManager.Instance();
@@ -314,14 +529,15 @@ namespace ICE.Scheduler.Tasks
                 return false;
             }
 
-            var job = Player.JobId;
+            var job = jobId == 0 ? Player.JobId : jobId;
             var toolClassId = (byte)(job - 7);
             var stage = wksManager->ResearchModule->CurrentStages[toolClassId - 1];
             var nextstate = wksManager->ResearchModule->UnlockedStages[toolClassId - 1];
 
             currentStage = stage;
+            isMaxStage = CosmicHelper.IsRelicAtMaxStage(wksManager->ResearchModule, toolClassId);
 
-            if (currentStage != maxStage)
+            if (!isMaxStage)
             {
                 for (byte type = 1; type < 6; type++)
                 {

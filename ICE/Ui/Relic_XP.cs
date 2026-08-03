@@ -53,7 +53,7 @@ namespace ICE.Ui
                 }
             }
 
-            bool MaxStage = XPTable.Where(x => x.Value.NeededXP != 0).Count() == 0;
+            bool MaxStage = CosmicHelper.IsRelicAtMaxStage(wksManager->ResearchModule, toolClassId);
 
             ImGui.Text($"階段: {stage}");
             if (MaxStage)
@@ -84,7 +84,7 @@ namespace ICE.Ui
                 else
                     xpType = "???";
 
-                if (stage != 14)
+                if (!MaxStage)
                 {
                     DrawXPBar($"宇宙資料{xpType}", current, needed, size, max);
                 }

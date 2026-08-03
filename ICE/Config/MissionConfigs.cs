@@ -30,6 +30,8 @@ namespace ICE.Config
         public bool XPRelicGrind { get; set; } = false;
         public bool XPRelicIgnoreManual { get; set; } = false;
         public bool XPRelicOnlyEnabled { get; set; } = false;
+        public bool CosmicAgendaMode { get; set; } = false;
+        public List<AgendaEntry> CosmicAgenda { get; set; } = new();
         public bool ShowCritical { get; set; } = true;
         public bool ShowSequential { get; set; } = true;
         public bool ShowWeather { get; set; } = true;
@@ -62,6 +64,11 @@ namespace ICE.Config
         public bool StopOnceHitCosmicScore { get; set; } = false;
         public int CosmicScoreCap { get; set; } = 500000;
         public bool StopOnceRelicFinished { get; set; } = false;
+        public bool StopOnceStandardMissionsGolded { get; set; } = false;
+        public bool StopStandardGoldARank { get; set; } = true;
+        public bool StopStandardGoldBRank { get; set; } = true;
+        public bool StopStandardGoldCRank { get; set; } = true;
+        public bool StopStandardGoldDRank { get; set; } = true;
         public byte SequenceMissionPriority { get; set; } = 1;
         public byte WeatherMissionPriority { get; set; } = 2;
         public byte TimedMissionPriority { get; set; } = 3;
@@ -81,6 +88,8 @@ namespace ICE.Config
         public bool ShowSinusMissions { get; set; } = true;
         public bool ShowPhaennaMissions { get; set; } = true;
         public bool RemoveAfterGold { get; set; } = false;
+        public bool RemoveAfterThreeGoldFailures { get; set; } = false;
+        public bool SkipHubActivitiesDuringRedAlert { get; set; } = false;
         public bool ShowExtraMissionInfo { get; set; } = true;
         public Dictionary<uint, uint> ScoreKeeper { get; set; } = new();
 
@@ -334,6 +343,27 @@ namespace ICE.Config
         }
 
         #endregion
+    }
+
+    public enum AgendaGoal
+    {
+        RelicStage,
+        CosmoCredits,
+        ClassLevel,
+        ClassScore,
+        StandardMissionsGolded,
+        LunarCredits,
+    }
+
+    public class AgendaEntry
+    {
+        public AgendaGoal Goal { get; set; } = AgendaGoal.RelicStage;
+        public uint Job { get; set; } = 8;
+        public int Target { get; set; } = 1;
+        public bool? StandardGoldARank { get; set; }
+        public bool? StandardGoldBRank { get; set; }
+        public bool? StandardGoldCRank { get; set; }
+        public bool? StandardGoldDRank { get; set; }
     }
 
     public class MissionSettings

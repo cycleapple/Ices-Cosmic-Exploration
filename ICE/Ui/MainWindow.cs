@@ -84,6 +84,9 @@ namespace ICE.Ui
                     }
                     modeSelect_Standard.Draw();
                     break;
+                case "modeSelect_Agenda":
+                    modeSelect_Agenda.Draw();
+                    break;
 
                 // Settings
                 case "setting_StopWhen":

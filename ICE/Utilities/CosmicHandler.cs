@@ -1,5 +1,6 @@
 ﻿using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game.WKS;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,12 @@ namespace ICE.Utilities
 {
     internal class CosmicHandler
     {
+        internal static unsafe bool IsRedAlertInProgress()
+        {
+            var agent = AgentWKSAnnounce.Instance();
+            return agent != null && agent->Data != null && agent->Data->State == 2;
+        }
+
         internal static HashSet<string> commenceStrings =
         [
             "Commence selected mission?",                     // English

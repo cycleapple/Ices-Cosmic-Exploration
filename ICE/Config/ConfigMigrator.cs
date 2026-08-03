@@ -462,6 +462,14 @@ namespace ICE.Config
                     }
                 }
 
+                C.CosmicAgenda ??= new();
+                foreach (var entry in C.CosmicAgenda.Where(x => x.Goal == AgendaGoal.StandardMissionsGolded))
+                {
+                    entry.StandardGoldARank ??= C.StopStandardGoldARank;
+                    entry.StandardGoldBRank ??= C.StopStandardGoldBRank;
+                    entry.StandardGoldCRank ??= C.StopStandardGoldCRank;
+                    entry.StandardGoldDRank ??= C.StopStandardGoldDRank;
+                }
                 C.ConfigVersion = 13;
                 C.Save();
             }

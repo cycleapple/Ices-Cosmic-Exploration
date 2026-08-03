@@ -108,7 +108,7 @@ namespace ICE.Scheduler.Tasks
 
             return false;
         }
-        public static bool? RefreshSelectedMissions()
+        public static unsafe bool? RefreshSelectedMissions()
         {
             CriticalMissions.Clear();
             WeatherMissions.Clear();
@@ -123,6 +123,8 @@ namespace ICE.Scheduler.Tasks
             BasicMissionCount = 0;
 
             uint currentJobId = Player.JobId;
+            var filterStandardRanks = Task_CheckState.IsStandardMissionsGoldAgendaActive();
+            var manager = WKSManager.Instance();
 
             foreach (var mission in C.MissionConfig)
             {
@@ -133,7 +135,7 @@ namespace ICE.Scheduler.Tasks
                     if (!enabled && C.XPRelicOnlyEnabled)
                         continue;
                 }
-                else if (!enabled)
+                else if (!enabled && !filterStandardRanks)
                     continue;
 
                 var missionId = mission.Key;
@@ -147,6 +149,19 @@ namespace ICE.Scheduler.Tasks
                     // Territory Check, cause people seem to also be forgetting this
                     if (missionInfo.TerritoryId != Player.Territory)
                         continue;
+
+                    var attributes = missionInfo.Attributes;
+                    var isStandardMission = !attributes.HasFlag(MissionAttributes.Critical)
+                        && !attributes.HasFlag(MissionAttributes.ProvisionalTimed)
+                        && !attributes.HasFlag(MissionAttributes.ProvisionalWeather)
+                        && !attributes.HasFlag(MissionAttributes.ProvisionalSequential);
+                    if (filterStandardRanks
+                        && (!isStandardMission
+                            || !Task_CheckState.IsStandardGoldRankSelected(missionInfo.Rank)
+                            || manager != null && ((WKSManagerCustom*)manager)->IsMissionGolded(missionId)))
+                    {
+                        continue;
+                    }
 
                     // Alright, mission was double checked to make sure it was enabled
                     // And also checked to make sure that the current job is on the mission, time to actually add it to the mission info
@@ -419,8 +434,12 @@ namespace ICE.Scheduler.Tasks
                     if (missionHashSet.Count == 0)
                         continue;
 
+                    var missions = x.StellerMissions.Where(m => missionHashSet.Contains(m.MissionId));
+                    if (Task_CheckState.IsStandardMissionsGoldAgendaActive() && CosmicHelper.GatheringJobList.Contains(Player.JobId))
+                        missions = missions.OrderBy(m => GetGatherEntryDistance(m.MissionId));
+
                     // Look for missions of this rank type
-                    foreach (var mission in x.StellerMissions.Where(m => missionHashSet.Contains(m.MissionId)))
+                    foreach (var mission in missions)
                     {
                         mission.Select();
                         InsertGrabMission(mission.MissionId);
@@ -438,6 +457,18 @@ namespace ICE.Scheduler.Tasks
 
             return false;
         }
+        private static float GetGatherEntryDistance(uint missionId)
+        {
+            if (!CosmicHelper.SheetMissionDict.TryGetValue(missionId, out var mission)
+                || !mission.Attributes.HasFlag(MissionAttributes.Gather))
+                return float.MaxValue;
+
+            var route = GatheringRouteLoader.GetRoute(mission.TerritoryId, mission.MapPosition);
+            return route == null || route.Count == 0
+                ? float.MaxValue
+                : route.Min(node => Player.DistanceTo(node.LandZone));
+        }
+
         private static unsafe bool? CheckExp()
         {
             if (GenericHelpers.TryGetAddonMaster<WKSMission>("WKSMission", out var x) && x.IsAddonReady)
@@ -509,17 +540,12 @@ namespace ICE.Scheduler.Tasks
 
             if (GenericHelpers.TryGetAddonMaster<WKSMission>("WKSMission", out var x) && x.IsAddonReady)
             {
-                var maxStage = CosmicHelper.MaxRelicLevel;
-
                 var wksManager = WKSManager.Instance();
                 if (wksManager == null || wksManager->ResearchModule == null || !wksManager->ResearchModule->IsLoaded)
                     return null;
 
                 var job = Player.JobId;
                 var toolClassId = (byte)(job - 7);
-                var stage = wksManager->ResearchModule->CurrentStages[toolClassId - 1];
-                var nextstate = wksManager->ResearchModule->UnlockedStages[toolClassId - 1];
-
                 if (Svc.Data.GetExcelSheet<WKSCosmoToolClass>().TryGetRow(toolClassId, out var row)) { }
 
                 Dictionary<int, CosmicHelper.XPType> XPTable = new Dictionary<int, CosmicHelper.XPType>();
@@ -530,7 +556,7 @@ namespace ICE.Scheduler.Tasks
                 }
                 else
                 {
-                    if (stage != maxStage)
+                    if (!CosmicHelper.IsRelicAtMaxStage(wksManager->ResearchModule, toolClassId))
                     {
                         for (byte type = 1; type < 6; type++)
                         {
