@@ -19,6 +19,9 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
             AutoUse();
             Separator();
 
+            TravelSettings();
+            Separator();
+
             RepairSettings();
             Separator();
 
@@ -35,6 +38,9 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
             Separator();
 
             PostMissionCommands();
+            Separator();
+
+            MissionPlaylists();
             Separator();
 
             ImGuiEx.IconWithText(FontAwesomeIcon.ExclamationTriangle, "安全設定");
@@ -480,6 +486,87 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                 }
 
                 ImGui.EndTable();
+            }
+        }
+
+        private static void TravelSettings()
+        {
+            ImGuiEx.IconWithText(FontAwesomeIcon.Route, "宇宙探索移動");
+            ImGui.Dummy(new Vector2(0, 5));
+
+            bool useHubReturn = C.UseHubReturn;
+            if (ImGui.Checkbox("使用返回據點縮短路程", ref useHubReturn))
+            {
+                C.UseHubReturn = useHubReturn;
+                C.Save();
+            }
+
+            bool useRedAlertNpc = C.UseRedAlertNpc;
+            if (ImGui.Checkbox("使用緊急任務傳送人員", ref useRedAlertNpc))
+            {
+                C.UseRedAlertNpc = useRedAlertNpc;
+                C.Save();
+            }
+        }
+
+        private static string playlistName = string.Empty;
+
+        private static void MissionPlaylists()
+        {
+            ImGuiEx.IconWithText(FontAwesomeIcon.List, "任務預設");
+            ImGui.Dummy(new Vector2(0, 5));
+            ImGui.TextWrapped("儲存目前啟用的任務組合。載入預設會關閉未列入的其他任務，但不會改變任務優先順序。");
+
+            ImGui.SetNextItemWidth(220);
+            ImGui.InputText("預設名稱", ref playlistName, 100);
+            ImGui.SameLine();
+            using (ImRaii.Disabled(string.IsNullOrWhiteSpace(playlistName)))
+            {
+                if (ImGui.Button("儲存目前啟用項目"))
+                {
+                    var enabledMissions = new List<uint>();
+                    foreach (var mission in C.MissionConfig)
+                    {
+                        if (mission.Value.Enabled)
+                        {
+                            enabledMissions.Add(mission.Key);
+                        }
+                    }
+
+                    C.MissionPlaylists[playlistName.Trim()] = enabledMissions;
+                    playlistName = string.Empty;
+                    C.Save();
+                }
+            }
+
+            string? deletePlaylist = null;
+            foreach (var playlist in C.MissionPlaylists)
+            {
+                ImGui.PushID(playlist.Key);
+                ImGui.Text($"{playlist.Key}（{playlist.Value.Count} 個任務）");
+                ImGui.SameLine();
+                if (ImGui.Button("載入"))
+                {
+                    var selected = new HashSet<uint>(playlist.Value);
+                    foreach (var mission in C.MissionConfig)
+                    {
+                        mission.Value.Enabled = selected.Contains(mission.Key);
+                    }
+
+                    C.Save();
+                }
+                ImGui.SameLine();
+                if (ImGuiEx.IconButton(FontAwesomeIcon.Trash, "刪除"))
+                {
+                    deletePlaylist = playlist.Key;
+                }
+                ImGui.PopID();
+            }
+
+            if (deletePlaylist != null)
+            {
+                C.MissionPlaylists.Remove(deletePlaylist);
+                C.Save();
             }
         }
 

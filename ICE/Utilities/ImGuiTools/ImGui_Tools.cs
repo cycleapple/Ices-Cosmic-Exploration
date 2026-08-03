@@ -245,7 +245,7 @@ public static partial class ImGui_Tools
 
         // If it doesn't already exist, then creating an entry in the category state
         if (!CategoryStates.ContainsKey(categoryId))
-            CategoryStates[categoryId] = false;
+            CategoryStates[categoryId] = C.MissionDisplayCategories.TryGetValue(categoryId, out var savedState) && savedState;
 
         bool isExpanded = CategoryStates[categoryId];
         bool isHovered = ImGui.IsMouseHoveringRect(cursorPos, new Vector2(cursorPos.X + contentWidth, cursorPos.Y + contentHeight))
@@ -256,6 +256,8 @@ public static partial class ImGui_Tools
         {
             CategoryStates[categoryId] = !CategoryStates[categoryId];
             isExpanded = CategoryStates[categoryId];
+            C.MissionDisplayCategories[categoryId] = isExpanded;
+            C.Save();
         }
 
         // Color changing! Based on the various states

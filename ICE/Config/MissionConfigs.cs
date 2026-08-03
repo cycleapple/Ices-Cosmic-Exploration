@@ -40,6 +40,7 @@ namespace ICE.Config
         public bool ShowClassB { get; set; } = true;
         public bool ShowClassC { get; set; } = true;
         public bool ShowClassD { get; set; } = true;
+        public Dictionary<string, bool> MissionDisplayCategories { get; set; } = new();
 
         #endregion
 
