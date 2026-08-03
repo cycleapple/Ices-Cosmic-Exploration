@@ -130,18 +130,16 @@ namespace ICE.Scheduler.Tasks
             if (PlayerHelper.GetItemCount(itemId, out var count) && count < dualCraftAmount)
             {
                 // We have enough to craft. Telling it to craft the item... x amount of times
-                P.Artisan.CraftItem(recipeId, dualCraftAmount);
                 P.TaskManager.Tasks.Clear();
-                InsertArtisanWait();
+                Task_Craft.InsertArtisanWait(recipeId, dualCraftAmount);
                 IceLogging.Info($"Told artisan to craft {dualCraftAmount} of the following recipe: {recipeId}");
                 return true;
             }
             else
             {
                 // We have enough for atleast 1 more craft, telling artisan to craft. Uno mas.
-                P.Artisan.CraftItem(recipeId, 1);
                 P.TaskManager.Tasks.Clear();
-                InsertArtisanWait();
+                Task_Craft.InsertArtisanWait(recipeId, 1);
                 IceLogging.Info($"Told Artisan to craft 1 item of the following recipe: {recipeId}");
                 return true;
             }
@@ -221,40 +219,6 @@ namespace ICE.Scheduler.Tasks
             }
 
             return false;
-        }
-
-        private static bool? WaitingForArtisan()
-        {
-            if (!P.Artisan.IsBusy())
-            {
-                IceLogging.Info("Artisan is no longer running, continuing the process");
-                P.TaskManager.Tasks.Clear();
-                return true;
-            }
-            else
-            {
-                if (Svc.Condition[ConditionFlag.ExecutingCraftingAction])
-                {
-                    // Need to add a timer check here. Make it configuarable maybe... 10s?
-                    // If the timer exceeds 10 seconds, then that means we're stuck in an animation lock
-                    // then need to cancel them all and just force abandon lock failsafe
-                }
-                if (GenericHelpers.TryGetAddonMaster<WKSHud>("WKSHud", out var moonHud))
-                {
-                    if (!AddonHelper.IsAddonActive("WKSMissionInfomation"))
-                    {
-                        if (EzThrottler.Throttle("Opening mission scoring info"))
-                        {
-                            moonHud.Mission();
-                        }
-                    }
-                }
-            }
-            return false;
-        }
-        private static void InsertArtisanWait()
-        {
-            P.TaskManager.Insert(() => WaitingForArtisan(), "Waiting for artisan to finish", Utils.TaskConfig);
         }
 
         #region Gathering

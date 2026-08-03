@@ -11,7 +11,7 @@ namespace ICE.Scheduler.Tasks
         {
             if (P.Artisan.IsBusy())
             {
-                P.TaskManager.Enqueue(() => WaitingForArtisan(), "Waiting for artisan to finish crafting");
+                P.TaskManager.Enqueue(() => WaitingForArtisan(), "Waiting for artisan to finish crafting", Utils.TaskConfig);
                 P.TaskManager.Enqueue(() => Task_CheckScore.Crafts(), "Checking score");
             }
             else
@@ -21,8 +21,14 @@ namespace ICE.Scheduler.Tasks
             }
         }
 
-        private static bool? WaitingForArtisan()
+        private static bool? WaitingForArtisan(ushort? craftId = null)
         {
+            if (craftId is { } recipeId && P.Artisan.GetRaphaelStatus(recipeId) == 2)
+            {
+                StopForRaphaelFailure(recipeId);
+                return true;
+            }
+
             if (!P.Artisan.IsBusy())
             {
                 IceLogging.Info("Artisan is no longer running, continuing the process");
@@ -52,13 +58,13 @@ namespace ICE.Scheduler.Tasks
 
         private static uint throttleCounter = 0;
 
-        private static void InsertArtisanWait(ushort craftId, int amount)
+        internal static void InsertArtisanWait(ushort craftId, int amount)
         {
             throttleCounter = 0;
             artisanRequestSent = false;
             P.TaskManager.InsertMulti(
                 new(() => ThrottleArtisanTask(craftId, amount), "Telling artisan to craft", Utils.TaskConfig),
-                new(() => WaitingForArtisan(), "Waiting for artisan", Utils.TaskConfig)
+                new(() => WaitingForArtisan(craftId), "Waiting for artisan", Utils.TaskConfig)
             );
         }
 
@@ -75,6 +81,15 @@ namespace ICE.Scheduler.Tasks
             }
             if (throttleCounter >= 2)
             {
+                var raphaelStatus = P.Artisan.GetRaphaelStatus(craftId);
+                if (raphaelStatus == 1)
+                    return false;
+                if (raphaelStatus == 2)
+                {
+                    StopForRaphaelFailure(craftId);
+                    return true;
+                }
+
                 if (!artisanRequestSent && EzThrottler.Throttle("Artisan Crafting Task"))
                 {
                     IceLogging.Debug($"Telling Artisan to craft: {craftId} -> {amount} times");
@@ -93,6 +108,17 @@ namespace ICE.Scheduler.Tasks
             }
 
             return false;
+        }
+
+        private static void StopForRaphaelFailure(ushort craftId)
+        {
+            var reason = P.Artisan.GetRaphaelFailure(craftId);
+            if (string.IsNullOrWhiteSpace(reason))
+                reason = "Raphael 未產生有效解法。";
+            IceLogging.Error($"Artisan 無法製作配方 {craftId}：{reason} ICE 已停止，避免改用 Standard 或重複送單。", "[Artisan / Raphael]");
+            artisanRequestSent = false;
+            throttleCounter = 0;
+            SchedulerMain.DisablePlugin();
         }
 
         private static bool? CheckMaterials()
