@@ -71,8 +71,9 @@ internal static class CosmicTravelPlanner
             || currentPlan.MissionId != missionId
             || Vector3.DistanceSquared(currentPlan.Destination, destination) > 1f)
         {
+            var allowHubReturn = currentPlan == null;
             Reset();
-            currentPlan = CreatePlan(destination, territory, waitForBusy, distance, stayMounted, missionId);
+            currentPlan = CreatePlan(destination, territory, waitForBusy, distance, stayMounted, missionId, allowHubReturn);
             return false;
         }
 
@@ -94,7 +95,7 @@ internal static class CosmicTravelPlanner
         return ExecutePlan(currentPlan);
     }
 
-    private static TravelPlan CreatePlan(Vector3 destination, uint territory, bool waitForBusy, float distance, bool stayMounted, uint missionId)
+    private static TravelPlan CreatePlan(Vector3 destination, uint territory, bool waitForBusy, float distance, bool stayMounted, uint missionId, bool allowHubReturn)
     {
         var plan = new TravelPlan
         {
@@ -106,16 +107,16 @@ internal static class CosmicTravelPlanner
             StayMounted = stayMounted,
             ChoiceTask = null!,
         };
-        plan.ChoiceTask = ChooseTravel(plan, Player.Position);
+        plan.ChoiceTask = ChooseTravel(plan, Player.Position, allowHubReturn);
         return plan;
     }
 
-    private static async Task<TravelMethod> ChooseTravel(TravelPlan plan, Vector3 playerPosition)
+    private static async Task<TravelMethod> ChooseTravel(TravelPlan plan, Vector3 playerPosition, bool allowHubReturn)
     {
         var candidates = new List<(TravelMethod Method, float Distance)> { (TravelMethod.Direct, await PathCost(playerPosition, plan.Destination)) };
         HubCenters.TryGetValue(plan.Territory, out var hub);
 
-        if (C.UseHubReturn && hub != Vector3.Zero && Vector3.Distance(playerPosition, hub) > 75f)
+        if (allowHubReturn && C.UseHubReturn && hub != Vector3.Zero && Vector3.Distance(playerPosition, hub) > 75f)
             candidates.Add((TravelMethod.HubReturn, await PathCost(hub, plan.Destination) * 1.2f));
 
         if (C.UseRedAlertNpc && plan.MissionId != 0)
@@ -136,7 +137,7 @@ internal static class CosmicTravelPlanner
                 $"selection {selection}, expected exit {plan.RedAlertExit}, destination {plan.Destination}.", "[TravelProbe]");
             var redAlertExitDistance = await PathCost(criticalLocation.RawLocation, plan.Destination);
             candidates.Add((TravelMethod.RedAlert, await PathCost(playerPosition, redNpc.Location) + redAlertExitDistance));
-            if (C.UseHubReturn && hub != Vector3.Zero && Vector3.Distance(playerPosition, hub) > 75f)
+            if (allowHubReturn && C.UseHubReturn && hub != Vector3.Zero && Vector3.Distance(playerPosition, hub) > 75f)
                 candidates.Add((TravelMethod.HubRedAlert, await PathCost(hub, redNpc.Location) + redAlertExitDistance));
             }
         }
