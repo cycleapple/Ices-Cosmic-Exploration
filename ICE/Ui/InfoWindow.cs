@@ -87,8 +87,8 @@ namespace ICE.Ui
                     GatherSettings.InitialSetupProfile(chainedMissions, "chained", out var _);
                     GatherSettings.InitialSetupProfile(boonMissions, "boon", out var _);
                     GatherSettings.InitialSetupProfile(ChainBoonMission, "boonChain", out var _);
-                    GatherSettings.InitialSetupProfile(DualClass, "dualCraft", out var _);
                     GatherSettings.InitialSetupProfile(GatherXAmount, "gatherX", out var _);
+                    GatherSettings.InitialSetupProfile(DualClass, "dualCraft", out var _);
 
                     C.Save();
                 }

@@ -155,9 +155,9 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                             UpdateMissions();
                         else if (type == "boonChain" && ChainedMission && BoonMission)
                             UpdateMissions();
-                        else if (type == "dualCraft" && craftMission)
-                            UpdateMissions();
                         else if (type == "gatherX" && GatherX)
+                            UpdateMissions();
+                        else if (type == "dualCraft" && craftMission)
                             UpdateMissions();
                     }
                 }
@@ -433,9 +433,9 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                                 UpdateMissions();
                             else if (MissionIndex == 5 && ChainedMission && BoonMission)
                                 UpdateMissions();
-                            else if (MissionIndex == 6 && craftMission)
-                                UpdateMissions();
                             else if (MissionIndex == 1 && GatherX)
+                                UpdateMissions();
+                            else if (MissionIndex == 6 && craftMission)
                                 UpdateMissions();
                         }
                     }
@@ -1053,8 +1053,8 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
             GatherSettings.InitialSetupProfile(chainedMissions, "chained", out var _);
             GatherSettings.InitialSetupProfile(boonMissions, "boon", out var _);
             GatherSettings.InitialSetupProfile(ChainBoonMission, "boonChain", out var _);
-            GatherSettings.InitialSetupProfile(DualClass, "dualCraft", out var _);
             GatherSettings.InitialSetupProfile(GatherXAmount, "gatherX", out var _);
+            GatherSettings.InitialSetupProfile(DualClass, "dualCraft", out var _);
         }
     }
 }
