@@ -20,7 +20,6 @@ namespace ICE.Config
                 Svc.Log.Information("You seem to be running the old config version, lets migrate you to the new one");
 
                 C.StopOnAbort = OldConfig.StopOnAbort;
-                C.RejectUnknownYesno = OldConfig.RejectUnknownYesno;
                 C.DelayGrabMission = OldConfig.DelayGrabMission;
                 C.DelayIncrease = OldConfig.DelayIncrease;
                 C.DelayCraft = OldConfig.DelayCraft;

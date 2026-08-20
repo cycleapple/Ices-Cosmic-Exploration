@@ -1010,7 +1010,7 @@ namespace ICE.Scheduler.Tasks
             {
                 if (EzThrottler.Throttle("Selecting Yesno window"))
                 {
-                    if (CosmicHandler.commenceStrings.Any(s => NormalizeWhitespace(select.Text).StartsWith(NormalizeWhitespace(s), StringComparison.OrdinalIgnoreCase)) || !C.RejectUnknownYesno)
+                    if (CosmicHandler.commenceStrings.Any(s => NormalizeWhitespace(select.Text).StartsWith(NormalizeWhitespace(s), StringComparison.OrdinalIgnoreCase)))
                     {
                         select.Yes();
                         if (reroll)

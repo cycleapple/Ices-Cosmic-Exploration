@@ -31,6 +31,8 @@ namespace ICE.Scheduler.Tasks
 
             if (!P.Artisan.IsBusy())
             {
+                if (craftId.HasValue)
+                    artisanRequestCompleted = true;
                 IceLogging.Info("Artisan is no longer running, continuing the process");
                 return true;
             }
@@ -62,6 +64,7 @@ namespace ICE.Scheduler.Tasks
         {
             throttleCounter = 0;
             artisanRequestSent = false;
+            artisanRequestCompleted = false;
             P.TaskManager.InsertMulti(
                 new(() => ThrottleArtisanTask(craftId, amount), "Telling artisan to craft", Utils.TaskConfig),
                 new(() => WaitingForArtisan(craftId), "Waiting for artisan", Utils.TaskConfig)
@@ -69,6 +72,16 @@ namespace ICE.Scheduler.Tasks
         }
 
         private static bool artisanRequestSent;
+        private static bool artisanRequestCompleted;
+
+        internal static bool ConsumeCompletedArtisanRequest()
+        {
+            if (!artisanRequestCompleted)
+                return false;
+
+            artisanRequestCompleted = false;
+            return true;
+        }
 
         private static bool? ThrottleArtisanTask(ushort craftId, int amount)
         {
@@ -117,6 +130,7 @@ namespace ICE.Scheduler.Tasks
                 reason = "Raphael 未產生有效解法。";
             IceLogging.Error($"Artisan 無法製作配方 {craftId}：{reason} ICE 已停止，避免改用 Standard 或重複送單。", "[Artisan / Raphael]");
             artisanRequestSent = false;
+            artisanRequestCompleted = false;
             throttleCounter = 0;
             SchedulerMain.DisablePlugin();
         }

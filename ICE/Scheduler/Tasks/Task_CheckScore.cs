@@ -336,7 +336,10 @@ namespace ICE.Scheduler.Tasks
 
                     if (mission.Attributes.HasFlag(MissionAttributes.Critical))
                     {
-                        if (missionInfo.CriticalScore == 1)
+                        if (!missionInfo.TryGetCriticalScore(out var criticalScore))
+                            return false;
+
+                        if (criticalScore == 1)
                         {
                             IceLogging.Verbose("We've completed the critical!", tag);
                             shouldTurnin = true;
@@ -505,7 +508,10 @@ namespace ICE.Scheduler.Tasks
 
                     if (mission.Attributes.HasFlag(MissionAttributes.Critical))
                     {
-                        if (missionInfo.CriticalScore == 1)
+                        if (!missionInfo.TryGetCriticalScore(out var criticalScore))
+                            return false;
+
+                        if (criticalScore == 1)
                         {
                             SchedulerMain.State = IceState.TurninMission;
                             P.TaskManager.Tasks.Clear();

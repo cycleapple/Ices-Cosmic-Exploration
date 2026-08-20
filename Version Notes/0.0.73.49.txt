@@ -1,0 +1,8 @@
+Ice's Cosmic Exploration (ICE) V0.0.73.49
+
+-> Removed the option that allowed ICE to accept unrelated confirmation dialogs.
+   Mission start and abandon tasks now always require a known Cosmic Exploration prompt.
+-> Guarded Cosmic Exploration score UI values while the addon is still loading.
+   Critical mission checks now wait instead of throwing a null-reference exception.
+-> Fixed dual-class missions stalling after an ICE-requested Artisan craft completes.
+   A stale Artisan busy state no longer prevents ICE from closing the crafting UI and returning to gathering.

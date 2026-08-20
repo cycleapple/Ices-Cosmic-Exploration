@@ -8,7 +8,6 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 {
     internal class SafetySettings
     {
-        private static bool rejectUnknownYesNo = C.RejectUnknownYesno;
         private static bool delayGrabMission = C.DelayGrabMission;
         private static int delayAmount = C.DelayIncrease;
         private static bool delayCraft = C.DelayCraft;
@@ -16,16 +15,6 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
         public static void Draw()
         {
-            if (ImGui.Checkbox("忽略非宇宙探索的確認視窗", ref rejectUnknownYesNo))
-            {
-                C.RejectUnknownYesno = rejectUnknownYesNo;
-                C.Save();
-            }
-            ImGuiEx.HelpMarker(
-                "警告：這是避免誤加入陌生小隊的安全功能。\n" +
-                "取消勾選後，插件可能會接受隨機的小隊邀請。\n" +
-                "停用此選項的風險由使用者自行承擔。"
-            );
             if (ImGui.Checkbox("在任務選單加入延遲", ref delayGrabMission))
             {
                 C.DelayGrabMission = delayGrabMission;

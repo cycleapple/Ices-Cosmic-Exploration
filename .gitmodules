@@ -1,6 +1,7 @@
 [submodule "ECommons"]
 	path = ECommons
-	url = https://github.com/NightmareXIV/ECommons.git
+	url = https://github.com/cycleapple/ECommons.git
+	branch = api13-ice-score-guard
 [submodule "ffxiv_pictomancy"]
 	path = ffxiv_pictomancy
 	url = https://github.com/sourpuh/ffxiv_pictomancy

@@ -13,7 +13,6 @@ namespace ICE.Config
 
         #region Safety Settings
         public bool StopOnAbort { get; set; } = true;
-        public bool RejectUnknownYesno { get; set; } = true;
         public bool DelayGrabMission { get; set; } = true;
         public int DelayIncrease { get; set; } = 500;
         public bool DelayCraft { get; set; } = true;

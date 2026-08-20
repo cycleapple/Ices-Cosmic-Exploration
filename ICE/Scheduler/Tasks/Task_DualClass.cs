@@ -28,13 +28,21 @@ namespace ICE.Scheduler.Tasks
 
         private static unsafe bool? CheckMaterials()
         {
-            if (P.Artisan.IsBusy())
+            // Artisan can briefly continue reporting busy after ICE's requested
+            // craft has completed (for example while the cosmic recipe UI is
+            // transitioning to an invalid crafting state). Do not let that stale
+            // status block the dual-class transition back to gathering.
+            var completedIceCraft = Task_Craft.ConsumeCompletedArtisanRequest();
+            if (P.Artisan.IsBusy() && !completedIceCraft)
             {
                 if (EzThrottler.Throttle("Waiting for artisan to finish making macro's...", 3000))
                     IceLogging.Debug("Waiting for artisan to finish making macros");
 
                 return false;
             }
+
+            if (completedIceCraft && P.Artisan.IsBusy())
+                IceLogging.Debug("Ignoring Artisan's stale busy state after the requested craft completed", "[Task_DualClass]");
 
             var id = CosmicHelper.CurrentLunarMission;
             var mission = CosmicHelper.SheetMissionDict[id];
