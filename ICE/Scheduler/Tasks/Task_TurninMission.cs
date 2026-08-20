@@ -77,7 +77,12 @@ namespace ICE.Scheduler.Tasks
 
                 if (critical)
                 {
-                    var collectionPoint = Utils.TryGetObjectCollectionPoint();
+                    GatheringUtil.CriticalLocations.TryGetValue(id, out var location);
+                    var mission = CosmicHelper.SheetMissionDict[id];
+                    var collectionPointRadius = Math.Max(100f, mission.Radius + 25f);
+                    var collectionPoint = location == null || location.RawLocation == Vector3.Zero
+                        ? null
+                        : Utils.TryGetObjectCollectionPoint(location.RawLocation, collectionPointRadius);
                     if (!PlayerHelper.CustomIsBusy)
                     {
                         if (collectionPoint != null && Player.DistanceTo(collectionPoint) <= 4)
@@ -131,7 +136,7 @@ namespace ICE.Scheduler.Tasks
                             }
 
                             // We need to path to the collection point, and get as *-close-* as we can. 
-                            if (GatheringUtil.CriticalLocations.TryGetValue(id, out var location) && location.RawLocation != Vector3.Zero)
+                            if (location != null && location.RawLocation != Vector3.Zero)
                             {
                                 if (collectionPoint == null)
                                 {
@@ -172,6 +177,12 @@ namespace ICE.Scheduler.Tasks
                                         if (!PathfoundToRed)
                                         {
                                             P.Navmesh.Stop();
+                                            IceLogging.Info(
+                                                $"Selected critical turn-in at {collectionPoint.Position}; " +
+                                                $"player distance {Player.DistanceTo(collectionPoint):F1}, " +
+                                                $"mission-center distance {Vector3.Distance(collectionPoint.Position, location.RawLocation):F1}, " +
+                                                $"allowed radius {collectionPointRadius:F1}",
+                                                "[Turnin Mission]");
                                             IceLogging.DestinationLogs.Log(collectionPoint.Position);
                                             P.Navmesh.PathfindAndMoveTo(collectionPoint.Position, false);
                                             PathfoundToRed = true;

@@ -16,7 +16,22 @@ namespace ICE.Utilities
         // Gather Specifics
         internal static Vector2 previousMap = Vector2.Zero;
         internal static int nodeCounter = 0;
-        internal static int nodeTotal = 0;
+        internal static HashSet<uint> ExhaustedGatheringNodes = [];
+        internal static bool GatheringNodesDepleted = false;
+        private static int _nodeTotal = 0;
+        internal static int nodeTotal
+        {
+            get => _nodeTotal;
+            set
+            {
+                _nodeTotal = value;
+                if (value == 0)
+                {
+                    ExhaustedGatheringNodes.Clear();
+                    GatheringNodesDepleted = false;
+                }
+            }
+        }
         internal static uint item_collectableId = 0;
         internal static int CollectableStep = 0;
         internal static int NextCollectableStep = 0;

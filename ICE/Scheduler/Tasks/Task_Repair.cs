@@ -33,15 +33,14 @@ namespace ICE.Scheduler.Tasks
         }
         public static unsafe bool? HubCheck()
         {
-            Vector2 HubCenter = Vector2.Zero;
-            if (PlayerHelper.IsInPhaenna())
+            var hubCenter = Player.Territory switch
             {
-                HubCenter = new Vector2(340.0f, -420.0f);
-            }
+                1237 => new Vector3(2.84f, 1.55f, -0.06f),
+                1291 => new Vector3(339.90f, 52.60f, -412.10f),
+                _ => Vector3.Zero,
+            };
 
-            Vector2 PlayerPos = new Vector2(Player.Position.Z, Player.Position.Z);
-
-            if (Player.DistanceTo(HubCenter) < 45)
+            if (hubCenter == Vector3.Zero || Player.DistanceTo(hubCenter) < 45)
             {
                 IceLogging.Info("Player is in the range of the main hub area right now", "[Vendor Repair Check]");
                 return true;

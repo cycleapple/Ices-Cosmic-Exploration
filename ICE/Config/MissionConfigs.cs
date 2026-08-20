@@ -9,7 +9,7 @@ namespace ICE.Config
     public class MissionConfigs : IYamlConfig
     {
         // Last edited version: 1
-        public int ConfigVersion { get; set; } = 9;
+        public int ConfigVersion { get; set; } = 12;
 
         #region Safety Settings
         public bool StopOnAbort { get; set; } = true;
@@ -249,6 +249,7 @@ namespace ICE.Config
         public static string ConfigPath => Path.Combine(Svc.PluginInterface.ConfigDirectory.FullName, "Mission Config.yaml");
         private static CancellationTokenSource? _saveCts;
         private static readonly object _saveLock = new();
+        private static readonly SemaphoreSlim _saveGate = new(1, 1);
 
         // Standard async save (fire-and-forget)
         public void Save()
@@ -295,10 +296,32 @@ namespace ICE.Config
         }
 
         // Core async implementation
-        public async Task SaveAsync() => await YamlConfig.SaveAsync(this, ConfigPath);
+        public async Task SaveAsync()
+        {
+            await _saveGate.WaitAsync().ConfigureAwait(false);
+            try
+            {
+                await YamlConfig.SaveAsync(this, ConfigPath).ConfigureAwait(false);
+            }
+            finally
+            {
+                _saveGate.Release();
+            }
+        }
 
         // Synchronous for migrations/critical paths
-        public void SaveSync() => YamlConfig.SaveSync(this, ConfigPath);
+        public void SaveSync()
+        {
+            _saveGate.Wait();
+            try
+            {
+                YamlConfig.SaveSync(this, ConfigPath);
+            }
+            finally
+            {
+                _saveGate.Release();
+            }
+        }
 
         #endregion
     }

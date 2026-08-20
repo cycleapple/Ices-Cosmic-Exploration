@@ -152,9 +152,8 @@ namespace ICE.Scheduler.Tasks
                         IceLogging.Debug($"Mission Infomation was active, checking if a mission is timed out.");
                         if (CosmicHandler.IsMissionTimedOut())
                         {
-                            // Mission time has reached 0, checking the score/aborting if necessary
-                            IceLogging.Info("Mission is currently timed out. Going to abandon the mission state", "[Task: Check State]");
-                            SchedulerMain.State = IceState.AbandonMission;
+                            IceLogging.Info("Mission timed out, checking score before turning in or abandoning", "[Task: Check State]");
+                            SchedulerMain.State = IceState.ScoreCheck;
                             P.TaskManager.Tasks.Clear();
                             return true;
                         }

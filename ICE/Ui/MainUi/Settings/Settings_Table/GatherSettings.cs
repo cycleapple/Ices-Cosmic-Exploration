@@ -122,7 +122,8 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                 {
                     var id = mission.Key;
 
-                    var missionDict = CosmicHelper.SheetMissionDict[id];
+                    if (!CosmicHelper.SheetMissionDict.TryGetValue(id, out var missionDict))
+                        continue;
 
                     bool craftMission = missionDict.Attributes.HasFlag(MissionAttributes.Craft);
                     bool gatherMission = missionDict.Attributes.HasFlag(MissionAttributes.Gather);
@@ -327,6 +328,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                         var newId = C.GatherProfiles.Keys.Max() + 1;
                         C.GatherProfiles[newId] = new()
                         {
+                            Id = newId,
                             Name = newProfileName,
                         };
                         C.Save();
@@ -398,7 +400,8 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                     {
                         var id = mission.Key;
 
-                        var missionDict = CosmicHelper.SheetMissionDict[id];
+                        if (!CosmicHelper.SheetMissionDict.TryGetValue(id, out var missionDict))
+                            continue;
 
                         bool craftMission = missionDict.Attributes.HasFlag(MissionAttributes.Craft);
                         bool gatherMission = missionDict.Attributes.HasFlag(MissionAttributes.Gather);
@@ -1025,19 +1028,14 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
         public static void SetupAllProfiles()
         {
-            foreach (var profile in C.GatherProfiles)
+            foreach (var profileId in C.GatherProfiles.Keys.Where(id => id != 0).ToList())
             {
-                if (profile.Key == 0)
-                    continue;
-                else
+                C.GatherProfiles.Remove(profileId);
+                foreach (var mission in C.MissionConfig)
                 {
-                    C.GatherProfiles.Remove(profile.Key);
-                    foreach (var mission in C.MissionConfig)
+                    if (mission.Value.GProfileId == profileId)
                     {
-                        if (mission.Value.GProfileId == profile.Key)
-                        {
-                            mission.Value.GProfileId = 0; // fallback to default
-                        }
+                        mission.Value.GProfileId = 0; // fallback to default
                     }
                 }
             }

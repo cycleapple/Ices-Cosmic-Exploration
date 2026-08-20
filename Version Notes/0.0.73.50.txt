@@ -1,0 +1,10 @@
+Ice's Cosmic Exploration (ICE) V0.0.73.50
+
+-> Timed-out missions now check their completed score and objectives before
+   deciding whether to turn in or abandon.
+-> Limited gathering missions track depleted route nodes instead of relying on
+   a fixed node count, preventing repeated visits to exhausted nodes.
+-> Critical mission turn-ins now select collection points within the current
+   mission area.
+-> Hardened gathering profile migration and serialized configuration saves.
+-> Corrected hub-distance repair checks and Manipulation unlock detection.

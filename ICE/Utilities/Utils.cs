@@ -151,9 +151,21 @@ public static unsafe class Utils
     {
         return Svc.Objects.OrderBy(PlayerHelper.GetDistanceToPlayer).FirstOrDefault(x => x.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.EventObj);
     }
-    public static IGameObject? TryGetObjectCollectionPoint()
+    public static IGameObject? TryGetObjectCollectionPoint(Vector3? expectedLocation = null, float maxDistanceFromExpected = 100f)
     {
-        return Svc.Objects.OrderBy(PlayerHelper.GetDistanceToPlayer).FirstOrDefault(x => x.DataId == 2014616 || x.DataId == 2014618);
+        var candidates = Svc.Objects.Where(x =>
+            x.IsTargetable && (x.DataId == 2014616 || x.DataId == 2014618));
+
+        if (expectedLocation is { } location)
+        {
+            candidates = candidates.Where(x => Vector3.Distance(x.Position, location) <= maxDistanceFromExpected);
+            return candidates
+                .OrderBy(PlayerHelper.GetDistanceToPlayer)
+                .ThenBy(x => Vector3.Distance(x.Position, location))
+                .FirstOrDefault();
+        }
+
+        return candidates.OrderBy(PlayerHelper.GetDistanceToPlayer).FirstOrDefault();
     }
     public static void TargetgameObject(IGameObject? gameObject)
     {

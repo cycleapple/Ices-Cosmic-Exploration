@@ -17,9 +17,15 @@ namespace ICE.Scheduler.Tasks
 {
     internal static class Task_Gather
     {
+        private static uint activeGatherNodeId;
+        private static uint activeGatherMissionId;
+        private static bool activeGatherWindowOpened;
 
         public static void Enqueue()
         {
+            if (!Svc.Condition[ConditionFlag.Gathering] && RecordCompletedLimitedNode())
+                return;
+
             if (GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady || GenericHelpers.TryGetAddonMaster<GatheringMasterpiece>("GatheringMasterpiece", out var collectable) && collectable.IsAddonReady)
             {
                 IceLogging.Debug("Current in a gathering session");
@@ -132,6 +138,30 @@ namespace ICE.Scheduler.Tasks
             var missionFlag = missionEntry.MapPosition;
             var gatherInfo = GatheringRouteLoader.GetRoute(zoneId, missionFlag);
 
+            if (gatherInfo == null || gatherInfo.Count == 0)
+            {
+                IceLogging.Error($"No gathering route found for mission {CosmicHelper.CurrentLunarMission}", "[Gathering: PathAndCheckNode]");
+                SchedulerMain.State = IceState.Idle;
+                return true;
+            }
+
+            if (missionEntry.Attributes.HasFlag(MissionAttributes.Limited))
+            {
+                if (Mission_Settings.GatheringNodesDepleted)
+                    return FinishDepletedLimitedRoute(gatherInfo);
+
+                var nextNodeIndex = Enumerable.Range(0, gatherInfo.Count)
+                    .Select(offset => (Mission_Settings.nodeCounter + offset) % gatherInfo.Count)
+                    .FirstOrDefault(index => !Mission_Settings.ExhaustedGatheringNodes.Contains(gatherInfo[index].NodeId), -1);
+                if (nextNodeIndex < 0)
+                    return FinishDepletedLimitedRoute(gatherInfo);
+                Mission_Settings.nodeCounter = nextNodeIndex;
+            }
+            else if (Mission_Settings.nodeCounter < 0 || Mission_Settings.nodeCounter >= gatherInfo.Count)
+            {
+                Mission_Settings.nodeCounter = 0;
+            }
+
             var location = gatherInfo[Mission_Settings.nodeCounter];
             if (!Task_NavmeshMove.NavToDestination(location.LandZone, distance: 1))
             {
@@ -143,13 +173,15 @@ namespace ICE.Scheduler.Tasks
             {
                 if (CosmicHandler.IsMissionTimedOut())
                 {
-                    IceLogging.Info($"We've managed to time out the mission. Going to attempt to turnin, and abandon if not", "[Gathering: Open Gathering Menu]");
-                    SchedulerMain.State = IceState.AbandonMission;
+                    IceLogging.Info("Mission timed out, checking score before turning in or abandoning", "[Gathering: Open Gathering Menu]");
+                    SchedulerMain.State = IceState.ScoreCheck;
                     P.TaskManager.Tasks.Clear();
                     return true;
                 }
                 else if (Svc.Condition[ConditionFlag.Gathering] && GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady || GenericHelpers.TryGetAddonMaster<GatheringMasterpiece>("GatheringMasterpiece", out var collectable) && collectable.IsAddonReady)
                 {
+                    SetActiveGatherNode(location.NodeId);
+                    activeGatherWindowOpened = true;
                     Mission_Settings.CollectableStep = 0;
 
                     IceLogging.Info($"Gathering window is now visible, continuing onto GatheringInteraction Task", "[Gathering: OpenGatheringMenu]");
@@ -171,7 +203,7 @@ namespace ICE.Scheduler.Tasks
                         }
                         else
                         {
-                            // Node doesn't exist/isn't targetable. 
+                            MarkLimitedNodeExhausted(location.NodeId, gatherInfo);
                             IceLogging.Info($"The current node doesn't exist, continuing onto the next", "[Gathering: OpenGatheringMenu]");
                             return true;
                         }
@@ -181,6 +213,89 @@ namespace ICE.Scheduler.Tasks
 
             return false;
         }
+
+        private static void SetActiveGatherNode(uint nodeId)
+        {
+            var missionId = CosmicHelper.CurrentLunarMission;
+            if (activeGatherNodeId == nodeId && activeGatherMissionId == missionId)
+                return;
+
+            activeGatherNodeId = nodeId;
+            activeGatherMissionId = missionId;
+            activeGatherWindowOpened = false;
+        }
+
+        private static bool RecordCompletedLimitedNode()
+        {
+            if (activeGatherNodeId == 0
+                || !activeGatherWindowOpened
+                || Svc.Condition[ConditionFlag.Gathering]
+                || CosmicHelper.CurrentLunarMission == 0)
+                return false;
+
+            if (activeGatherMissionId != CosmicHelper.CurrentLunarMission)
+            {
+                ClearActiveGatherNode();
+                return false;
+            }
+
+            var missionEntry = CosmicHelper.CurrentMissionInfo;
+            if (!missionEntry.Attributes.HasFlag(MissionAttributes.Limited))
+            {
+                ClearActiveGatherNode();
+                return false;
+            }
+
+            if (Svc.Objects.Any(obj =>
+                    obj.ObjectKind == ObjectKind.GatheringPoint
+                    && obj.DataId == activeGatherNodeId
+                    && obj.IsTargetable))
+                return false;
+
+            var completedNodeId = activeGatherNodeId;
+            ClearActiveGatherNode();
+            var gatherInfo = GatheringRouteLoader.GetRoute(Player.Territory, missionEntry.MapPosition);
+            return MarkLimitedNodeExhausted(completedNodeId, gatherInfo);
+        }
+
+        private static void ClearActiveGatherNode()
+        {
+            activeGatherNodeId = 0;
+            activeGatherMissionId = 0;
+            activeGatherWindowOpened = false;
+        }
+
+        private static bool MarkLimitedNodeExhausted(uint nodeId, List<Resources.GatheringRoutes.GathNodeInfo> gatherInfo)
+        {
+            if (!CosmicHelper.CurrentMissionInfo.Attributes.HasFlag(MissionAttributes.Limited)
+                || !Mission_Settings.ExhaustedGatheringNodes.Add(nodeId))
+                return false;
+
+            Mission_Settings.nodeTotal = Mission_Settings.ExhaustedGatheringNodes.Count;
+            IceLogging.Info(
+                $"Recorded depleted limited node {nodeId} ({Mission_Settings.ExhaustedGatheringNodes.Count}/{gatherInfo.Count})",
+                "[Gathering: Limited Nodes]");
+
+            if (!gatherInfo.All(routeNode => Mission_Settings.ExhaustedGatheringNodes.Contains(routeNode.NodeId)))
+                return false;
+
+            return FinishDepletedLimitedRoute(gatherInfo);
+        }
+
+        private static bool FinishDepletedLimitedRoute(List<Resources.GatheringRoutes.GathNodeInfo> gatherInfo)
+        {
+            Mission_Settings.GatheringNodesDepleted = true;
+            if (P.Navmesh.IsRunning())
+                P.Navmesh.Stop();
+
+            IceLogging.Info(
+                $"All {gatherInfo.Count} limited gathering nodes are depleted; checking the final score",
+                "[Gathering: Limited Nodes]");
+            SchedulerMain.State = IceState.ScoreCheck;
+            P.TaskManager.Tasks.Clear();
+            return true;
+        }
+
         public static unsafe bool? GatheringInteraction()
         {
             var missionInfo = CosmicHelper.CurrentMissionInfo;

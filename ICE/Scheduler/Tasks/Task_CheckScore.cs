@@ -321,17 +321,41 @@ namespace ICE.Scheduler.Tasks
             {
                 if (missionInfo.Addon->AtkValuesCount > 4) // Really just here to make sure that the addon atkValues are fully loaded...
                 {
+                    var Id = CosmicHelper.CurrentLunarMission;
+                    var mission = CosmicHelper.SheetMissionDict[Id];
+
                     if (CosmicHandler.IsMissionTimedOut())
                     {
-                        IceLogging.Debug("Mission is timed out, attempting to abandon", tag);
-                        SchedulerMain.State = IceState.AbandonMission;
+                        bool canTurnin;
+                        if (mission.Attributes.HasFlag(MissionAttributes.Critical))
+                        {
+                            if (!missionInfo.TryGetCriticalScore(out var criticalScore))
+                                return false;
+                            canTurnin = criticalScore == 1;
+                        }
+                        else if (mission.BronzeScore == 0)
+                        {
+                            canTurnin = mission.Crafts_Main.All(item =>
+                                PlayerHelper.GetItemCount(item.Value.ItemId, out var count)
+                                && count >= item.Value.RequiredAmount);
+                        }
+                        else
+                        {
+                            canTurnin = missionInfo.CurrentScore >= mission.BronzeScore;
+                        }
+
+                        SchedulerMain.State = canTurnin ? IceState.TurninMission : IceState.AbandonMission;
+                        if (canTurnin)
+                        {
+                            if (mission.Attributes.HasFlag(MissionAttributes.Critical))
+                                Mission_Settings.TurninState = TurninState.Critical;
+                            else
+                                MedalChecker(missionInfo.CurrentScore, mission.SilverScore, mission.GoldScore);
+                        }
                         P.TaskManager.Tasks.Clear();
                         return true;
                     }
 
-                    var Id = CosmicHelper.CurrentLunarMission;
-                    // var mission = CosmicHelper.Dict_CosmicMissions[Id];
-                    var mission = CosmicHelper.SheetMissionDict[Id];
                     bool shouldTurnin = false;
 
                     if (mission.Attributes.HasFlag(MissionAttributes.Critical))
@@ -494,18 +518,43 @@ namespace ICE.Scheduler.Tasks
             {
                 if (missionInfo.Addon ->AtkValuesCount > 4) // Really just here to make sure that the addon atkValues are fully loaded...
                 {
+                    var id = CosmicHelper.CurrentLunarMission;
+                    var mission = CosmicHelper.SheetMissionDict[id];
+
                     if (CosmicHandler.IsMissionTimedOut())
                     {
-                        SchedulerMain.State = IceState.AbandonMission;
+                        bool canTurnin;
+                        if (mission.Attributes.HasFlag(MissionAttributes.Critical))
+                        {
+                            if (!missionInfo.TryGetCriticalScore(out var criticalScore))
+                                return false;
+                            canTurnin = criticalScore == 1;
+                        }
+                        else if (mission.Attributes.HasFlag(MissionAttributes.ScoreTimeRemaining) || mission.BronzeScore == 0)
+                        {
+                            canTurnin = mission.Gathering_Min.All(item =>
+                                PlayerHelper.GetItemCount(item.Key, out var count)
+                                && count >= item.Value);
+                        }
+                        else
+                        {
+                            canTurnin = missionInfo.CurrentScore >= mission.BronzeScore;
+                        }
+
+                        SchedulerMain.State = canTurnin ? IceState.TurninMission : IceState.AbandonMission;
+                        if (canTurnin)
+                        {
+                            if (mission.Attributes.HasFlag(MissionAttributes.Critical))
+                                Mission_Settings.TurninState = TurninState.Critical;
+                            else
+                                MedalChecker(missionInfo.CurrentScore, mission.SilverScore, mission.GoldScore);
+                        }
                         P.TaskManager.Tasks.Clear();
                         return true;
                     }
 
                     IceLogging.Debug("Checking score for gathering. . .", "[Check Score: Gather]");
                     // Hud info should be available. Now time to check the mission status.
-                    var id = CosmicHelper.CurrentLunarMission;
-                    var mission = CosmicHelper.SheetMissionDict[id];
-
                     if (mission.Attributes.HasFlag(MissionAttributes.Critical))
                     {
                         if (!missionInfo.TryGetCriticalScore(out var criticalScore))
@@ -549,16 +598,27 @@ namespace ICE.Scheduler.Tasks
                     }
                     else
                     {
-                        if (mission.Attributes.HasFlag(MissionAttributes.Limited))
+                        if (mission.Attributes.HasFlag(MissionAttributes.Limited)
+                            && Mission_Settings.GatheringNodesDepleted
+                            && !Svc.Condition[ConditionFlag.Gathering])
                         {
-                            if (Mission_Settings.nodeTotal >= 7 && !Svc.Condition[ConditionFlag.Gathering])
+                            var limitedCanTurnin = mission.BronzeScore == 0
+                                ? mission.Gathering_Min.All(item =>
+                                    PlayerHelper.GetItemCount(item.Key, out var count)
+                                    && count >= item.Value)
+                                : missionInfo.CurrentScore >= mission.BronzeScore;
+
+                            SchedulerMain.State = limitedCanTurnin ? IceState.TurninMission : IceState.AbandonMission;
+                            if (limitedCanTurnin)
                             {
-                                // We've hit the node total, and can't gather anymore. Just going to try and turnin/abandon
-                                SchedulerMain.State = IceState.AbandonMission;
-                                Mission_Settings.nodeTotal = 0;
-                                P.TaskManager.Tasks.Clear();
-                                return true;
+                                MedalChecker(missionInfo.CurrentScore, mission.SilverScore, mission.GoldScore);
                             }
+                            P.TaskManager.Tasks.Clear();
+                            IceLogging.Info(
+                                $"All limited nodes are depleted for mission {id}; " +
+                                $"score {missionInfo.CurrentScore}, can turn in: {limitedCanTurnin}",
+                                "[Gathering Scoring]");
+                            return true;
                         }
 
                         var canTurnin = false;

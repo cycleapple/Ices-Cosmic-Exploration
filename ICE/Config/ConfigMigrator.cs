@@ -370,6 +370,7 @@ namespace ICE.Config
 
                     C.GatherProfiles[newId] = new GatherProfile()
                     {
+                        Id = newId,
                         Name = oldBuff.Name,
                         DualClassCraftAmount = oldBuff.DualClassCraftAmount,
                         MinimumGp = oldBuff.MinimumGp,
@@ -428,12 +429,22 @@ namespace ICE.Config
                 C.ConfigVersion = 11;
                 C.Save();
             }
+            if (C.ConfigVersion == 11)
+            {
+                foreach (var (id, profile) in C.GatherProfiles)
+                {
+                    profile.Id = id;
+                }
+                C.ConfigVersion = 12;
+                C.Save();
+            }
         }
 
         public static void UpdateConfigMissionList()
         {
-            // Older repair/abandon timeout loops could persist a synthetic mission
-            // with ID 0. It is not a sheet row and breaks mission selection scans.
+            // ID 0 is a synthetic entry left by older repair/abandon timeout loops.
+            // Keep other unknown IDs so a temporarily incomplete sheet cannot erase
+            // settings for future or currently unavailable missions.
             if (C.MissionConfig.Remove(0))
             {
                 Svc.Log.Warning("Removed invalid mission ID 0 from Mission Config");

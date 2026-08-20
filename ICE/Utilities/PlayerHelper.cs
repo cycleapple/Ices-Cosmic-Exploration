@@ -158,15 +158,20 @@ public class PlayerHelper
 
     public static unsafe void UpdateHasManip()
     {
-        if (Player.IsBusy)
-            return;
-
         foreach (var jobId in CosmicHelper.CrafterJobList)
         {
             if (ManipClassInfo.TryGetValue(jobId, out var info))
             {
-                info.HasUnlocked = ActionManager.Instance()->GetActionStatus(ActionType.Action, info.ActionId, checkRecastActive: false, checkCastingActive: false) is 574 or 586;
+                info.HasUnlocked = IsManipulationUnlocked(info.ActionId);
             }
         }
+    }
+
+    private static unsafe bool IsManipulationUnlocked(uint actionId)
+    {
+        var uiState = UIState.Instance();
+        return uiState != null
+            && Svc.Data.GetExcelSheet<Lumina.Excel.Sheets.Action>().TryGetRow(actionId, out var action)
+            && uiState->IsUnlockLinkUnlockedOrQuestCompleted(action.UnlockLink.RowId, 0);
     }
 }
