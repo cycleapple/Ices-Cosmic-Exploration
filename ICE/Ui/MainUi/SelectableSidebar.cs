@@ -66,6 +66,7 @@ namespace ICE.Ui.MainUi
                         DrawSelectableWithIcon(FontAwesomeIcon.Stop, "停止條件", "setting_StopWhen");
                     if (C.Show_GatheringProfile)
                         DrawSelectableWithIcon(FontAwesomeIcon.Leaf, "採集設定檔", "setting_GatheringProfile");
+                    DrawSelectableWithIcon(FontAwesomeIcon.Hammer, "製作設定檔", "setting_CraftProfile");
                     if (C.Show_MissionPriority)
                         DrawSelectableWithIcon(FontAwesomeIcon.SortAmountUp, "任務優先順序", "setting_MissionPriority");
                     if (C.Show_MiscSettings)

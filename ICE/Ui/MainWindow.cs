@@ -95,6 +95,9 @@ namespace ICE.Ui
                 case "setting_GatheringProfile":
                     GatherSettings.Draw();
                     break;
+                case "setting_CraftProfile":
+                    CraftSettings.Draw();
+                    break;
                 case "setting_MissionPriority":
                     Priority_Settings.Draw();
                     break;

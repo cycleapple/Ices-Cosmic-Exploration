@@ -56,6 +56,33 @@ public static class GatheringRouteLoader
         return _cachedRoutes;
     }
 
+    /// <summary>
+    /// Loads complete embedded route records for one territory, including audit metadata
+    /// intentionally omitted from the runtime route cache.
+    /// </summary>
+    public static List<GatheringRouteFile> LoadRouteFiles(uint territoryId)
+    {
+        var assembly = Assembly.GetExecutingAssembly();
+        var routes = new List<GatheringRouteFile>();
+
+        foreach (var resourceName in assembly.GetManifestResourceNames()
+                     .Where(r => r.Contains("GatheringRoutes") && r.EndsWith(".yaml")))
+        {
+            try
+            {
+                var route = LoadRouteFromResource(resourceName);
+                if (route.ZoneId == territoryId)
+                    routes.Add(route);
+            }
+            catch (Exception ex)
+            {
+                PluginLog.Error($"Failed to load route from {resourceName}: {ex.Message}");
+            }
+        }
+
+        return routes;
+    }
+
     private static GatheringRouteFile LoadRouteFromResource(string resourceName)
     {
         var assembly = Assembly.GetExecutingAssembly();

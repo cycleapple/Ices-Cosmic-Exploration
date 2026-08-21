@@ -179,7 +179,7 @@ namespace ICE.Config
         public float DismountRadius { get; set; } = 7.0f;
         public bool UseMountOutsideMission { get; set; } = true;
         public bool UseMountInMission { get; set; } = true;
-        public bool UseHubReturn { get; set; } = true;
+        public bool UseHubReturn { get; set; } = false;
         public bool UseRedAlertNpc { get; set; } = false;
         public float LeftColumnWidth { get; set; } = 300f;
         public bool PlaySoundAlert { get; set; } = false;

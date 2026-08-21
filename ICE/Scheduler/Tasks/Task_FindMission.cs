@@ -42,6 +42,8 @@ namespace ICE.Scheduler.Tasks
 
         private static readonly Random _random = new Random();
         private static uint missionToAbandon = 0;
+        private static uint cachedGatherTravelMissionId;
+        private static Vector3? cachedGatherTravelDestination;
 
         private static int timeoutAmount = 0;
         private static int maxTimeout = 10;
@@ -1027,6 +1029,8 @@ namespace ICE.Scheduler.Tasks
         {
             if (CosmicHelper.CurrentLunarMission != 0)
             {
+                cachedGatherTravelMissionId = 0;
+                cachedGatherTravelDestination = null;
                 Mission_Settings.ResetNodeCounter();
                 SchedulerMain.State = IceState.ExecutingMission;
                 timeoutAmount = 0;
@@ -1161,15 +1165,20 @@ namespace ICE.Scheduler.Tasks
                     return true;
                 }
 
-                var selectionOrigin = missionEntry.Attributes.HasFlag(MissionAttributes.Critical) &&
-                    GatheringUtil.CriticalLocations.TryGetValue(missionId, out var criticalLocation)
-                    ? criticalLocation.RawLocation
-                    : Player.Position;
-                var closestGatherNode = gatherInfo
-                    .OrderBy(node => Vector3.Distance(selectionOrigin, node.Position))
-                    .First();
-                var closestNode = Task_Gather.GetGatherApproachPosition(closestGatherNode, closestGatherNode.Position);
-                IceLogging.Info($"Mission {missionId}: node {closestGatherNode.NodeId}, center {closestGatherNode.Position}, approach {closestNode}", "[TravelProbe]");
+                if (cachedGatherTravelMissionId != missionId || cachedGatherTravelDestination == null)
+                {
+                    var selectionOrigin = missionEntry.Attributes.HasFlag(MissionAttributes.Critical) &&
+                        GatheringUtil.CriticalLocations.TryGetValue(missionId, out var criticalLocation)
+                        ? criticalLocation.RawLocation
+                        : Player.Position;
+                    var closestGatherNode = gatherInfo
+                        .OrderBy(node => Vector3.Distance(selectionOrigin, node.Position))
+                        .First();
+                    cachedGatherTravelMissionId = missionId;
+                    cachedGatherTravelDestination = Task_Gather.GetGatherApproachPosition(closestGatherNode, closestGatherNode.Position);
+                    IceLogging.Info($"Mission {missionId}: locked node {closestGatherNode.NodeId}, center {closestGatherNode.Position}, approach {cachedGatherTravelDestination.Value}", "[TravelProbe]");
+                }
+                var closestNode = cachedGatherTravelDestination.Value;
 
                 if (!P.Navmesh.IsRunning())
                 {

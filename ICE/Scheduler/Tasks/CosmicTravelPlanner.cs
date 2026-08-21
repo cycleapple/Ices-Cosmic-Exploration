@@ -307,7 +307,7 @@ internal static class CosmicTravelPlanner
             return false;
         }
 
-        var npc = Svc.Objects.FirstOrDefault(x => x.BaseId == plan.RedAlertNpc.ObjectId);
+        var npc = Svc.Objects.FirstOrDefault(x => x.DataId == plan.RedAlertNpc.ObjectId);
         if (npc == null)
         {
             if (EzThrottler.Throttle("Cosmic travel red alert NPC missing", 5000))
@@ -321,7 +321,7 @@ internal static class CosmicTravelPlanner
         }
         if (!Player.IsBusy && EzThrottler.Throttle("Cosmic travel red alert interact", 1000))
         {
-            IceLogging.Info($"Mission {plan.MissionId}: interacting with RedAlert NPC base {npc.BaseId} at {npc.Position}; expected {plan.RedAlertNpc.Location}.", "[TravelProbe]");
+            IceLogging.Info($"Mission {plan.MissionId}: interacting with RedAlert NPC base {npc.DataId} at {npc.Position}; expected {plan.RedAlertNpc.Location}.", "[TravelProbe]");
             Utils.TargetgameObject(npc);
             Utils.InteractWithObject(npc);
         }

@@ -7,8 +7,34 @@ namespace ICE.Scheduler.Tasks
 {
     internal static class Task_Craft
     {
+        private static bool TryTransitionCompletedCriticalMission()
+        {
+            var missionId = CosmicHelper.CurrentLunarMission;
+            if (missionId == 0
+                || !CosmicHelper.SheetMissionDict.TryGetValue(missionId, out var mission)
+                || !mission.Attributes.HasFlag(MissionAttributes.Critical)
+                || !GenericHelpers.TryGetAddonMaster<WKSMissionInfomation>("WKSMissionInfomation", out var missionInfo)
+                || !missionInfo.IsAddonReady
+                || !missionInfo.TryGetCriticalScore(out var criticalScore)
+                || criticalScore != 1)
+                return false;
+
+            P.Artisan.SetEnduranceStatus(false);
+            artisanRequestSent = false;
+            artisanRequestCompleted = false;
+            throttleCounter = 0;
+            Mission_Settings.TurninState = TurninState.Critical;
+            SchedulerMain.State = IceState.TurninMission;
+            P.TaskManager.Tasks.Clear();
+            IceLogging.Info("關鍵製作目標已完成；已停止 Artisan 並前往指定繳交點。", "[Task Craft]");
+            return true;
+        }
+
         public static void Enqueue()
         {
+            if (TryTransitionCompletedCriticalMission())
+                return;
+
             if (P.Artisan.IsBusy())
             {
                 P.TaskManager.Enqueue(() => WaitingForArtisan(), "Waiting for artisan to finish crafting", Utils.TaskConfig);
@@ -23,6 +49,9 @@ namespace ICE.Scheduler.Tasks
 
         private static bool? WaitingForArtisan(ushort? craftId = null)
         {
+            if (TryTransitionCompletedCriticalMission())
+                return true;
+
             if (craftId is { } recipeId && P.Artisan.GetRaphaelStatus(recipeId) == 2)
             {
                 StopForRaphaelFailure(recipeId);
@@ -85,6 +114,9 @@ namespace ICE.Scheduler.Tasks
 
         private static bool? ThrottleArtisanTask(ushort craftId, int amount)
         {
+            if (TryTransitionCompletedCriticalMission())
+                return true;
+
             int delay = C.DelayCraft ? C.DelayCraftIncrease : 25;
 
 
@@ -137,6 +169,9 @@ namespace ICE.Scheduler.Tasks
 
         private static bool? CheckMaterials()
         {
+            if (TryTransitionCompletedCriticalMission())
+                return true;
+
             var id = CosmicHelper.CurrentLunarMission;
                var mission = CosmicHelper.SheetMissionDict[id];
 

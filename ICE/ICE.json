@@ -4,6 +4,7 @@
   "Punchline": "專為宇宙探索準備的採集助手。",
   "Description": "協助宇宙探索中的採集、製作與據點活動。",
   "ApplicableVersion": "any",
+  "ChangeLog": "新增安全的 Artisan 製作設定檔、宇宙計畫 Agenda、任務偏好與停止條件；加入預設關閉的據點／緊急傳送規劃、採集路線角度修正與唯讀路線稽核，並改善超時計分、後續任務及關鍵製作繳交。",
   "Tags": [
     "Gatherers"
   ]

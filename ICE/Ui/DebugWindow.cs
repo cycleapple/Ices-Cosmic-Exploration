@@ -57,6 +57,9 @@ internal class DebugWindow : Window
         "TaskManager Testing",
         "NPC Box Viewer",
 
+        // Route audit
+        "Moon Route Audit",
+
         // Sheet Viewer Info
         "Sheet: Mission Rewards"
     ];
@@ -124,7 +127,9 @@ internal class DebugWindow : Window
                 case 23: Ui_TaskManagerInfo.Draw(); break;
                 case 24: Ui_NpcViewer.Draw(); break;
 
-                case 25: Sheet_MissionRewards.Draw(); break;
+                case 25: Ui_GatherRoute_Audit.Draw(); break;
+
+                case 26: Sheet_MissionRewards.Draw(); break;
 
                 default: ImGui.Text("Unknown Debug View"); break;
             }
