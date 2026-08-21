@@ -1,0 +1,6 @@
+Ice's Cosmic Exploration (ICE) V0.0.73.51
+
+-> Added named mission playlists for saving and restoring the currently enabled
+   mission set without changing priorities or per-mission settings.
+-> Playlist loading ignores unavailable mission IDs and safely disables missions
+   that are not part of the selected set.

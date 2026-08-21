@@ -203,6 +203,8 @@ namespace ICE.Config
 
         public Dictionary<uint, MissionSettings> MissionConfig { get; set; } = new();
 
+        public Dictionary<string, List<uint>> MissionPlaylists { get; set; } = new();
+
         public List<MissionCommand> PostMissionCommands { get; set; } = new();
 
         #region Tab Hider

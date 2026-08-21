@@ -265,9 +265,10 @@ namespace ICE.Scheduler.Tasks
             activeGatherWindowOpened = false;
         }
 
-        private static bool MarkLimitedNodeExhausted(uint nodeId, List<Resources.GatheringRoutes.GathNodeInfo> gatherInfo)
+        private static bool MarkLimitedNodeExhausted(uint nodeId, List<Resources.GatheringRoutes.GathNodeInfo>? gatherInfo)
         {
-            if (!CosmicHelper.CurrentMissionInfo.Attributes.HasFlag(MissionAttributes.Limited)
+            if (gatherInfo is not { Count: > 0 }
+                || !CosmicHelper.CurrentMissionInfo.Attributes.HasFlag(MissionAttributes.Limited)
                 || !Mission_Settings.ExhaustedGatheringNodes.Add(nodeId))
                 return false;
 
