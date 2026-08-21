@@ -19,6 +19,7 @@ namespace ICE.Ui.MainUi.Settings
             ImGui.BeginChild("##tab_scroll", new Vector2(0, ImGui.GetTextLineHeight() + 16), false, ImGuiWindowFlags.HorizontalScrollbar);
 
             DrawCategoryTab("採集設定檔", "settings_GatheringProfile", FontAwesomeIcon.Leaf);
+            DrawCategoryTab("製作設定檔", "settings_CraftProfile", FontAwesomeIcon.Hammer);
             DrawCategoryTab("宇宙信用點購物", "settings_CosmoShopping", textureId: 65112);
             DrawCategoryTab("宇宙轉盤", "settings_CosmoWheel", textureId: 65127);
             DrawCategoryTab("停止條件", "settings_StopWhen", FontAwesomeIcon.Stop);
@@ -31,6 +32,10 @@ namespace ICE.Ui.MainUi.Settings
             if (settingsTabs["settings_GatheringProfile"])
             {
                 GatherSettings.Draw();
+            }
+            else if (settingsTabs["settings_CraftProfile"])
+            {
+                CraftSettings.Draw();
             }
             else if (settingsTabs["settings_CosmoShopping"])
             {

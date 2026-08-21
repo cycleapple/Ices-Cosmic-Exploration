@@ -1279,6 +1279,7 @@ namespace ICE.Ui.MainUi.ModeSelect
 
                                     ImGui.EndTable();
                                 }
+                                Settings.Settings_Table.CraftSettings.DrawRecipeAssignment(selectedMission, craft.Key);
                             }
                         }
                     }

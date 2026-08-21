@@ -24,6 +24,11 @@ namespace ICE.Scheduler.Tasks
             if (CosmicHelper.CurrentLunarMission != 0)
             {
                 var missionId = CosmicHelper.CurrentLunarMission;
+                if (!P.Artisan.ApplyMissionCraftSettings(missionId))
+                {
+                    SchedulerMain.DisablePlugin();
+                    return true;
+                }
                 P.MissionTimer.StartMission(missionId);
 
                 var mission = CosmicHelper.SheetMissionDict[missionId];

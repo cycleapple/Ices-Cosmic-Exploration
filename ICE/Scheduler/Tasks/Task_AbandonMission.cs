@@ -30,6 +30,7 @@ namespace ICE.Scheduler.Tasks
 
             if (CosmicHelper.CurrentLunarMission == 0)
             {
+                P.Artisan.ClearAppliedMissionSettings();
                 if (WasAbandoned)
                 {
                     IceLogging.Debug("Mission was abandoned");

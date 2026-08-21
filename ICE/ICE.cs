@@ -157,6 +157,7 @@ public sealed partial class ICE : IDalamudPlugin
         GenericHelpers.Safe(() => Svc.PluginInterface.UiBuilder.Draw -= windowSystem.Draw);
         GenericHelpers.Safe(TextAdvancedManager.UnlockTA);
         GenericHelpers.Safe(YesAlreadyManager.Unlock);
+        GenericHelpers.Safe(P.Artisan.ClearAppliedMissionSettings);
         ECommonsMain.Dispose();
         PictoService.Dispose();
     }

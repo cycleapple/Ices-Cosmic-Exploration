@@ -33,6 +33,7 @@ namespace ICE.Scheduler.Tasks
 
             if (id == 0)
             {
+                P.Artisan.ClearAppliedMissionSettings();
                 PathfoundToRed = false;
                 HasInteracted = false;
 

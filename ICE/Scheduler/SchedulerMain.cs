@@ -17,6 +17,7 @@ namespace ICE.Scheduler
         internal static bool DisablePlugin()
         {
             IceLogging.Debug("Stopping the plugin state", "[Schedular - Disable Plugin]");
+            P.Artisan.ClearAppliedMissionSettings();
             P.TaskManager.Abort();
             State = IceState.Idle;
             if (P.Navmesh.Installed)

@@ -438,6 +438,33 @@ namespace ICE.Config
                 C.ConfigVersion = 12;
                 C.Save();
             }
+            if (C.ConfigVersion == 12)
+            {
+                C.CraftProfiles ??= new();
+                if (!C.CraftProfiles.ContainsKey(0))
+                    C.CraftProfiles[0] = new CraftProfile { Id = 0, Name = "預設" };
+
+                foreach (var (id, profile) in C.CraftProfiles)
+                {
+                    profile.Id = id;
+                    profile.Settings ??= new();
+                }
+                if (!C.CraftProfiles.ContainsKey(C.SelectedCraftProfileId))
+                    C.SelectedCraftProfileId = 0;
+
+                foreach (var mission in C.MissionConfig.Values)
+                {
+                    mission.CraftSettings ??= new();
+                    foreach (var settings in mission.CraftSettings.Values)
+                    {
+                        if (settings.CraftProfileId >= 0 && !C.CraftProfiles.ContainsKey(settings.CraftProfileId))
+                            settings.CraftProfileId = -1;
+                    }
+                }
+
+                C.ConfigVersion = 13;
+                C.Save();
+            }
         }
 
         public static void UpdateConfigMissionList()

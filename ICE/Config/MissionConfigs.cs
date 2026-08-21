@@ -9,7 +9,7 @@ namespace ICE.Config
     public class MissionConfigs : IYamlConfig
     {
         // Last edited version: 1
-        public int ConfigVersion { get; set; } = 12;
+        public int ConfigVersion { get; set; } = 13;
 
         #region Safety Settings
         public bool StopOnAbort { get; set; } = true;
@@ -137,6 +137,12 @@ namespace ICE.Config
             { 
                 Name = "Default",
             },
+        };
+
+        public int SelectedCraftProfileId { get; set; } = 0;
+        public Dictionary<int, CraftProfile> CraftProfiles { get; set; } = new()
+        {
+            [0] = new CraftProfile { Id = 0, Name = "預設" },
         };
 
         #endregion
@@ -352,6 +358,7 @@ namespace ICE.Config
         public int GoldCompletions { get; set; } = 0;
         public int CriticalCompletions { get; set; } = 0;
         public int FailedCounters { get; set; } = 0;
+        public Dictionary<ushort, ArtisanRecipeSettings> CraftSettings { get; set; } = new();
         public List<TurninData> TurninRecords { get; set; } = new();
         // Old References to time below for migration
         [YamlIgnore]
@@ -371,6 +378,23 @@ namespace ICE.Config
         public int MinimumGp { get; set; } = -1;
         public int DualClassCraftAmount { get; set; } = 1;
         public GatherBuffs GatherBuffs { get; set; } = new();
+    }
+
+    public class ArtisanRecipeSettings
+    {
+        public string SolverName { get; set; } = "";
+        public int CraftProfileId { get; set; } = -1;
+        public uint FoodId { get; set; }
+        public bool FoodHq { get; set; } = true;
+        public uint PotionId { get; set; }
+        public bool PotionHq { get; set; } = true;
+    }
+
+    public class CraftProfile
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+        public ArtisanRecipeSettings Settings { get; set; } = new();
     }
 
     public class GatherBuff
