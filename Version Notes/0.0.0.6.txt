@@ -1,0 +1,5 @@
+ICE V0.0.0.6
+-this is why we can't have anything nice-
+
+-> Fixed the "Random Mission Pickup" (it was trying to abandon, and decided to keep it for safety instead) 
+-> Fixed the crafting task abandoning itself and leaving the job, it'll go through and craft as it's suppose to.

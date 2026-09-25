@@ -1,0 +1,5 @@
+Ice's Cosmic Exploration (ICE) V 0.0.0.3
+Small hotfix:
+-> Fixed language issues across clients (french/german should now behave properly for missions)
+-> Added the ability to delay between finishing a mission/abandoning and grabbing the next one.
+-> Grabbing missions SHOULD now grab based off of ID, not by name. This should help prevent grabbing the wrong one (Thanks Liza for that)

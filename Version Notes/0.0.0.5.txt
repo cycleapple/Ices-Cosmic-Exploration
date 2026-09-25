@@ -1,0 +1,18 @@
+Ice's Cosmic Exploration (ICE) V0.0.0.5
+-> Went through and fixed all the mission items. Every recipe -should- be properly hooked up with the corresponding mission. 
+    -> This also means that any x3 collectable crafts should also be up and running now. 
+    -> This also should help stop the looping that would happen with certain missions as well. 
+-> Cleaned up some memory leakage that might of happened over the course of several hours (thanks wah)
+-> Missions will now show you what rewards they can give on the mission selection screen. 
+-> Added the ability to checkmark/enable "turnin on silver && "Turnin ASAP" 
+    -> this is off by default, but it's right there on the main window. You can't miss it. 
+-> You can now start the plugin anytime during the process (pre-mission or post mission) and will now jump into the right part to do
+-> There is some improvements to artisan interaction coming, but need to work on some things in the background first/get artisan code updated to meet the same specs (thank you Chika for this)
+-> Added "stop" and "start" for commands. [This should of been added awhile back]
+
+ THINGS TO STILL
+-> Priority system 
+-> Add gatherers as resetable 
+    -> Then actually work on gatherers
+-> Only do quest once
+-> Meteor missions

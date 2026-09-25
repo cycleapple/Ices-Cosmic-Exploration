@@ -1,0 +1,28 @@
+
+Turnin Spots:
+A: 2014618 -463.70923f, 37.764088f, -65.73092f,
+B: 2014618 -474.42532f, 37.8244f, -57.751297f,
+
+MIN: Insulting Material - 536
+FSH: Edible Fish 
+CUL: Cured Foodstuffs
+
+// Insulting Material - 536
+new GathNodeInfo
+{
+    ZoneId = 1237,
+    NodeId = 35114,
+    Position = new Vector3 (-453.94f, 43.02f, -287.68f),
+    LandZone = new Vector3 (-454.41f, 41.82f, -287.42f),
+    GatheringType = 2,
+    NodeSet = 2
+},
+
+Turnin Spot #2
+
+A: 2014616 | -78.42f, 51f, 769.11f | -79.333496f, 50.999992f, 768.62646f,
+B: 2014616 |-75.3f, 51f, 769.16f | -74.20461f, 50.999992f, 768.7364f,
+
+CRP: Work Ladders
+GSM: Lighting Repair Tools
+WVR: Spare Cloth

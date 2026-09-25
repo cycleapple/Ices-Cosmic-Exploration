@@ -1,0 +1,26 @@
+# Pinned 2026-08-03 (ICE forward-port to upstream HEAD 81d9961 / v1.0.0.1).
+#
+# Upstream ICE consumes ECommons and Pictomancy as NuGet packages and OtterGui /
+# Glamourer.Api as git submodules. All four are net10 / Dalamud.NET.Sdk 14-15 upstream, so
+# the TC tree vendors hand-retargeted api13 source for each. A refresh must NOT overwrite
+# them from upstream -- there is nothing upstream to overwrite them WITH, and `git archive`
+# does not descend into submodule gitlinks (it would leave OtterGui/ and Glamourer.Api/
+# empty). See doc/FORWARD_PORT_REFERENCE.md.
+ECommons/*
+ffxiv_pictomancy/*
+OtterGui/*
+Glamourer.Api/*
+
+# TC-only compatibility layer that has no upstream counterpart: without the pin a refresh's
+# wipe deletes it and the tree stops compiling.
+ICE/Compat/*
+
+# NOT version-pinned. ICE tracks upstream's <Version>.
+#
+# On 2026-08-04 the version was briefly TC-managed (1.0.0.2 -> 1.0.0.4) to push the game-7.20
+# fixes to clients already sitting on v1.0.0.1, then deliberately forced back to upstream's
+# 1.0.0.1 the same day: the whole divergence existed for one day of debugging, and permanently
+# carrying a TC-only version number costs more than the one-off "delete and reinstall" it saves.
+# Consequence, by design: v1.0.0.1-TC13 is re-clobbered rather than superseded, so Dalamud offers
+# no update and anyone already on v1.0.0.1 must delete and reinstall. Publishing therefore needs
+# -AllowStaleRepublish; the Layer-1 guard firing here is correct, not a mistake to route around.

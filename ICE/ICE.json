@@ -1,0 +1,12 @@
+{
+  "DalamudApiLevel": 13,
+  "Author": "Ice",
+  "Name": "Ice's Cosmic Exploration",
+  "Punchline": "The gathering companion that we all needed.",
+  "Description": "A little helper to go gather your heart out.",
+  "ApplicableVersion": "any",
+  "Tags": [
+    "Gatherers"
+  ],
+  "RepoUrl": "https://github.com/LeontopodiumNivale14/Ices-Cosmic-Exploration"
+}

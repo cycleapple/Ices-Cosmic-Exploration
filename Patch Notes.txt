@@ -1,0 +1,7 @@
+Dev build:
+Fix getting stuck on `WaitingForCrafts` (#65)
+Fix getting stuck on `AbandonMission` (#67)
+Mission turnin dropdowns (#69)
+Per-mission manual mode (#69)
+Animation lock detect + fix attempt (#73,#76,#77)
+Add credit sliders (#79)

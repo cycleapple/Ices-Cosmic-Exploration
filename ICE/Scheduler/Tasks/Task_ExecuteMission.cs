@@ -1,0 +1,143 @@
+﻿using ECommons.GameHelpers;
+using ICE.Utilities.Cosmic_Helper;
+
+namespace ICE.Scheduler.Tasks
+{
+    internal static class Task_ExecuteMission
+    {
+        public static void Enqueue()
+        {
+            P.TaskManager.Enqueue(() => ExecuteMission(), "Finding proper mission state");
+        }
+
+        private static bool? ExecuteMission()
+        {
+            if (CosmicHelper.CurrentLunarMission != 0)
+            {
+                var missionId = CosmicHelper.CurrentLunarMission;
+                P.MissionTimer.StartMission(missionId);
+
+                var mission = CosmicHelper.SheetMissionDict[missionId];
+                bool fishingMission = mission.Jobs.Contains(18);
+                bool gatherMission = mission.Jobs.Contains(16) || mission.Jobs.Contains(17);
+                bool craftMission = mission.Jobs.Any(x => CosmicHelper.CrafterJobList.Contains(x));
+
+                C.MissionConfig.TryGetValue(missionId, out var config);
+                bool dualClass = (gatherMission && craftMission) || (fishingMission && craftMission);
+
+                bool notUpdatedFisher = !P.AutoHook.UpdatedPlugin() && CosmicMoonRegistry.Auxesia.TerritoryId == Player.Territory.RowId && mission.Jobs.Contains(18);
+
+                if (C.OnlyGrabMission_Debug || UnsupportedMissions.Ids.Contains(missionId) || notUpdatedFisher)
+                {
+                    if (notUpdatedFisher && P.AutoHook.Installed)
+                    {
+                        string message = $"[I.C.E.] You didn't read the little warning in the mission setup\n" +
+                            "You need to update autohook for you to be able to fish here on Auxesia.\n" +
+                            "Please swap to testing version";
+                        IceLogging.Error($"{message}", "Execute Mission");
+                        Svc.Chat.Print(new()
+                        {
+                            Type = Dalamud.Game.Text.XivChatType.ErrorMessage,
+                            Message = message,
+                        });
+                        Svc.Toasts.ShowError($"{message}");
+                    }
+                    SchedulerMain.State = IceState.ManualMode;
+                }
+                else if (dualClass)
+                {
+                    IceLogging.Info("We've found a dual class mission! Kicking it off with that.", "[Task: Execute Mission]");
+                    SchedulerMain.State = IceState.DualClass;
+                    if (fishingMission)
+                    {
+                        if (config.Use_BuildinPreset)
+                        {
+							IceLogging.Debug("Use Built-In Presets Checked. Resetting/Importing presets.");
+                            P.AutoHook.DeleteAllAnonymousPresets();
+                            FishingTask(missionId);
+                        }
+						else
+						{
+							IceLogging.Debug("Use Built-In Presets Unchecked. Setting configured preset.");
+							string presetName = C.MissionConfig[CosmicHelper.CurrentLunarMission].AutoHookPresetName;
+							P.AutoHook.SetPreset(presetName);
+						}
+                    }
+                }
+                else if (fishingMission)
+                {
+                    // Check exist twice, one here is to actually enable the fishing profile that is selected.
+                    var missionConfig = C.MissionConfig[missionId];
+                    if (missionConfig.Use_BuildinPreset)
+                    {
+                        // Using the build in presets that are included in the plugin.
+						IceLogging.Debug("Use Built-In Presets Checked. Resetting/Importing presets.");
+                        P.AutoHook.DeleteAllAnonymousPresets();
+                        FishingTask(missionId);
+                    }
+                    else
+                    {
+						IceLogging.Debug("Use Built-In Presets Unchecked. Setting configured preset.");
+                        string presetName = missionConfig.AutoHookPresetName;
+                        P.AutoHook.SetPreset(presetName);
+                    }
+
+                    SchedulerMain.State = IceState.Fish;
+                    IceLogging.Debug("Mission is a fishing mission, so going to the fishing task");
+                }
+                else if (gatherMission)
+                {
+                    SchedulerMain.State = IceState.Gather;
+                    IceLogging.Info("Mission is a gathering mission. Need to gather inial resources. But first going to do a check to make sure where we're at.", "[Task_ExecuteMission]");
+                }
+                else if (craftMission)
+                {
+                    IceLogging.Debug("Mission is purely a crafting mission (yay), checking current state next", "[Task_ExecuteMission]");
+                    SchedulerMain.State = IceState.Craft;
+                }
+            }
+            else if (CosmicHelper.CurrentLunarMission == 0)
+            {
+                IceLogging.Debug("Hmm... somehow we got in this state. And we shouldn't be? Returning back to the grab mission state");
+                SchedulerMain.State = IceState.GrabMission;
+            }
+
+            return true;
+        }
+
+        public static void FishingTask(uint missionId)
+        {
+            P.TaskManager.Enqueue(() => ClearFishingPreset(), "Clearing All Fishing Presets");
+            P.TaskManager.EnqueueDelay(150);
+            P.TaskManager.Enqueue(() => ImportPresetsSequentially(missionId));
+        }
+
+        private static bool? ClearFishingPreset()
+        {
+            if (P.AutoHook.Installed)
+            {
+                P.AutoHook.DeleteAllAnonymousPresets();
+            }
+            return true;
+        }
+        private static void ImportPresetsSequentially(uint missionId)
+        {
+            var presetList = CosmicHelper.SheetMissionDict[missionId].Fish_Presets;
+
+            if (presetList.Count == 0)
+                return;
+
+            var preset = presetList[0];
+            if (preset.StartsWith("AHFOLDER"))
+            {
+                IceLogging.Verbose("We found a folder! We're going to import that", "AH Import");
+                P.AutoHook.CreateAndSelectAnonymousFolder(preset);
+            }
+            else
+            {
+                IceLogging.Verbose("Basic Fishing preset (bless) single import it is", "AH Import");
+                P.AutoHook.CreateAndSelectAnonymousPreset(preset);
+            }
+        }
+    }
+}

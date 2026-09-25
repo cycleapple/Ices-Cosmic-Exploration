@@ -1,0 +1,15 @@
+﻿using System.Collections.Generic;
+
+namespace ICE.Utilities.Cosmic_Helper
+{
+    /// <summary>
+    /// IDs of missions that should be disabled and shown as unsupported.
+    /// </summary>
+    public static class UnsupportedMissions
+    {
+        public static readonly HashSet<uint> Ids = new HashSet<uint>
+        {
+            // Oizyr Missions
+        };
+    }
+}

@@ -1,0 +1,11 @@
+Ice's Cosmic Exploration (ICE) Beta V0.2
+
+Major beta!  
+-> Now can select which of each mission for each class that you would like to do
+-> Checkmark them, and it will attempt to grab based off your selection
+-> If none are available, will grab a random one and immediately dispose of it to refresh the list
+-> Now does full crafts/auto turn ins WITH ARTISAN SUPPORT (aka you need it to run this.
+
+More to come in the future. Look forward to you nerd breaking shit.
+
+NOTE: Other languages might/probably is bugged. Will work on that tomorrow. I have to work in 6 hours from posting this update SOOO... tomorrow me problem

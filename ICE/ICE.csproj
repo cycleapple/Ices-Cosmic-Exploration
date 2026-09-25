@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  TC port of the upstream ICE.csproj (Ices-Cosmic-Exploration @ 81d9961, v1.0.0.1).
+  Transformed per doc/PORTING_RECIPE.md §3 (api13) + repo-root tc-runtime.json:
+    Dalamud.NET.Sdk/15.0.0     -> Microsoft.NET.Sdk + explicit <Reference> items
+    net10.0-windows8.0         -> net9.0-windows7.0
+    DalamudPackager 15.0.0     -> 13.1.0
+    ECommons / Pictomancy      -> local ProjectReference (the NuGet packages are net10 binaries)
+    TerraFX.Interop.Windows    -> <Reference> against the api13 DLL set (it ships the assembly)
+    <ImplicitUsings>           -> enabled; Dalamud.NET.Sdk turned it on implicitly and the
+                                  upstream sources rely on it (System.Linq etc.)
+  The upstream `EnsureOtterGuiSubmodules` / `Ensure GlamourerApiSubmodule` Exec targets are
+  DELETED on purpose: their WorkingDirectory resolves inside this repo, so they would run a
+  submodule-update command against the outer host repository.
+  Both dependencies are vendored as plain source here instead.
+-->
+
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Platforms>x64</Platforms>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <LangVersion>preview</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+
+	<PropertyGroup>
+		<Version>1.0.0.3</Version>
+		<Description>Who said we couldn't explore the moon!.</Description>
+		<PackageProjectUrl>https://github.com/goatcorp/ICE</PackageProjectUrl>
+		<PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
+		<IsPackable>true</IsPackable>
+		<RootNamespace>ICE</RootNamespace>
+		<TargetFramework>net9.0-windows</TargetFramework>
+		<InformationalVersion>$([System.DateTime]::UtcNow.ToString("yyyy\-MM\-dd HH\:mm\:ss"))</InformationalVersion>
+		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+		<!-- Dalamud001: IUnlockState is marked [Experimental] at api13; ICE opts in deliberately. -->
+		<NoWarn>CS8618; CS8625; CS8629; Dalamud001; </NoWarn>
+	</PropertyGroup>
+  <PropertyGroup>
+    <DalamudLibPath>$(MSBuildThisFileDirectory)..\..\..\TC_ok\_dalamud_api13\</DalamudLibPath>
+  </PropertyGroup>
+
+
+	<ItemGroup>
+		<Content Include="ICE.json" />
+		<EmbeddedResource Include="Resources\TrophyIcons\bronze_trophy.png" />
+		<EmbeddedResource Include="Resources\TrophyIcons\gold_trophy.png" />
+		<EmbeddedResource Include="Resources\TrophyIcons\silver_trophy.png" />
+		<EmbeddedResource Include="Resources\Auxesia.png" />
+		<EmbeddedResource Include="Resources\ResearchIcons\advance.png" />
+		<EmbeddedResource Include="Resources\ResearchIcons\expert.png" />
+		<EmbeddedResource Include="Resources\ResearchIcons\novice.png" />
+		<EmbeddedResource Include="Resources\ResearchIcons\intermediate.png" />
+		<EmbeddedResource Include="Resources\CosmicClassTracker.png" />
+		<EmbeddedResource Include="Resources\Red_Alert.png" />
+		<EmbeddedResource Include="Resources\Oizys.png" />
+		<Content Include="utilities\Z_RandomNotes.yaml" />
+		<EmbeddedResource Include="Resources\GreyscaleJobs\ALC.png" />
+		<EmbeddedResource Include="Resources\GreyscaleJobs\ARM.png" />
+		<EmbeddedResource Include="Resources\GreyscaleJobs\BSM.png" />
+		<EmbeddedResource Include="Resources\GreyscaleJobs\BTN.png" />
+		<EmbeddedResource Include="Resources\GreyscaleJobs\CUL.png" />
+		<EmbeddedResource Include="Resources\GreyscaleJobs\FSH.png" />
+		<EmbeddedResource Include="Resources\GreyscaleJobs\GSM.png" />
+		<EmbeddedResource Include="Resources\GreyscaleJobs\LTW.png" />
+		<EmbeddedResource Include="Resources\GreyscaleJobs\MIN.png" />
+		<EmbeddedResource Include="Resources\GreyscaleJobs\WVR.png" />
+		<EmbeddedResource Include="Resources\GreyscaleJobs\CRP.png" />
+		<EmbeddedResource Include="Resources\Icon.png">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Sounds\Task_Completed.mp3" />
+		<EmbeddedResource Include="Resources\Phaenna.png">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Resources\Sinus_Ardorum.png">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Resources\GatherRoutes\**\*" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\MissionScores.csv" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\ECommons\ECommons\ECommons.csproj" />
+		<PackageReference Include="NAudio" Version="2.3.0" />
+		<ProjectReference Include="..\ffxiv_pictomancy\Pictomancy\Pictomancy.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\OtterGui\OtterGui.csproj" />
+		<ProjectReference Include="..\Glamourer.Api\Glamourer.Api.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Update="DotNet.ReproducibleBuilds" Version="2.0.5" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Resources\GatherRoutes\" />
+	  <Folder Include="Ui\NewFolder\" />
+	</ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="DalamudPackager" Version="13.1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="TerraFX.Interop.Windows">
+      <HintPath>$(DalamudLibPath)TerraFX.Interop.Windows.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>$(DalamudLibPath)Newtonsoft.Json.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Dalamud">
+      <HintPath>$(DalamudLibPath)Dalamud.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Dalamud.Common">
+      <HintPath>$(DalamudLibPath)Dalamud.Common.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Dalamud.Bindings.ImGui">
+      <HintPath>$(DalamudLibPath)Dalamud.Bindings.ImGui.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Lumina">
+      <HintPath>$(DalamudLibPath)Lumina.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Lumina.Excel">
+      <HintPath>$(DalamudLibPath)Lumina.Excel.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="FFXIVClientStructs">
+      <HintPath>$(DalamudLibPath)FFXIVClientStructs.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="InteropGenerator.Runtime">
+      <HintPath>$(DalamudLibPath)InteropGenerator.Runtime.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Dalamud.Bindings.ImPlot">
+      <HintPath>$(DalamudLibPath)Dalamud.Bindings.ImPlot.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Dalamud.Bindings.ImGuizmo">
+      <HintPath>$(DalamudLibPath)Dalamud.Bindings.ImGuizmo.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+
+</Project>

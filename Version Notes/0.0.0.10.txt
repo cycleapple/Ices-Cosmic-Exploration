@@ -1,0 +1,8 @@
+0.10 Update  [ICE]
+-> Mostly cosmetic changes
+  -> Added the ability to not sort by name and by id instead (sorry I gaslit you all into thinking I changed nothing, I did in fact. But now best of both worlds)
+-> Added the ability to craft x2 items when "Turnin on Silver" is enabled.
+  -> This is really only meant for A-3 missions/weather missions but, might revisit as a mission to mission basis later
+-> Added "Blacklist" feature to the plugin
+  -> This is moreso for me to control/say "Hey, this isn't working rn, no you can't do it"
+  -> Only has the meteor shower event on there right now, but will use it to say "hey, this is broken" in the future.

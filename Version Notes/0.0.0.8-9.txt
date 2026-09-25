@@ -1,0 +1,10 @@
+ICE 0.8
+-> I swear this time, fixed triple master recipe crafts
+  -> "Turn in ASAP" now properly works, sorry bout that.
+  -> Will look into a "per mission" basis in the future
+  
+ICE V0.0.0.9
+FINALLY ACTUALLY SWEAR ON THE NAME OF CUTHULU'S NAME
+
+Fixed the A-3 missions. 
+-> this might in turn also help with the crafts that have been across multiple classes? Need to double check/please let me know
