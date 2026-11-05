@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Dalamud.NET.Sdk/13.0">
+<Project Sdk="Dalamud.NET.Sdk/14.0.1">
 
 	<PropertyGroup>
 		<Version>0.0.73.52</Version>
@@ -8,7 +8,7 @@
 		<PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
 		<IsPackable>true</IsPackable>
 		<RootNamespace>ICE</RootNamespace>
-		<TargetFramework>net9.0-windows7.0</TargetFramework>
+		<TargetFramework>net10.0-windows7.0</TargetFramework>
 		<InformationalVersion>$([System.DateTime]::UtcNow.ToString("yyyy\-MM\-dd HH\:mm\:ss"))</InformationalVersion>
 		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 		<NoWarn>CS8618; CS8625; CS8629; </NoWarn>
@@ -53,6 +53,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Update="DalamudPackager" Version="13.1.0" />
+		<PackageReference Update="DalamudPackager" Version="14.0.1" />
 	</ItemGroup>
 </Project>

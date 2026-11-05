@@ -1,4 +1,4 @@
-﻿using Lumina.Excel.Sheets;
+using Lumina.Excel.Sheets;
 
 namespace ICE.Ui.DebugWindowTabs
 {
@@ -25,13 +25,13 @@ namespace ICE.Ui.DebugWindowTabs
                     ImGui.Text($"{entry.RowId}");
 
                     ImGui.TableNextColumn();
-                    ImGui.Text($"{entry.Unknown0}");
+                    ImGui.Text($"{entry.WeatherRequired.RowId}");
 
                     ImGui.TableNextColumn();
-                    ImGui.Text($"{entry.Unknown1}");
+                    ImGui.Text($"{entry.StartTimeHour}");
 
                     ImGui.TableNextColumn();
-                    ImGui.Text($"{entry.Unknown2}");
+                    ImGui.Text($"{entry.EndTimeHour}");
 
                 }
 

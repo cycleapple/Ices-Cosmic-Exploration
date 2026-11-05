@@ -1,0 +1,14 @@
+[
+  {
+    "path": "ECommons",
+    "baseCommit": "fdf444c1f8c793fd882b654923ddf451f01e74c2",
+    "patch": "patches/e347001520b30beb.patch",
+    "sha256": "fbb87ca43495e7bb0b346c174ecfec1a9ece6f36acef24113371b3bb972f9aed"
+  },
+  {
+    "path": "ffxiv_pictomancy",
+    "baseCommit": "788bc339a67e7a3db01a47a954034a83b9c3b61b",
+    "patch": "patches/7b9d096c5556e015.patch",
+    "sha256": "1e326a328e0cef819a3bb0b40e74a72a008b2a6916d82886bd4401884fcfa112"
+  }
+]

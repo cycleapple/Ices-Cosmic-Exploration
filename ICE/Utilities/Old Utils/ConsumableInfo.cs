@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -48,7 +48,7 @@ namespace ICE.Utilities
             if (!item.ItemAction.IsValid)
                 return false;
             var action = item.ItemAction.Value;
-            return action.Type == 816 && action.Data[0] is 300 or 301 or 1751 or 5329;
+            return action.Action.RowId == 816 && action.Data[0] is 300 or 301 or 1751 or 5329;
         }
 
         internal static bool IsSquadronManual(Item item)
@@ -58,7 +58,7 @@ namespace ICE.Utilities
             if (!item.ItemAction.IsValid)
                 return false;
             var action = item.ItemAction.Value;
-            return action.Type == 816 && action.Data[0] is 2291 or 2292 or 2293 or 2294;
+            return action.Action.RowId == 816 && action.Data[0] is 2291 or 2292 or 2293 or 2294;
         }
     }
 }
