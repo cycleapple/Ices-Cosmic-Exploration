@@ -144,20 +144,7 @@ namespace ICE.Ui.DebugWindowTabs
 
         private static void SwapBait(uint baitId)
         {
-            _ = Task.Run(async () =>
-            {
-                baitSwapped = await TaskSwapBait(baitId);
-            });
-
-            _ = Task.Run(async () =>
-            {
-                await P.AutoHook.SwapBaitById(baitId);
-            });
-        }
-
-        private static async Task<bool> TaskSwapBait(uint bait)
-        {
-            return await P.AutoHook.SwapBaitById(bait);
+            baitSwapped = P.AutoHook.SwapBaitById(baitId);
         }
     }
 }

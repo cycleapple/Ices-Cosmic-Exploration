@@ -29,10 +29,8 @@ namespace ICE.Scheduler.Tasks
             // wait for fishing to be done
 
             P.TaskManager.Enqueue(() => Task_CheckScore.Fish());
-            P.TaskManager.Enqueue(() => FishingCheck());
+            P.TaskManager.Enqueue(() => FishingCheck(), "Preparing to fish", Utils.TaskConfig);
         }
-
-        private static int BaitCounter = 0;
 
         private static unsafe bool? FishingCheck()
         {
@@ -43,9 +41,19 @@ namespace ICE.Scheduler.Tasks
 
             if (Player.Mounted)
             {
-                Utils.Dismount();
+                if (EzThrottler.Throttle("Dismounting to fish", 1000))
+                    Utils.Dismount();
                 return false;
             }
+
+            if (P.Navmesh.IsRunning())
+            {
+                P.Navmesh.Stop();
+                return false;
+            }
+            if (!Svc.Condition[ConditionFlag.Gathering]
+                && (Player.IsMoving || Player.IsJumping || Player.Mounting || Player.IsBusy))
+                return false;
 
             string handle = "[Standard Fishing: Fishing Check]";
             if (EzThrottler.Throttle("Throttling intro message", 1000))
@@ -144,28 +152,8 @@ namespace ICE.Scheduler.Tasks
                 else if (EzThrottler.Throttle("Starting to fish", 1000))
                 {
                     IceLogging.Debug("Telling it to start fishing", handle);
-                    // ActionManager.Instance()->UseAction(ActionType.Action, 289);
-                    Svc.Commands.ProcessCommand("/ahstart");
-                }
-                else if (EzThrottler.Throttle("Adding counter for bait not equipped"))
-                {
-                    BaitCounter++;
-                    IceLogging.Debug($"Adding 1 to the counter. Counter is at: {BaitCounter}");
-                    if (BaitCounter >= 2)
-                    {
-                        foreach (var bait in GatheringUtil.MoonBaits)
-                        {
-                            foreach (var baitId in bait.Value)
-                            {
-                                if (PlayerHelper.GetItemCount(baitId, out var count) && count > 0)
-                                {
-                                    P.AutoHook.SwapBaitById(baitId);
-                                    IceLogging.Debug($"Telling it to equip bait ID: {baitId}", handle);
-                                    return false;
-                                }
-                            }
-                        }
-                    }
+                    P.AutoHook.SetPluginState(true);
+                    ActionManager.Instance()->UseAction(ActionType.Action, 289);
                 }
                 return false;
             }
@@ -175,7 +163,6 @@ namespace ICE.Scheduler.Tasks
                 P.AutoHook.SetPluginState(true);
                 IceLogging.Info("We're starting to fish. So kicking it over to checking the fish items", handle);
                 P.TaskManager.Insert(() => WaitToStartFishing(), "Waiting till we actually start fishing", Utils.TaskConfig);
-                BaitCounter = 0;
                 return true;
             }
         }

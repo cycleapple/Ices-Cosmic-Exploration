@@ -22,6 +22,6 @@ namespace ICE.IPC
         [EzIPC] public Action<string> ImportAndSelectPreset;
         [EzIPC] public Action DeleteSelectedPreset;
         [EzIPC] public Action DeleteAllAnonymousPresets;
-        [EzIPC] public Func<uint, Task<bool>> SwapBaitById;
+        [EzIPC] public Func<uint, bool> SwapBaitById;
     }
 }

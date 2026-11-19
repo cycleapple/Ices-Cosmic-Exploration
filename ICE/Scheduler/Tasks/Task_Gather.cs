@@ -265,6 +265,22 @@ namespace ICE.Scheduler.Tasks
             else
             {
                 approachNodeId = 0;
+                // Reaching interaction range can short-circuit the navigation helper.
+                // Finish its movement/dismount handoff before interacting with the node.
+                if (P.Navmesh.IsRunning())
+                {
+                    P.Navmesh.Stop();
+                    return false;
+                }
+                if (Player.Mounted)
+                {
+                    if (EzThrottler.Throttle("Dismounting at gathering node", 1000))
+                        Utils.Dismount();
+                    return false;
+                }
+                if (Player.IsMoving || Player.Mounting || Player.IsJumping)
+                    return false;
+
                 if (CosmicHandler.IsMissionTimedOut())
                 {
                     IceLogging.Info("Mission timed out, checking score before turning in or abandoning", "[Gathering: Open Gathering Menu]");
