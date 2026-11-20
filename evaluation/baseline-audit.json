@@ -1,0 +1,75 @@
+{
+  "date": "2026-11-20",
+  "purpose": "Evaluate ICE 1.0.0.3 as the next API13 baseline; not a release candidate",
+  "baseRepository": "https://github.com/lilasrepo/Ices-Cosmic-Exploration",
+  "baseCommit": "8fb4f8510264bf231453fa57b32765b71677f39c",
+  "branch": "api13-next-evaluation",
+  "stableVersion": "0.0.73.54",
+  "newBaseVersion": "1.0.0.3",
+  "buildEnvironment": {
+    "compiler": "E:/FFXIV/XIVLauncher/.tools/dotnet10/dotnet.exe",
+    "framework": ".NET 9",
+    "references": "E:/FFXIV/XIVLauncher/api13-work/dalamud/"
+  },
+  "sourceBuild": {
+    "success": false,
+    "errors": 56,
+    "warnings": 85,
+    "log": "../../diagnostics/ice-next-api13-build.log",
+    "findings": [
+      "ECommons references IPlayerState, IUnlockState and IReliableFileStorage absent in the selected API13 SDK",
+      "Vendored OtterGui source has no OtterGui.Log.Logger definition"
+    ]
+  },
+  "diagnosticBinaryDependencyBuild": {
+    "success": false,
+    "errors": 6,
+    "warnings": 77,
+    "log": "../../diagnostics/ice-next-api13-binarydeps-build.log",
+    "note": "Diagnostic only: published dependency DLLs were used temporarily; original ProjectReferences have been restored",
+    "findings": [
+      "IUnlockState is directly injected by ICE but absent in selected SDK",
+      "TcDirectorCompat uses MassivePcContentTodo absent in selected reference assembly",
+      "SharpDX namespace needs explicit references when transitive ProjectReferences are bypassed"
+    ]
+  },
+  "confirmedFixesApplied": [
+    "AutoHook.SwapBaitById consumer returns bool, matching current Extended AutoHook",
+    "Debug bait swap runs once on caller thread rather than two background calls"
+  ],
+  "migrationWork": [
+    {
+      "area": "API13 source dependencies",
+      "required": "Use source-compatible ECommons and complete compatible OtterGui; rebuild against the Extended SDK rather than relying on a manifest API number"
+    },
+    {
+      "area": "Artisan",
+      "required": "Adapt new-base ChangeSolver/ChangeFood/ChangePotion calls to existing validated SetTemporarySolver/SetTemporaryFood/SetTemporaryPotion endpoints and preserve cleanup and Raphael failure handling"
+    },
+    {
+      "area": "Configuration",
+      "required": "Explicitly migrate CosmicAgenda to Cosmic_Agenda, profiles and per-recipe settings; do not overwrite user configuration during evaluation"
+    },
+    {
+      "area": "Localization",
+      "evidence": "0 of 72 new-base UI C# files contain Chinese characters; old base has 21 of 54",
+      "required": "Port zh-TW interface strings to renamed/restructured UI files"
+    },
+    {
+      "area": "Gathering and fishing",
+      "required": "Port arrival handoff and tested collectable watchdog into the new active V2 paths; keep existing recovery fixes rather than restoring the old dormant paths"
+    },
+    {
+      "area": "Travel",
+      "evidence": "New defaults enable UseHubReturn and UseAethernet",
+      "required": "Retain explicitly disabled travel shortcuts and revalidate node depletion and score/turn-in decisions"
+    },
+    {
+      "area": "Native layout",
+      "required": "Verify TcMissionState offsets against the exact supported client/FFXIVClientStructs, including rank failure guards"
+    }
+  ],
+  "verdict": "Suitable as a migration starting point, not directly buildable/releasable against our selected API13 SDK",
+  "published": false,
+  "inGameTested": false
+}
