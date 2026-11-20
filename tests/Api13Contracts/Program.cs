@@ -2,7 +2,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Loader;
 var root = Path.GetFullPath(args[0]);
-var plugin = Path.Combine(root, "ICE/bin/Release");
+var plugin = Path.Combine(root, "ICE/bin/Release/Candidate");
 var artisanDir = Path.GetFullPath(args[1]);
 var sdk = Path.GetFullPath(args[2]);
 AssemblyLoadContext.Default.Resolving += (ctx, name) => {
@@ -12,11 +12,17 @@ AssemblyLoadContext.Default.Resolving += (ctx, name) => {
     }
     return null;
 };
-var ice = AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.Combine(plugin, "ICE.dll"));
+var ice = AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.Combine(plugin, "ICECandidate.dll"));
 var artisan = AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.Combine(artisanDir, "Artisan.dll"));
 int checks = 0;
 void Check(bool value, string why) { checks++; if (!value) throw new Exception(why); }
 Check(ice.GetReferencedAssemblies().Single(x => x.Name == "Dalamud").Version!.Major == 13, "Not API13");
+Check(ice.GetName().Name == "ICECandidate", "Candidate would replace stable assembly identity");
+var identity = ice.GetType("ICE.Compat.CandidateIdentity", true)!;
+Check((string)identity.GetField("Command")!.GetRawConstantValue()! == "/icecandidate", "Candidate command conflicts with stable");
+Check((string)identity.GetField("InternalName")!.GetRawConstantValue()! == "ICECandidate", "Candidate identity conflicts with stable");
+var legacy = (string)identity.GetMethod("LegacyConfigPath")!.Invoke(null, new object[]{Path.Combine(root, "pluginConfigs", "ICECandidate")})!;
+Check(legacy == Path.Combine(root, "pluginConfigs", "ICE", "Mission Config.yaml"), "Candidate looks for legacy settings in its own directory");
 var consumer = ice.GetType("ICE.IPC.ArtisanIPC", true)!;
 var provider = artisan.GetType("Artisan.IPC.IPC", true)!;
 foreach (var name in new[]{"SetTemporarySolver", "SetTemporaryFood", "SetTemporaryPotion", "ClearTemporaryRecipeSettings", "ClearAllTemporarySettings", "GetAvailableSolvers", "GetRaphaelStatus", "GetRaphaelFailure"}) {

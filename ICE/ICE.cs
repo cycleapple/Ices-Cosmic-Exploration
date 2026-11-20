@@ -16,7 +16,8 @@ namespace ICE;
 
 public sealed partial class ICE : IDalamudPlugin
 {
-    public static string Name => "ICE";
+    public static string Name => "ICE Candidate";
+    internal static bool StableVersionLoaded => Svc.PluginInterface.InstalledPlugins.Any(plugin => plugin.InternalName == CandidateIdentity.StableInternalName && plugin.IsLoaded);
 
     internal static ICE P = null!;
     private Config config;
@@ -62,11 +63,11 @@ public sealed partial class ICE : IDalamudPlugin
     public void Load()
     {
         // Candidate schema differs from 0.0.73.x. Never rewrite the stable configuration.
-        EzConfig.PluginConfigDirectoryOverride = "ICE.Next.API13";
+        EzConfig.PluginConfigDirectoryOverride = CandidateIdentity.ConfigDirectory;
         try
         {
             LegacyConfigImporter.TryImport(
-                System.IO.Path.Combine(Svc.PluginInterface.GetPluginConfigDirectory(), "Mission Config.yaml"),
+                CandidateIdentity.LegacyConfigPath(Svc.PluginInterface.GetPluginConfigDirectory()),
                 EzConfig.DefaultConfigurationFileName);
         }
         catch (Exception error)
@@ -102,17 +103,7 @@ public sealed partial class ICE : IDalamudPlugin
         infoWindow = new();
         externalDetails = new();
 
-        EzCmd.Add("/icecosmic", OnCommand, """
-            Open plugin interface
-            /ice help - shows all commands
-            /ice clear - removes all missions
-            /ice stop - stops ICE
-            /ice start - Starts ICE
-            /ice add | remove | toggle | only 
-            /ice flag [id] - Opens the map and marks where the area of gathering is.
-            """);
-        EzCmd.Add("/ice", OnCommand);
-        EzCmd.Add("/IceCosmic", OnCommand);
+        EzCmd.Add(CandidateIdentity.Command, OnCommand, "開啟 ICE 新版測試版；使用 /icecandidate help 查看指令。");
         Init();
         Svc.Framework.Update += Tick;
         Svc.PluginInterface.UiBuilder.Draw += OnDraw;
@@ -169,6 +160,11 @@ public sealed partial class ICE : IDalamudPlugin
 
     private void Tick(object _)
     {
+        if (StableVersionLoaded)
+        {
+            if (SchedulerMain.State != IceState.Idle) SchedulerMain.DisablePlugin();
+            return;
+        }
         if (Player.Available && PlayerHelper.IsInCosmicZone())
         {
             if (EzThrottler.Throttle("Update Character Stats"))
@@ -363,19 +359,19 @@ public sealed partial class ICE : IDalamudPlugin
         else if (firstArg.ToLower() == "help")
         {
             string helpMessage = $"- - ICE Commands Help - - \n" +
-                                 $"/ice help - show all available commands\n" +
-                                 $"/ice -> opens the main settings\n" +
-                                 $"/ice s -> opens the settings menu\n" +
+                                 $"/icecandidate help - show all available commands\n" +
+                                 $"/icecandidate -> opens the main settings\n" +
+                                 $"/icecandidate s -> opens the settings menu\n" +
                                  $" - - - Mission specific - - - \n" +
-                                 $"/ice stop - Stops ICE\n" +
-                                 $"/ice start - starts ICE \n" +
+                                 $"/icecandidate stop - Stops ICE\n" +
+                                 $"/icecandidate start - starts ICE \n" +
                                  $"The rest of the commands work by doing a single id/multiple in a row \n" +
-                                 $"EX. /ice add 10 155 185\n" +
-                                 $"/ice add (ids) - enables select missions\n" +
-                                 $"/ice remove (ids) - removes/disables select missions\n" +
-                                 $"/ice toggle (ids) - toggles select mission ids" +
-                                 $"/ice only (ids) - makes only select missions enabled" +
-                                 $"/ice flag (id) - opens the map and flags the mission (if it has one).\n";
+                                 $"EX. /icecandidate add 10 155 185\n" +
+                                 $"/icecandidate add (ids) - enables select missions\n" +
+                                 $"/icecandidate remove (ids) - removes/disables select missions\n" +
+                                 $"/icecandidate toggle (ids) - toggles select mission ids" +
+                                 $"/icecandidate only (ids) - makes only select missions enabled" +
+                                 $"/icecandidate flag (id) - opens the map and flags the mission (if it has one).\n";
             Svc.Chat.Print(helpMessage);
         }
         else if (firstArg.ToLower() == "overlay")

@@ -12,7 +12,7 @@ public class IceCosmicExplorationIPC
 {
     public IceCosmicExplorationIPC()
     {
-        EzIPC.Init(this);
+        EzIPC.Init(this, CandidateIdentity.InternalName);
     }
 
 

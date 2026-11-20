@@ -16,7 +16,7 @@ namespace ICE.Ui
 {
     internal class InfoWindow : Window
     {
-        public InfoWindow() : base($"Ice's Cosmic Exploration - 資訊")
+        public InfoWindow() : base($"Ice's Cosmic Exploration [新版測試版] - 資訊")
         {
             Flags = ImGuiWindowFlags.None;
             SizeConstraints = new()

@@ -1,0 +1,12 @@
+{
+  "DalamudApiLevel": 13,
+  "Author": "Ice",
+  "Name": "Ice's Cosmic Exploration（新版測試版）",
+  "Punchline": "宇宙探索新版基底測試版，與正式版分開安裝。",
+  "Description": "以新版 1.0 基底移植至 API13，含核心繁中、舊設定匯入、採集與釣魚復原。使用 /icecandidate 開啟；執行前請停用正式版 ICE。使用獨立設定，尚未完成遊戲內驗證。",
+  "ApplicableVersion": "any",
+  "Tags": [
+    "Gatherers"
+  ],
+  "RepoUrl": "https://github.com/cycleapple/Ices-Cosmic-Exploration/tree/api13-next-evaluation"
+}

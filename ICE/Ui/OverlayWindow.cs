@@ -15,7 +15,7 @@ namespace ICE.Ui
 {
     internal class OverlayWindow : Window
     {
-        public OverlayWindow() : base("ICE Overlay")
+        public OverlayWindow() : base("ICE Candidate Overlay")
         {
             Flags = ImGuiWindowFlags.None;
             RespectCloseHotkey = false;

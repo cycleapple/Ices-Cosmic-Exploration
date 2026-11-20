@@ -9,6 +9,11 @@ namespace ICE.Scheduler
     {
         internal static bool EnablePlugin()
         {
+            if (StableVersionLoaded)
+            {
+                IceLogging.Error("請先停用正式版 ICE，再開始執行新版測試版。", "[新版測試版]");
+                return false;
+            }
             if (LegacyImportError.Length != 0)
             {
                 IceLogging.Error("舊設定尚未成功匯入，請先在主視窗確認匯入問題。", "[設定匯入]");

@@ -16,7 +16,7 @@ internal class DebugWindow : Window
     private bool _showSidebar = true;
 
     public DebugWindow() :
-        base($"ICE {P.GetType().Assembly.GetName().Version} Debugger ###IceCosmicDebug1")
+        base($"ICE {P.GetType().Assembly.GetName().Version} Debugger ###ICECandidateDebug")
     {
         Flags = ImGuiWindowFlags.None;
         SizeConstraints = new WindowSizeConstraints

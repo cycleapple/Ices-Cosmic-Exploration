@@ -69,7 +69,8 @@ namespace ICE.IPC
 
         public void ClearAppliedSettings()
         {
-            if (Utils.HasPlugin(Name)) ClearAllTemporarySettings();
+            if (Utils.HasPlugin(Name))
+                foreach (var recipeId in CraftSettings.Keys) ClearTemporaryRecipeSettings(recipeId);
             CraftSettings.Clear();
             appliedMission = null;
         }

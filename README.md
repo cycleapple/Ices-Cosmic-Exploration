@@ -1,6 +1,6 @@
 # Ice's Cosmic Exploration — API13 新基底候選版
 
-目前候選版本：**1.0.0.5**，分支 `api13-next-evaluation`。
+目前候選版本：**1.0.0.6**，分支 `api13-next-evaluation`。
 
 以 [lilasrepo 的 1.0.0.3 移植原始碼](https://github.com/lilasrepo/Ices-Cosmic-Exploration/tree/8fb4f8510264bf231453fa57b32765b71677f39c) 為基礎，對接 Extended 庫使用的 API13 SDK、.NET 9 與 Artisan。原插件由 [LeontopodiumNivale14](https://github.com/LeontopodiumNivale14/Ices-Cosmic-Exploration) 開發，遵循本倉庫 AGPL 授權。
 
@@ -31,15 +31,17 @@
 ./evaluation/Build-Api13Candidate.ps1 -DalamudHome <API13-SDK目錄> -Dotnet <dotnet10.exe>
 ```
 
-套件位於 `ICE/bin/Release/ICE/latest.zip`。測試以 .NET 9 執行：
+套件位於 `ICE/bin/Release/Candidate/ICECandidate/latest.zip`。測試以 .NET 9 執行：
 
 ```powershell
 dotnet run --project tests/CollectableProgress -c Release
 dotnet run --project tests/Api13Contracts -c Release -- . <Artisan的Release目錄> <API13-SDK目錄>
 ```
 
-目前完整重建 0 錯誤、177 警告；173 項離線檢查通過。檢查包含採集復原、實際編譯組件的接口、Artisan 設定回復，以及 YAML 匯入、備份、重複匯入與來源變更處理。
+目前完整重建 0 錯誤、177 警告；177 項離線檢查通過。檢查包含採集復原、實際編譯組件的接口、Artisan 設定回復，以及 YAML 匯入、備份、重複匯入與來源變更處理。
 
-候選版尚未完成遊戲內驗證，也仍有詳細提示與除錯文字待翻譯。正式 Extended 庫維持 0.0.73.54。候選版與正式版共用 `InternalName=ICE`，測試時請只啟用其中一版。
+候選版尚未完成遊戲內驗證，也仍有詳細提示與除錯文字待翻譯。正式 Extended 庫維持 0.0.73.54。測試版在 API13 Extended 庫以「Ice's Cosmic Exploration（新版測試版）」獨立列出，`InternalName=ICECandidate`，使用 `/icecandidate` 開啟。正式版的名稱、版本與 `/ice` 指令保持不變。測試版的 IPC 前綴為 `ICECandidate`。
+
+兩版可分開安裝。執行測試版前請先停用正式版 ICE；正式版載入時，測試版會暫停自動執行。測試版只清除自己套用的 Artisan 配方覆寫。
 
 完整移植紀錄見 [baseline-audit.json](evaluation/baseline-audit.json)。

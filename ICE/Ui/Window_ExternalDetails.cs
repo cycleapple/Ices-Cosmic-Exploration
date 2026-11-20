@@ -57,7 +57,7 @@ namespace ICE.Ui
         };
         public static int jokeId = 0;
 
-        public Window_ExternalDetails() : base($"Ice's Cosmic Exploration | Mission Details")
+        public Window_ExternalDetails() : base($"Ice's Cosmic Exploration [新版測試版] | Mission Details")
         {
             Flags = ImGuiWindowFlags.None;
             SizeConstraints = new()

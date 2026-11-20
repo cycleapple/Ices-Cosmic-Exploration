@@ -28,12 +28,14 @@
 
 
 	<PropertyGroup>
-		<Version>1.0.0.5</Version>
+		<Version>1.0.0.6</Version>
 		<Description>Who said we couldn't explore the moon!.</Description>
 		<PackageProjectUrl>https://github.com/goatcorp/ICE</PackageProjectUrl>
 		<PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
 		<IsPackable>true</IsPackable>
 		<RootNamespace>ICE</RootNamespace>
+        <AssemblyName>ICECandidate</AssemblyName>
+        <OutputPath>bin/$(Configuration)/Candidate/</OutputPath>
 		<TargetFramework>net9.0-windows</TargetFramework>
 		<InformationalVersion>$([System.DateTime]::UtcNow.ToString("yyyy\-MM\-dd HH\:mm\:ss"))</InformationalVersion>
 		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
@@ -46,7 +48,7 @@
 
 
 	<ItemGroup>
-		<Content Include="ICE.json" />
+		<Content Include="ICECandidate.json" />
 		<EmbeddedResource Include="Resources\TrophyIcons\bronze_trophy.png" />
 		<EmbeddedResource Include="Resources\TrophyIcons\gold_trophy.png" />
 		<EmbeddedResource Include="Resources\TrophyIcons\silver_trophy.png" />

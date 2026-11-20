@@ -1,6 +1,6 @@
 {
   "date": "2026-11-20",
-  "purpose": "API13 1.0.0.5 candidate with legacy YAML import and core zh-TW interface",
+  "purpose": "Separate ICECandidate entry for API13 Extended; preserves stable ICE",
   "baseRepository": "https://github.com/lilasrepo/Ices-Cosmic-Exploration",
   "baseCommit": "8fb4f8510264bf231453fa57b32765b71677f39c",
   "branch": "api13-next-evaluation",
@@ -14,9 +14,9 @@
   "sourceBuild": {
     "success": true,
     "errors": 0,
-    "log": "../../diagnostics/ice-next-api13-1005-final-rebuild.log",
-    "type": "Full source Release rebuild",
-    "warnings": 177
+    "warnings": 177,
+    "log": "../../diagnostics/icecandidate-1006-build.log",
+    "type": "Full source Release rebuild"
   },
   "diagnosticBinaryDependencyBuild": {
     "success": false,
@@ -83,7 +83,7 @@
     }
   ],
   "verdict": "Source-rebuildable API13 candidate with 145 offline checks passed; not approved for replacement of the stable repository version",
-  "published": false,
+  "published": true,
   "inGameTested": false,
   "previousSourceBuild": {
     "success": false,
@@ -95,11 +95,11 @@
       "Vendored OtterGui source has no OtterGui.Log.Logger definition"
     ]
   },
-  "candidateVersion": "1.0.0.5",
+  "candidateVersion": "1.0.0.6",
   "candidateConfigDirectory": "ICE.Next.API13",
   "verification": {
     "watchdogChecks": 123,
-    "ipcAdapterAndMigrationChecks": 50,
+    "ipcAdapterMigrationAndIdentityChecks": 54,
     "inGameTested": false
   },
   "remainingBeforeStableRelease": [
@@ -131,5 +131,16 @@
       "Restricted-rank gold goals are rejected rather than widened"
     ],
     "failure": "Persisted error blocks start until resolved or explicitly skipped"
+  },
+  "separateEntry": {
+    "internalName": "ICECandidate",
+    "assembly": "ICECandidate.dll",
+    "manifest": "ICECandidate.json",
+    "command": "/icecandidate",
+    "ipcPrefix": "ICECandidate",
+    "configDirectory": "ICE.Next.API13",
+    "legacySourceDirectory": "ICE",
+    "stableVersionLoaded": "Candidate does not start or tick automation",
+    "cleanup": "Only candidate-owned recipe overrides are cleared"
   }
 }

@@ -18,9 +18,9 @@ namespace ICE.Ui
     {
         public MainWindow() :
 #if DEBUG
-        base($"Ice's Cosmic Exploration {P.GetType().Assembly.GetName().Version} [Debug Build] ###ICEMainWindow2")
+        base($"Ice's Cosmic Exploration [新版測試版] {P.GetType().Assembly.GetName().Version} [Debug Build] ###ICECandidateMainWindow")
 #else
-        base($"Ice's Cosmic Exploration {P.GetType().Assembly.GetName().Version} ###ICEMainWindow2")
+        base($"Ice's Cosmic Exploration [新版測試版] {P.GetType().Assembly.GetName().Version} ###ICECandidateMainWindow")
 #endif
         {
             Flags = ImGuiWindowFlags.NoScrollbar;
@@ -54,6 +54,7 @@ namespace ICE.Ui
             using (var mainBody = ImRaii.Child("mainBody_WindowV3", windowSizeRemaining, true))
             {
                 if (!mainBody.Success) return;
+                if (StableVersionLoaded) ImGui.TextWrapped("正式版 ICE 目前已載入；請先停用正式版，再開始測試新版。");
                 DrawLegacyImport();
                 if (LegacyImportError.Length != 0)
                 {
@@ -78,7 +79,7 @@ namespace ICE.Ui
         private static string importMessage = "";
         private static void DrawLegacyImport()
         {
-            var source = System.IO.Path.Combine(Svc.PluginInterface.GetPluginConfigDirectory(), "Mission Config.yaml");
+            var source = CandidateIdentity.LegacyConfigPath(Svc.PluginInterface.GetPluginConfigDirectory());
             using (ImRaii.Disabled(SchedulerMain.State != IceState.Idle))
             {
                 if (ImGui.Button("預覽匯入舊版設定"))
