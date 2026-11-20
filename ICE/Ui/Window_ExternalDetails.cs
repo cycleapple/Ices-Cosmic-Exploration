@@ -238,7 +238,7 @@ namespace ICE.Ui
 
             if (ImGui.BeginTable("Detailed Mission Info", 2, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders))
             {
-                ImGui.TableSetupColumn("Name");
+                ImGui.TableSetupColumn("名稱");
                 ImGui.TableSetupColumn("Info");
 
                 // Cosmocredits
@@ -262,7 +262,7 @@ namespace ICE.Ui
 
                 RelicInfo();
 
-                ScoreInfo(TurninState.Gold, "Class Score", mission.ClassScore);
+                ScoreInfo(TurninState.Gold, "職業分數", mission.ClassScore);
 
                 ImGui.TableNextRow();
                 ImGui.TableSetColumnIndex(0);
@@ -493,7 +493,7 @@ namespace ICE.Ui
             ImGui.Text("Mission Atributes");
             if (mission.Attributes == MissionAttributes.None)
             {
-                ImGui.Text("None");
+                ImGui.Text("無");
                 return;
             }
             else
@@ -602,8 +602,8 @@ namespace ICE.Ui
 
                         if (ImGui.BeginTabBar("Completion Stats"))
                         {
-                            // "All" tab always shown if there are any records
-                            if (ImGui.BeginTabItem("All"))
+                            // "全部" tab always shown if there are any records
+                            if (ImGui.BeginTabItem("全部"))
                             {
                                 DrawTurninTable(config.TurninRecords);
                                 ImGui.EndTabItem();
@@ -631,9 +631,9 @@ namespace ICE.Ui
         {
             return attribute switch
             {
-                MissionAttributes.Craft => "Crafting",
-                MissionAttributes.Gather => "Gathering",
-                MissionAttributes.Fish => "Fishing",
+                MissionAttributes.Craft => "製作",
+                MissionAttributes.Gather => "採集",
+                MissionAttributes.Fish => "釣魚",
                 MissionAttributes.Limited => "Limited Supplies",
                 MissionAttributes.Collectables => "Collectable",
                 MissionAttributes.ReducedItems => "Reducable Items",
@@ -657,7 +657,7 @@ namespace ICE.Ui
                 return;
 
             ImGui.TableSetupScrollFreeze(0, 1);
-            ImGui.TableSetupColumn("Time");
+            ImGui.TableSetupColumn("時間");
             ImGui.TableSetupColumn("State", ImGuiTableColumnFlags.WidthStretch, 100f);
             ImGui.TableHeadersRow();
 

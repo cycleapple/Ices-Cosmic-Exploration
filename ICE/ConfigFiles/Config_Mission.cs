@@ -114,6 +114,7 @@ public partial class Config
             public uint SquadronManualId { get; set; } = 0;
             public ArtisanCraftType ArtisanSolverType { get; set; } = ArtisanCraftType.Default;
             public string MacroName { get; set; } = "";
+            public string SolverOverrideName { get; set; } = "";
             public int SkillUsageAmount { get; set; } = -1;
             public int MinStepsForMiracle { get; set; } = -1;
             public uint ExpertProfileId = 0;

@@ -1,4 +1,4 @@
-﻿using ICE.IPC;
+using ICE.IPC;
 using ICE.Utilities.Cosmic_Helper;
 using System;
 using System.Collections.Generic;
@@ -162,7 +162,7 @@ namespace ICE.Ui.DebugWindowTabs
                 P.Artisan.ChangePotion(RecipeId, SelectedPot.Id, false, true);
             }
 
-            if (ImGui.Button("Manual"))
+            if (ImGui.Button("手冊"))
             {
                 P.Artisan.ChangeManual(RecipeId, SelectedManual.Id, true);
             }

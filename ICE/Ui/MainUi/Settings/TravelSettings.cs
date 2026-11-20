@@ -40,18 +40,18 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
         private static void PathfindingSettings()
         {
-            ImGuiEx.IconWithText(FontAwesomeIcon.Route, "Pathfinding");
+            ImGuiEx.IconWithText(FontAwesomeIcon.Route, "尋路");
             ImGui.Dummy(new Vector2(0, 5));
 
             bool stellarSprint = C.MoonSprint;
-            if (ImGui.Checkbox("Auto-Use Stellar Sprint", ref stellarSprint))
+            if (ImGui.Checkbox("自動使用宇宙衝刺", ref stellarSprint))
             {
                 C.MoonSprint = stellarSprint;
                 C.Save();
             }
 
             bool closestNode = C.ClosestNodeSelection;
-            if (ImGui.Checkbox("Prioritize closest gathering node", ref closestNode))
+            if (ImGui.Checkbox("優先前往最近的可採集點", ref closestNode))
             {
                 C.ClosestNodeSelection = closestNode;
                 C.Save();
@@ -62,7 +62,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
             }
 
             bool randomize = C.RandomizeWaypoints;
-            if (ImGui.Checkbox("Randomize waypoint positions", ref randomize))
+            if (ImGui.Checkbox("隨機偏移移動目標位置", ref randomize))
             {
                 C.RandomizeWaypoints = randomize;
                 C.Save();
@@ -76,13 +76,13 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                 ImGui.SameLine();
                 float radius = C.RandomizeWaypointsRadius;
                 ImGui.SetNextItemWidth(100);
-                if (ImGui.SliderFloat("Randomize radius (yalms)", ref radius, 0.5f, 1.0f, "%.1f"))
+                if (ImGui.SliderFloat("隨機偏移半徑（星碼）", ref radius, 0.5f, 1.0f, "%.1f"))
                 {
                     C.RandomizeWaypointsRadius = radius;
                     C.SaveDebounced();
                 }
                 bool showDebug = C.RandomizeWaypointsDebug;
-                if (ImGui.Checkbox("Show random location debug target", ref showDebug))
+                if (ImGui.Checkbox("顯示偏移位置的除錯標記", ref showDebug))
                 {
                     C.RandomizeWaypointsDebug = showDebug;
                     C.Save();
@@ -91,7 +91,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
             int GatherFanRandom = C.GatherFanSectionSize;
             ImGui.SetNextItemWidth(200);
-            if (ImGui.SliderInt("Gathering Fan Selection", ref GatherFanRandom, 0, 360))
+            if (ImGui.SliderInt("採集接近角度", ref GatherFanRandom, 0, 360))
             {
                 C.GatherFanSectionSize = GatherFanRandom;
                 C.SaveDebounced();
@@ -103,7 +103,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                 "Anything besides that will chose within that fan (if it's available)", false);
 
             bool selfGather = C.Gather_NoNav;
-            if (ImGui.Checkbox("Disable Pathfinding Between Gathering Nodes", ref selfGather))
+            if (ImGui.Checkbox("停用採集點之間的自動尋路", ref selfGather))
             {
                 C.Gather_NoNav = selfGather;
                 C.SaveDebounced();
@@ -118,30 +118,30 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
 
             bool useHubReturn = C.UseHubReturn;
-            if (ImGui.Checkbox("Use Hub Return", ref useHubReturn))
+            if (ImGui.Checkbox("使用據點返回", ref useHubReturn))
             {
                 C.UseHubReturn = useHubReturn;
                 C.Save();
             }
             ImGui.SameLine();
             bool useAethernet = C.UseAethernet;
-            if (ImGui.Checkbox("Use Aethernet", ref useAethernet))
+            if (ImGui.Checkbox("使用以太傳送網", ref useAethernet))
             {
                 C.UseAethernet = useAethernet;
                 C.Save();
             }
 
             bool useRedAlertNpc = C.UseRedAlertNpc;
-            if (ImGui.Checkbox("Use Red Alert NPC for travel", ref useRedAlertNpc))
+            if (ImGui.Checkbox("使用緊急任務 NPC 傳送", ref useRedAlertNpc))
             {
                 C.UseRedAlertNpc = useRedAlertNpc;
                 C.Save();
             }
             ImGui.SameLine();
-            ImGui.TextDisabled("Beta, might not work");
+            ImGui.TextDisabled("測試功能，可能尚未正常運作");
 
             bool avoidStellarReturn = C.AvoidStellarReturn;
-            if (ImGui.Checkbox("Avoid Stellar Return for pathing", ref avoidStellarReturn))
+            if (ImGui.Checkbox("尋路時避免使用宇宙返回", ref avoidStellarReturn))
             {
                 C.AvoidStellarReturn = avoidStellarReturn;
                 C.Save();
@@ -154,7 +154,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
             {
                 ImGui.SameLine();
                 bool exceptHub = C.AvoidStellarReturnExceptHub;
-                if (ImGui.Checkbox("Except for hub activities", ref exceptHub))
+                if (ImGui.Checkbox("據點活動除外", ref exceptHub))
                 {
                     C.AvoidStellarReturnExceptHub = exceptHub;
                     C.Save();
@@ -167,28 +167,28 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
 
             var minHubReturnDistance = C.HubReturn_Distance;
             ImGui.SetNextItemWidth(200);
-            if (ImGui.DragFloat("Distance before hub return is used (yalms)", ref minHubReturnDistance))
+            if (ImGui.DragFloat("使用據點返回的最低距離（星碼）", ref minHubReturnDistance))
             {
                 C.HubReturn_Distance = minHubReturnDistance;
                 C.SaveDebounced();
             }
 
             bool DisableRedAlertPathing = C.DisablePathfindingToRedAlert;
-            if (ImGui.Checkbox("Disable Pathfinding to Red Alerts", ref DisableRedAlertPathing))
+            if (ImGui.Checkbox("停用前往紅色警報的尋路", ref DisableRedAlertPathing))
             {
                 C.DisablePathfindingToRedAlert = DisableRedAlertPathing;
                 C.Save();
             }
 
             bool DisableHubActivies_RE = C.DisableHub_Critical;
-            if (ImGui.Checkbox("Don't do hub activities when a red alert is active", ref DisableHubActivies_RE))
+            if (ImGui.Checkbox("緊急任務期間暫停據點活動", ref DisableHubActivies_RE))
             {
                 C.DisableHub_Critical = DisableHubActivies_RE;
                 C.Save();
             }
 
             bool delayAether = C.Delay_Aethernet;
-            if (ImGui.Checkbox("Add delay to athernet / npc travel", ref delayAether))
+            if (ImGui.Checkbox("以太傳送網與 NPC 傳送前加入延遲", ref delayAether))
             {
                 C.Delay_Aethernet = delayAether;
                 C.Save();
@@ -198,11 +198,11 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
         }
         private static void StuckSettings()
         {
-            ImGuiEx.IconWithText(FontAwesomeIcon.ExclamationTriangle, "Stuck Detection");
+            ImGuiEx.IconWithText(FontAwesomeIcon.ExclamationTriangle, "卡住偵測");
             ImGui.Dummy(new Vector2(0, 5));
 
             bool unstuckEnabled = C.JumpIfStuck_V2 || C.RetargetIfStuck;
-            if (ImGui.Checkbox("If stuck during nav movement:", ref unstuckEnabled))
+            if (ImGui.Checkbox("導航移動卡住時：", ref unstuckEnabled))
             {
                 if (unstuckEnabled)
                     C.JumpIfStuck_V2 = true;
@@ -219,25 +219,25 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                 "- Jump: attempts to jump over the obstacle\n" +
                 "- Retarget: stops and re-pathfinds to the destination (re-randomizes if enabled)");
             if (!unstuckEnabled) ImGui.BeginDisabled();
-            if (ImGui.RadioButton("Jump", C.JumpIfStuck_V2 && !C.RetargetIfStuck))
+            if (ImGui.RadioButton("跳躍", C.JumpIfStuck_V2 && !C.RetargetIfStuck))
             {
                 C.JumpIfStuck_V2 = true;
                 C.RetargetIfStuck = false;
                 C.Save();
             }
             ImGui.SameLine();
-            if (ImGui.RadioButton("Retarget", C.RetargetIfStuck))
+            if (ImGui.RadioButton("重新選取目標", C.RetargetIfStuck))
             {
                 C.RetargetIfStuck = true;
                 C.JumpIfStuck_V2 = false;
                 C.Save();
             }
             ImGui.SameLine();
-            ImGui.Text("after");
+            ImGui.Text("等待");
             ImGui.SameLine();
             int stuckDelay = C.StuckDelayMs;
             ImGui.SetNextItemWidth(100);
-            if (ImGui.SliderInt("ms stuck###StuckDelay", ref stuckDelay, 500, 3000))
+            if (ImGui.SliderInt("毫秒後判定卡住###StuckDelay", ref stuckDelay, 500, 3000))
             {
                 if (C.StuckDelayMs != stuckDelay)
                 {
@@ -249,11 +249,11 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
         }
         private static void CraftingLocations()
         {
-            ImGuiEx.IconWithText(FontAwesomeIcon.MapPin, "Crafting Return Spot");
+            ImGuiEx.IconWithText(FontAwesomeIcon.MapPin, "製作返回位置");
             ImGui.Dummy(new Vector2(0, 5));
 
             bool usePersonalLocations = C.PersonalReturnSpot;
-            if (ImGui.Checkbox("Use personal return spots", ref usePersonalLocations))
+            if (ImGui.Checkbox("使用自訂返回位置", ref usePersonalLocations))
             {
                 C.PersonalReturnSpot = usePersonalLocations;
                 C.Save();
@@ -265,7 +265,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                 ImGui.SameLine();
                 if (C.CrafterLocations.TryGetValue(territory, out var moonLoc))
                 {
-                    if (ImGui.Button("Set to current location"))
+                    if (ImGui.Button("設為目前位置"))
                     {
                         C.CrafterLocations[territory] = location;
                         C.Save();
@@ -275,19 +275,19 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                 }
                 else
                 {
-                    if (ImGui.Button("Add Location"))
+                    if (ImGui.Button("新增位置"))
                     {
                         C.CrafterLocations[territory] = Player.Position;
                         C.Save();
                     }
                     ImGui.SameLine();
-                    ImGui.Text("No location set");
+                    ImGui.Text("尚未設定位置");
                 }
             }
         }
         private static void FishingLocations()
         {
-            ImGuiEx.IconWithText(FontAwesomeIcon.Fish, "Personalized Fishing Spots");
+            ImGuiEx.IconWithText(FontAwesomeIcon.Fish, "自訂釣魚位置");
             ImGui.SameLine();
             ImGui_Ice.IconWithTooltip(FontAwesomeIcon.QuestionCircle, "A way for you to save your own positions if you choose to not use a randomized spot that's included in the plugin\n" +
                 "You don't have to use this, it will just use a random spot if:\n" +
@@ -300,7 +300,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
             if (GatheringUtil.MoonFishingLocations.TryGetValue(currentTerritory, out var fishingHoles))
             {
                 ImGui.Text($"Planet: {Player.Territory.Value.PlaceName.Value.Name}");
-                ImGui.Checkbox("Show fishing spot raycast", ref _fishingDebug.ShowFishRay);
+                ImGui.Checkbox("顯示釣點方向判定", ref _fishingDebug.ShowFishRay);
                 if (Player.Object is { } player && _fishingDebug.ShowFishRay)
                 {
                     _fishingDebug.Draw();
@@ -335,7 +335,7 @@ namespace ICE.Ui.MainUi.Settings.Settings_Table
                     }
                     ImGui.SameLine();
 
-                    string currentPos = entry.WorldPosition == null ? "Add New" : $"Remove";
+                    string currentPos = entry.WorldPosition == null ? "Add New" : $"移除";
 
                     if (ImGui.Button($"{currentPos}"))
                     {

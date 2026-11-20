@@ -1,4 +1,4 @@
-﻿using Dalamud.Interface;
+using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Utility;
@@ -210,7 +210,7 @@ namespace ICE.Ui.MainUi.Settings
             if (ImGui.BeginTable($"Shopping_{tableName}", 10, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders))
             {
                 ImGui.TableSetupColumn("Order", ImGuiTableColumnFlags.WidthFixed);
-                ImGui.TableSetupColumn("Name");
+                ImGui.TableSetupColumn("名稱");
                 ImGui.TableSetupColumn("Have", ImGuiTableColumnFlags.WidthFixed);
                 ImGui.TableSetupColumn("Cost", ImGuiTableColumnFlags.WidthFixed);
                 ImGui.TableSetupColumn("Kind", ImGuiTableColumnFlags.WidthFixed);

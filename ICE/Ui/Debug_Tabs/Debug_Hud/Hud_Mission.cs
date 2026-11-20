@@ -1,4 +1,4 @@
-﻿using ECommons.GameHelpers;
+using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game.WKS;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ICE.Utilities.Cosmic_Helper;
@@ -23,7 +23,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Hud
                 ImGui.Text($"Selected Mission ID: {x.SelectedMissionId}");
                 ImGui.Text($"{AgentWKSMissionEx.selectedTab()}");
 
-                if (ImGui.Button("Help"))
+                if (ImGui.Button("說明"))
                 {
                     x.Help();
                 }
@@ -167,7 +167,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Hud
                 {
                     BestMission = (int)RelicMissionFinder();
                     if (BestMission < 1)
-                        MissionName = "None";
+                        MissionName = "無";
                     else
                     {
                         MissionName = CosmicHelper.SheetMissionDict[(uint)BestMission].Name;

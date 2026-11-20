@@ -1,4 +1,4 @@
-﻿using Dalamud.Interface;
+using Dalamud.Interface;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,13 +14,13 @@ namespace ICE.Ui.MainUi.HelpFolder.Tips_Folder
 
             if (ImGui.BeginTabBar("Mode Selection Info"))
             {
-                if (ImGui.BeginTabItem("Standard"))
+                if (ImGui.BeginTabItem("標準"))
                 {
                     StandardMode();
                     ImGui.EndTabItem();
                 }
 
-                if (ImGui.BeginTabItem("Relic Grind"))
+                if (ImGui.BeginTabItem("宇宙工具培養"))
                 {
                     RelicGrind();
                     ImGui.EndTabItem();
@@ -32,13 +32,13 @@ namespace ICE.Ui.MainUi.HelpFolder.Tips_Folder
                     ImGui.EndTabItem();
                 }
 
-                if (ImGui.BeginTabItem("Gold Completion Grind"))
+                if (ImGui.BeginTabItem("任務金牌收集"))
                 {
                     GoldCompletion();
                     ImGui.EndTabItem();
                 }
 
-                if (ImGui.BeginTabItem("Agenda Mode"))
+                if (ImGui.BeginTabItem("宇宙計畫"))
                 {
                     ImGui.EndTabItem();
                 }
@@ -50,7 +50,7 @@ namespace ICE.Ui.MainUi.HelpFolder.Tips_Folder
         private static void StandardMode()
         {
             ImGui.Dummy(new(0, 5));
-            ImGuiEx.IconWithText(FontAwesomeIcon.List, "Standard");
+            ImGuiEx.IconWithText(FontAwesomeIcon.List, "標準");
             ImGui.TextWrapped(
                 "The most straightforward mode. Standard runs only the missions you have enabled " +
                 "for your current class — you pick what you want done, and it handles the rest.");
@@ -67,7 +67,7 @@ namespace ICE.Ui.MainUi.HelpFolder.Tips_Folder
         private static void RelicGrind()
         {
             ImGui.Dummy(new(0, 5));
-            ImGuiEx.IconWithText(FontAwesomeIcon.ArrowUpRightDots, "Relic Grind");
+            ImGuiEx.IconWithText(FontAwesomeIcon.ArrowUpRightDots, "宇宙工具培養");
 
             ImGui.TextWrapped(
                 "A mode designed to automate mission selection for relic progression with minimal intervention. " +
@@ -120,7 +120,7 @@ namespace ICE.Ui.MainUi.HelpFolder.Tips_Folder
             ImGui.BulletText("These are the points where I found i could just get away with, if you want to make it go faster absolutely can grab gear more often between but.");
 
             ImGui.Dummy(new(0, 5));
-            ImGui.Text("Gathering");
+            ImGui.Text("採集");
             ImGui.BulletText("A bit more tedious, and defitenly not the fastest, but it's the safest so far.");
             ImGui.BulletText("Fisher has profiles already built into the plugin, and Btn/Min will auto set profiles to be able to turnin missions ASAP");
             ImGui.BulletText("You NEED to get gear more often here than crafters, about every 5-7 levels below lv 50, then about every 3 levels after");

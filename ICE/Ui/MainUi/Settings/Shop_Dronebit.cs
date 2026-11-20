@@ -1,4 +1,4 @@
-﻿using Dalamud.Interface;
+using Dalamud.Interface;
 using ICE.Utilities.ImGuiTools;
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace ICE.Ui.MainUi.Settings
                 SchedulerMain.State = IceState.ArtifactSearch;
             }
 
-            if (ImGui.Button("Stop"))
+            if (ImGui.Button("停止"))
             {
                 SchedulerMain.DisablePlugin();
             }

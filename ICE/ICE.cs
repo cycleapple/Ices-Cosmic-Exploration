@@ -20,6 +20,7 @@ public sealed partial class ICE : IDalamudPlugin
 
     internal static ICE P = null!;
     private Config config;
+    internal static string LegacyImportError { get; set; } = "";
     public static Config C => P.config;
     // porting-note(api13): the TC tree vendors the pre-rename Pictomancy, where PictoService is a
     // static class rather than a PctContext instance returned by Initialize. The field is dropped
@@ -62,8 +63,26 @@ public sealed partial class ICE : IDalamudPlugin
     {
         // Candidate schema differs from 0.0.73.x. Never rewrite the stable configuration.
         EzConfig.PluginConfigDirectoryOverride = "ICE.Next.API13";
+        try
+        {
+            LegacyConfigImporter.TryImport(
+                System.IO.Path.Combine(Svc.PluginInterface.GetPluginConfigDirectory(), "Mission Config.yaml"),
+                EzConfig.DefaultConfigurationFileName);
+        }
+        catch (Exception error)
+        {
+            // Stop initialization rather than silently running with different settings.
+            Svc.Log.Error(error, "舊版 ICE 設定匯入失敗；原始檔未變更。請查看紀錄並重新確認設定。");
+            LegacyImportError = error.Message;
+        }
         EzConfig.Migrate<Config>();
         config = EzConfig.Init<Config>();
+        if (LegacyImportError.Length != 0)
+        {
+            config.LegacyImportFailure = LegacyImportError;
+            config.Save();
+        }
+        else LegacyImportError = config.LegacyImportFailure;
 
         //IPC's that are used
         Lifestream = new();
@@ -134,6 +153,20 @@ public sealed partial class ICE : IDalamudPlugin
         ConsumableInfo.Init();
     }
 
+    internal void ApplyImportedSettings(string json)
+    {
+        SchedulerMain.DisablePlugin();
+        config = Newtonsoft.Json.JsonConvert.DeserializeObject<Config>(json)
+            ?? throw new InvalidOperationException("匯入設定無效。");
+        EzConfig.Set(config);
+        LegacyImportError = "";
+        EnsureAllMission();
+        MigrateConfigSettings();
+        UpdateMissingGathering();
+        global::ICE.Ui.MainUi.ModeSelect_Modes.Mission_Setup.MissionTable = null;
+        config.Save();
+    }
+
     private void Tick(object _)
     {
         if (Player.Available && PlayerHelper.IsInCosmicZone())
@@ -147,14 +180,7 @@ public sealed partial class ICE : IDalamudPlugin
                 SchedulerMain.Tick();
             WeatherForecastHandler.Tick();
 
-            if (C.FakeIncreaseFisher)
-            {
-                GlamourIpc.SetClownHead();
-            }
-            else
-            {
-                GlamourIpc.ResetClownHead();
-            }
+
         }
         else if (!Player.Available)
         {

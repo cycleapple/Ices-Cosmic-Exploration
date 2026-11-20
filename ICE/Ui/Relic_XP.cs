@@ -49,7 +49,7 @@ using System.Collections.Generic;namespace ICE.Ui
 
             var maxRelicStage = CosmicMoonRegistry.GetMaxRelicStage((uint)Svc.ClientState.TerritoryType);
 
-            ImGui.Text($"Stage: {stage}");
+            ImGui.Text($"階段: {stage}");
             if (MaxStage)
             {
                 ImGui.SameLine();
@@ -82,11 +82,11 @@ using System.Collections.Generic;namespace ICE.Ui
 
                 if (stage != maxRelicStage)
                 {
-                    DrawXPBar($"Type: {xpType}", current, needed, size, max);
+                    DrawXPBar($"宇宙資料{xpType}", current, needed, size, max);
                 }
                 else
                 {
-                    DrawXPBar($"Type: {xpType}", current, max, size, max);
+                    DrawXPBar($"宇宙資料{xpType}", current, max, size, max);
                 }
             }
         }

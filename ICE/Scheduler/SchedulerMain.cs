@@ -9,6 +9,11 @@ namespace ICE.Scheduler
     {
         internal static bool EnablePlugin()
         {
+            if (LegacyImportError.Length != 0)
+            {
+                IceLogging.Error("舊設定尚未成功匯入，請先在主視窗確認匯入問題。", "[設定匯入]");
+                return false;
+            }
             State = Start;
             IceLogging.Info($"Setting State to: {State} / Enabling Plugin");
             Mission_Settings.SelectedJob = (uint)Player.Job;

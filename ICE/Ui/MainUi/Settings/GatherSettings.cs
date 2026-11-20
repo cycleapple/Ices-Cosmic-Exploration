@@ -1,4 +1,4 @@
-﻿using Dalamud.Interface;
+using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using ICE.Utilities.Cosmic_Helper;
 using ICE.Utilities.GatheringHelper;
@@ -188,7 +188,7 @@ namespace ICE.Ui.MainUi.Settings
             ImGuiEx.HelpMarker("Enabling this will make it to where pandora's cordial feature won't be auto-paused.");
 
             bool AutoCordial = C.AutoCordial;
-            if (ImGui.Checkbox("Auto Cordial", ref AutoCordial))
+            if (ImGui.Checkbox("自動使用強心劑", ref AutoCordial))
             {
                 C.AutoCordial = AutoCordial;
                 C.Save();
@@ -214,7 +214,7 @@ namespace ICE.Ui.MainUi.Settings
                     C.inverseCordialPrio = InverseCordialPrio;
                     C.Save();
                 }
-                if (ImGui.Checkbox("Prevent Overcap", ref PreventOvercap))
+                if (ImGui.Checkbox("避免 GP 溢出", ref PreventOvercap))
                 {
                     C.PreventOvercap = PreventOvercap;
                     C.Save();
@@ -273,9 +273,9 @@ namespace ICE.Ui.MainUi.Settings
                     if (ImGui.BeginTable("Food Item Selection", 2, ImGuiTableFlags.RowBg))
                     {
                         ImGui.TableSetupColumn("Food Item");
-                        ImGui.TableSetupColumn("Amount");
+                        ImGui.TableSetupColumn("數量");
 
-                        // First Column, pretty much giving an option for "None" if they want none
+                        // First Column, pretty much giving an option for "無" if they want none
                         ImGui.TableNextRow();
                         ImGui.TableSetColumnIndex(0);
                         if (ImGui.Selectable("Use no gathering food"))
@@ -318,7 +318,7 @@ namespace ICE.Ui.MainUi.Settings
             }
 
             bool selfGather = C.Gather_NoNav;
-            if (ImGui.Checkbox("Disable Pathfinding Between Gathering Nodes", ref selfGather))
+            if (ImGui.Checkbox("停用採集點之間的自動尋路", ref selfGather))
             {
                 C.Gather_NoNav = selfGather;
                 C.SaveDebounced();
@@ -336,7 +336,7 @@ namespace ICE.Ui.MainUi.Settings
             if (ImGui.BeginTable("Gathering Profile Settings", 2, ImGuiTableFlags.SizingFixedFit))
             {
                 ImGui.TableSetupColumn("Profile Selection");
-                ImGui.TableSetupColumn("Gathering Settings");
+                ImGui.TableSetupColumn("採集設定");
 
                 // 1st Row, technically only really used for the gather profile name creator
                 ImGui.TableNextRow();
@@ -500,7 +500,7 @@ namespace ICE.Ui.MainUi.Settings
                     ImGui.Text($"Action Info: ");
                     ImGuiEx.HelpMarker(ActionInfo);
 
-                    if (ImGui.Checkbox("Enable", ref currentlyEnabled))
+                    if (ImGui.Checkbox("啟用", ref currentlyEnabled))
                     {
                         entry.GatherBuffs.Buffs[buffName].Enabled = currentlyEnabled;
                         C.Save();
@@ -514,7 +514,7 @@ namespace ICE.Ui.MainUi.Settings
                     }
 
                     ImGui.SetNextItemWidth(200);
-                    if (ImGui.InputInt("Max Use", ref maxActionUsage))
+                    if (ImGui.InputInt("使用次數上限", ref maxActionUsage))
                     {
                         entry.GatherBuffs.Buffs[buffName].MaxUse = maxActionUsage;
                         C.SaveDebounced();
@@ -542,7 +542,7 @@ namespace ICE.Ui.MainUi.Settings
                     ImGui.Text($"Action Info: ");
                     ImGuiEx.HelpMarker(ActionInfo);
 
-                    if (ImGui.Checkbox("Enable", ref currentlyEnabled))
+                    if (ImGui.Checkbox("啟用", ref currentlyEnabled))
                     {
                         entry.GatherBuffs.Buffs[buffName].Enabled = currentlyEnabled;
                         C.Save();
@@ -556,7 +556,7 @@ namespace ICE.Ui.MainUi.Settings
                     }
 
                     ImGui.SetNextItemWidth(200);
-                    if (ImGui.InputInt("Max Use", ref maxActionUsage))
+                    if (ImGui.InputInt("使用次數上限", ref maxActionUsage))
                     {
                         entry.GatherBuffs.Buffs[buffName].MaxUse = maxActionUsage;
                         C.SaveDebounced();
@@ -586,7 +586,7 @@ namespace ICE.Ui.MainUi.Settings
                     ImGui.Text($"Action Info: ");
                     ImGuiEx.HelpMarker(ActionInfo);
 
-                    if (ImGui.Checkbox("Enable", ref currentlyEnabled))
+                    if (ImGui.Checkbox("啟用", ref currentlyEnabled))
                     {
                         entry.GatherBuffs.Buffs[buffName].Enabled = currentlyEnabled;
                         C.Save();
@@ -600,7 +600,7 @@ namespace ICE.Ui.MainUi.Settings
                     }
 
                     ImGui.SetNextItemWidth(200);
-                    if (ImGui.InputInt("Max Use", ref maxActionUsage))
+                    if (ImGui.InputInt("使用次數上限", ref maxActionUsage))
                     {
                         entry.GatherBuffs.Buffs[buffName].MaxUse = maxActionUsage;
                         C.SaveDebounced();
@@ -632,7 +632,7 @@ namespace ICE.Ui.MainUi.Settings
                     ImGui.Text($"Action Info: ");
                     ImGuiEx.HelpMarker(ActionInfo);
 
-                    if (ImGui.Checkbox("Enable", ref currentlyEnabled))
+                    if (ImGui.Checkbox("啟用", ref currentlyEnabled))
                     {
                         entry.GatherBuffs.Buffs[buffName].Enabled = currentlyEnabled;
                         C.Save();
@@ -656,7 +656,7 @@ namespace ICE.Ui.MainUi.Settings
                         "Mainly used for missions where you can chain durability refresh");
 
                     ImGui.SetNextItemWidth(200);
-                    if (ImGui.InputInt("Max Use", ref maxActionUsage))
+                    if (ImGui.InputInt("使用次數上限", ref maxActionUsage))
                     {
                         entry.GatherBuffs.Buffs[buffName].MaxUse = maxActionUsage;
                         C.SaveDebounced();
@@ -688,7 +688,7 @@ namespace ICE.Ui.MainUi.Settings
                     ImGui.Text($"Action Info: ");
                     ImGuiEx.HelpMarker(ActionInfo);
 
-                    if (ImGui.Checkbox("Enable", ref currentlyEnabled))
+                    if (ImGui.Checkbox("啟用", ref currentlyEnabled))
                     {
                         entry.GatherBuffs.Buffs[buffName].Enabled = currentlyEnabled;
                         C.Save();
@@ -712,7 +712,7 @@ namespace ICE.Ui.MainUi.Settings
                         "Mainly used for missions where you can chain durability refresh");
 
                     ImGui.SetNextItemWidth(200);
-                    if (ImGui.InputInt("Max Use", ref maxActionUsage))
+                    if (ImGui.InputInt("使用次數上限", ref maxActionUsage))
                     {
                         entry.GatherBuffs.Buffs[buffName].MaxUse = maxActionUsage;
                         C.SaveDebounced();
@@ -744,7 +744,7 @@ namespace ICE.Ui.MainUi.Settings
                     ImGui.Text($"Action Info: ");
                     ImGuiEx.HelpMarker(ActionInfo);
 
-                    if (ImGui.Checkbox("Enable", ref currentlyEnabled))
+                    if (ImGui.Checkbox("啟用", ref currentlyEnabled))
                     {
                         entry.GatherBuffs.Buffs[buffName].Enabled = currentlyEnabled;
                         C.Save();
@@ -765,7 +765,7 @@ namespace ICE.Ui.MainUi.Settings
                     }
 
                     ImGui.SetNextItemWidth(200);
-                    if (ImGui.InputInt("Max Use", ref maxActionUsage))
+                    if (ImGui.InputInt("使用次數上限", ref maxActionUsage))
                     {
                         entry.GatherBuffs.Buffs[buffName].MaxUse = maxActionUsage;
                         C.SaveDebounced();
@@ -796,7 +796,7 @@ namespace ICE.Ui.MainUi.Settings
                     ImGui.Text($"Action Info: ");
                     ImGuiEx.HelpMarker(ActionInfo);
 
-                    if (ImGui.Checkbox("Enable", ref currentlyEnabled))
+                    if (ImGui.Checkbox("啟用", ref currentlyEnabled))
                     {
                         entry.GatherBuffs.Buffs[buffName].Enabled = currentlyEnabled;
                         C.Save();
@@ -810,7 +810,7 @@ namespace ICE.Ui.MainUi.Settings
                     }
 
                     ImGui.SetNextItemWidth(200);
-                    if (ImGui.InputInt("Max Use", ref maxActionUsage))
+                    if (ImGui.InputInt("使用次數上限", ref maxActionUsage))
                     {
                         entry.GatherBuffs.Buffs[buffName].MaxUse = maxActionUsage;
                         C.SaveDebounced();
@@ -853,7 +853,7 @@ namespace ICE.Ui.MainUi.Settings
                     ImGui.Text($"Action Info: ");
                     ImGuiEx.HelpMarker(ActionInfo);
 
-                    if (ImGui.Checkbox("Enable", ref currentlyEnabled))
+                    if (ImGui.Checkbox("啟用", ref currentlyEnabled))
                     {
                         entry.GatherBuffs.Buffs[buffName].Enabled = currentlyEnabled;
                         C.Save();
@@ -867,7 +867,7 @@ namespace ICE.Ui.MainUi.Settings
                     }
 
                     ImGui.SetNextItemWidth(200);
-                    if (ImGui.InputInt("Max Use", ref maxActionUsage))
+                    if (ImGui.InputInt("使用次數上限", ref maxActionUsage))
                     {
                         entry.GatherBuffs.Buffs[buffName].MaxUse = maxActionUsage;
                         C.SaveDebounced();
@@ -899,7 +899,7 @@ namespace ICE.Ui.MainUi.Settings
                     ImGui.Text($"Action Info: ");
                     ImGuiEx.HelpMarker(ActionInfo);
 
-                    if (ImGui.Checkbox("Enable", ref currentlyEnabled))
+                    if (ImGui.Checkbox("啟用", ref currentlyEnabled))
                     {
                         entry.GatherBuffs.Buffs[buffName].Enabled = currentlyEnabled;
                         C.Save();
@@ -913,7 +913,7 @@ namespace ICE.Ui.MainUi.Settings
                     }
 
                     ImGui.SetNextItemWidth(200);
-                    if (ImGui.InputInt("Max Use", ref maxActionUsage))
+                    if (ImGui.InputInt("使用次數上限", ref maxActionUsage))
                     {
                         entry.GatherBuffs.Buffs[buffName].MaxUse = maxActionUsage;
                         C.SaveDebounced();
@@ -945,7 +945,7 @@ namespace ICE.Ui.MainUi.Settings
                     ImGui.Text($"Action Info: ");
                     ImGuiEx.HelpMarker(ActionInfo);
 
-                    if (ImGui.Checkbox("Enable", ref currentlyEnabled))
+                    if (ImGui.Checkbox("啟用", ref currentlyEnabled))
                     {
                         entry.GatherBuffs.Buffs[buffName].Enabled = currentlyEnabled;
                         C.Save();
@@ -959,7 +959,7 @@ namespace ICE.Ui.MainUi.Settings
                     }
 
                     ImGui.SetNextItemWidth(200);
-                    if (ImGui.InputInt("Max Use", ref maxActionUsage))
+                    if (ImGui.InputInt("使用次數上限", ref maxActionUsage))
                     {
                         entry.GatherBuffs.Buffs[buffName].MaxUse = maxActionUsage;
                         C.SaveDebounced();
@@ -990,7 +990,7 @@ namespace ICE.Ui.MainUi.Settings
                     ImGui.Text($"Action Info: ");
                     ImGuiEx.HelpMarker(ActionInfo);
 
-                    if (ImGui.Checkbox("Enable", ref currentlyEnabled))
+                    if (ImGui.Checkbox("啟用", ref currentlyEnabled))
                     {
                         entry.GatherBuffs.Buffs[buffName].Enabled = currentlyEnabled;
                         C.Save();
@@ -1004,7 +1004,7 @@ namespace ICE.Ui.MainUi.Settings
                     }
 
                     ImGui.SetNextItemWidth(200);
-                    if (ImGui.InputInt("Max Use", ref maxActionUsage))
+                    if (ImGui.InputInt("使用次數上限", ref maxActionUsage))
                     {
                         entry.GatherBuffs.Buffs[buffName].MaxUse = maxActionUsage;
                         C.SaveDebounced();
@@ -1051,7 +1051,7 @@ namespace ICE.Ui.MainUi.Settings
 
             using (ImRaii.Disabled(!ImGui.IsKeyDown(ImGuiKey.LeftShift)))
             {
-                if (ImGui.Button("Setup Gathering Profiles"))
+                if (ImGui.Button("設定採集設定檔"))
                 {
                     SetupAllProfiles();
 
@@ -1151,7 +1151,7 @@ namespace ICE.Ui.MainUi.Settings
 
         private static void ResetAllFisherProfiles()
         {
-            IceLogging.Verbose("User has selected to reset all fishing presets, respecting request", "Gathering Settings");
+            IceLogging.Verbose("User has selected to reset all fishing presets, respecting request", "採集設定");
             foreach (var config in C.MissionConfig)
             {
                 config.Value.Use_BuildinPreset = true;

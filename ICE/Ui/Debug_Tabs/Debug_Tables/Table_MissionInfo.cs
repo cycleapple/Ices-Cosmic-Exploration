@@ -1,4 +1,4 @@
-﻿using Dalamud.Interface.ImGuiFileDialog;
+using Dalamud.Interface.ImGuiFileDialog;
 using Dalamud.Interface.Textures;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.WKS;
@@ -47,7 +47,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Tables
             ImGui.SetNextItemWidth(250);
             ImGui.SliderUInt("Rank ID", ref RankSearch, 0, 6);
             ImGui.SetNextItemWidth(250);
-            ImGui.SliderUInt("Class Selection", ref jobSearch, 7, 18);
+            ImGui.SliderUInt("職業選擇", ref jobSearch, 7, 18);
             if (ImGui.Button("Copy Scores"))
             {
                 ImGui.SetClipboardText(GenerateMissionScoreDictionaryCode());
@@ -165,7 +165,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Tables
             if (!string.IsNullOrEmpty(statusMessage))
             {
                 ImGui.TextColored(
-                    statusMessage.Contains("Success") ? new System.Numerics.Vector4(0, 1, 0, 1) : new System.Numerics.Vector4(1, 0, 0, 1),
+                    statusMessage.Contains("成功") ? new System.Numerics.Vector4(0, 1, 0, 1) : new System.Numerics.Vector4(1, 0, 0, 1),
                     statusMessage
                 );
             }
@@ -183,13 +183,13 @@ namespace ICE.Ui.Debug_Tabs.Debug_Tables
                 ImGui.TableSetupColumn("Jobs");
 
                 ImGui.TableSetupColumn("Mission Name");
-                ImGui.TableSetupColumn("Job");
+                ImGui.TableSetupColumn("職業");
                 ImGui.TableSetupColumn("2nd Job");
                 ImGui.TableSetupColumn("Rank");
                 ImGui.TableSetupColumn("ToDo ID");
-                ImGui.TableSetupColumn("Bronze");
-                ImGui.TableSetupColumn("Silver");
-                ImGui.TableSetupColumn("Gold");
+                ImGui.TableSetupColumn("銅牌");
+                ImGui.TableSetupColumn("銀牌");
+                ImGui.TableSetupColumn("金牌");
                 ImGui.TableSetupColumn("Attribute Flags");
 
                 IOrderedEnumerable<KeyValuePair<int, string>> orderedExp = CosmicHelper.ExpDictionary.ToList().OrderBy(exp => exp.Key);
@@ -203,7 +203,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Tables
 
                 ImGui.TableSetupColumn("Test Flag");
 
-                ImGui.TableSetupColumn("Score");
+                ImGui.TableSetupColumn("分數");
 
                 ImGui.TableSetupColumn("Main Item 1");
                 ImGui.TableSetupColumn("Amount #1");
@@ -213,13 +213,13 @@ namespace ICE.Ui.Debug_Tabs.Debug_Tables
                 ImGui.TableSetupColumn("Amount #3");
                 ImGui.TableSetupColumn("Pre-Craft Item");
                 ImGui.TableSetupColumn("Pre-Craft Amount");
-                ImGui.TableSetupColumn("Export"); // New column for export button
+                ImGui.TableSetupColumn("匯出"); // New column for export button
                 for (int i = 1; i < 4; i++)
                 {
                     ImGui.TableSetupColumn($"Gather [{i}]");
                     ImGui.TableSetupColumn($"Amount [G-{i}]");
                 }
-                ImGui.TableSetupColumn("Completion");
+                ImGui.TableSetupColumn("完成狀態");
                 ImGui.TableSetupColumn("Activate Mission");
 
                 ImGui.TableHeadersRow();
@@ -525,7 +525,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Tables
                     string classes = info.Jobs != null && info.Jobs.Any()
                         ? string.Join(";", info.Jobs.Select(jobId =>
                             JobAbbreviations.TryGetValue(jobId, out var abbr) ? abbr : jobId.ToString()))
-                        : "None";
+                        : "無";
 
                     string missionName = EscapeCsvField(RemovePrivateUseChars(info.Name ?? ""));
 

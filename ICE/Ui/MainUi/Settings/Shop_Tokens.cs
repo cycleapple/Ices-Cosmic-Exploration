@@ -53,7 +53,7 @@ namespace ICE.Ui.MainUi.Settings
                 ImGui.TableSetupColumn("Planet");
                 ImGui.TableSetupColumn("Tokens");
                 ImGui.TableSetupColumn("Booklets");
-                ImGui.TableSetupColumn("Mount");
+                ImGui.TableSetupColumn("坐騎");
                 ImGui.TableSetupColumn("Unlocked");
 
                 ImGui.TableHeadersRow();

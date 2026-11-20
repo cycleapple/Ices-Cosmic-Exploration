@@ -83,7 +83,7 @@ namespace ICE.IPC
                 || recipeConfig.MinStepsForMiracle != -1)
                 return false;
 
-            string solver = recipeConfig.ArtisanSolverType switch
+            string solver = recipeConfig.SolverOverrideName.Length > 0 ? recipeConfig.SolverOverrideName : recipeConfig.ArtisanSolverType switch
             {
                 ArtisanCraftType.Default => "",
                 ArtisanCraftType.Standard => "Standard Recipe Solver",
@@ -115,6 +115,7 @@ namespace ICE.IPC
             a.SquadronManualId == b.SquadronManualId &&
             a.ArtisanSolverType == b.ArtisanSolverType &&
             a.MacroName == b.MacroName &&
+            a.SolverOverrideName == b.SolverOverrideName &&
             a.SkillUsageAmount == b.SkillUsageAmount &&
             a.MinStepsForMiracle == b.MinStepsForMiracle &&
             a.ExpertProfileId == b.ExpertProfileId;
@@ -159,7 +160,10 @@ namespace ICE.IPC
             }
 
             if (isLeveling)
+            {
                 effectiveSettings.ArtisanSolverType = ArtisanCraftType.ProgressOnly;
+                effectiveSettings.SolverOverrideName = "";
+            }
 
             if (CraftSettings.TryGetValue(recipeId, out var cached) && ArtisanSettingsEqual(cached, effectiveSettings))
                 return true;
@@ -180,6 +184,7 @@ namespace ICE.IPC
                 SquadronManualId = effectiveSettings.SquadronManualId,
                 ArtisanSolverType = effectiveSettings.ArtisanSolverType,
                 MacroName = effectiveSettings.MacroName,
+                SolverOverrideName = effectiveSettings.SolverOverrideName,
                 SkillUsageAmount = effectiveSettings.SkillUsageAmount,
                 MinStepsForMiracle = effectiveSettings.MinStepsForMiracle,
                 ExpertProfileId = effectiveSettings.ExpertProfileId,

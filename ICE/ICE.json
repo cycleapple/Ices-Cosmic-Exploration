@@ -3,7 +3,7 @@
   "Author": "Ice",
   "Name": "Ice's Cosmic Exploration [API13 Candidate]",
   "Punchline": "The gathering companion that we all needed.",
-  "Description": "新版基底 API13 移植候選版；尚未完成舊設定遷移及遊戲內驗證。",
+  "Description": "新版基底 API13 候選版；支援舊設定匯入與核心繁中介面，尚未完成遊戲內驗證。",
   "ApplicableVersion": "any",
   "Tags": [
     "Gatherers"

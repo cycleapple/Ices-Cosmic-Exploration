@@ -1,4 +1,4 @@
-﻿using FFXIVClientStructs.FFXIV.Client.UI.Misc;
+using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -46,7 +46,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Ui
             if (ImGui.BeginTable("Gearset Viewer", 3, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders))
             {
                 ImGui.TableSetupColumn("ID");
-                ImGui.TableSetupColumn("Name");
+                ImGui.TableSetupColumn("名稱");
                 ImGui.TableSetupColumn("JobID");
 
                 ImGui.TableHeadersRow();

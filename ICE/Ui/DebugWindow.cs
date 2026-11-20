@@ -1,4 +1,4 @@
-﻿using Dalamud.Interface;
+using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using ICE.Ui.Debug_Tabs.Debug_CS;
 using ICE.Ui.Debug_Tabs.Debug_Hud;
@@ -48,7 +48,7 @@ internal class DebugWindow : Window
         {
             ["Shop"] = () => Hud_Shop.Draw(),
             ["Moon Main"] = () => Hud_MainMoon.Draw(),
-            ["Mission"] = () => Hud_Mission.Draw(),
+            ["任務"] = () => Hud_Mission.Draw(),
             ["Mission Info"] = () => Hud_MissionInfo.Draw(),
             ["Wheel of Fortune!"] = () => Hud_WheelofFortune.Draw(),
             ["Moon Recipe"] = () => Hud_MoonRecipe.Draw(),
@@ -84,7 +84,7 @@ internal class DebugWindow : Window
             ["Oizyr Map Stuff"] = () => Ui_OyzinMap.Draw(),
             ["Aethernet Test"] = () => Ui_Aethernet.Draw(),
         },
-        ["Misc"] = new()
+        ["其他"] = new()
         {
             ["CS: Timer Info"] = () => CS_TimerInfo.Draw(),
             ["CS: Available Missions"] = () => CS_Missions.Draw(),

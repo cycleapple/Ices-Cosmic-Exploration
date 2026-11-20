@@ -61,7 +61,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Ui
             ImGui.Text("AutoHook");
             ImGui.SetNextItemWidth(150);
             ImGui.InputText("Preset String", ref importString, 2048);
-            if (ImGui.Button("Import"))
+            if (ImGui.Button("匯入"))
             {
                 P.AutoHook.ImportAndSelectPreset(importString);
                 importString = string.Empty;

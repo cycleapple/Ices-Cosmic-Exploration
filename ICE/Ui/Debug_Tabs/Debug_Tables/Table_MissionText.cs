@@ -1,4 +1,4 @@
-﻿using Lumina.Excel.Sheets;
+using Lumina.Excel.Sheets;
 using System.Collections.Generic;
 
 namespace ICE.Ui.Debug_Tabs.Debug_Tables
@@ -22,7 +22,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Tables
             }
 
             ImGui.SameLine();
-            if (ImGui.Button("Clear"))
+            if (ImGui.Button("清除"))
             {
                 searchFilter = "";
             }

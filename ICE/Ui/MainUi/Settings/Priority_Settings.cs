@@ -1,4 +1,4 @@
-﻿using Dalamud.Interface;
+using Dalamud.Interface;
 using ICE.Utilities.Cosmic_Helper;
 using ICE.Utilities.ImGuiTools;
 
@@ -83,9 +83,9 @@ namespace ICE.Ui.MainUi.Settings
                     ImGui.AlignTextToFramePadding();
                     string type = entry switch
                     {
-                        ProvisionalTypes.ProvisionalTimed => "Timed",
-                        ProvisionalTypes.ProvisionalSequential => "Sequence",
-                        ProvisionalTypes.ProvisionalWeather => "Weather",
+                        ProvisionalTypes.ProvisionalTimed => "限時",
+                        ProvisionalTypes.ProvisionalSequential => "連續任務",
+                        ProvisionalTypes.ProvisionalWeather => "天氣",
                         _ => entry.ToString()
                     };
                     ImGui.Text($"{type}");

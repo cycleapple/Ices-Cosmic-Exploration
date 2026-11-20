@@ -29,7 +29,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Ui
 
                     if (ImGui.BeginTable("NPC Info Debugger", 5, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders))
                     {
-                        ImGui.TableSetupColumn("Name");
+                        ImGui.TableSetupColumn("名稱");
                         ImGui.TableSetupColumn("Position");
                         ImGui.TableSetupColumn("MoveTo Spot");
                         ImGui.TableSetupColumn("Move To");

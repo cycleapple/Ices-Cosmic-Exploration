@@ -1,4 +1,4 @@
-﻿using Dalamud.Interface;
+using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using ECommons.GameHelpers;
@@ -45,7 +45,7 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
         {
             if (ImGui.BeginTabBar("Agenda Mode: Tabs"))
             {
-                if (ImGui.BeginTabItem("Current Agenda"))
+                if (ImGui.BeginTabItem("目前計畫"))
                 {
                     float scale = ImGuiHelpers.GlobalScale;
 
@@ -63,29 +63,29 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
 
 
                     if (standard)
-                        modeType = "Standard";
+                        modeType = "標準";
                     else if (relicMode)
                     {
-                        modeType = "Relic Grind";
+                        modeType = "宇宙工具培養";
                         modeIcon = FontAwesomeIcon.ArrowUpRightDots;
                     }
                     else if (xpLeveling)
                     {
-                        modeType = "Leveling Grind";
+                        modeType = "職業練等";
                         modeIcon = FontAwesomeIcon.Leaf;
                     }
                     else if (goldMode)
                     {
-                        modeType = "Gold Completion Grind";
+                        modeType = "任務金牌收集";
                         modeIcon = FontAwesomeIcon.Trophy;
                     }
                     else if (agendaMode)
                     {
-                        modeType = "Cosmic Agenda";
+                        modeType = "宇宙計畫";
                         modeIcon = FontAwesomeIcon.ClipboardList;
                     }
 
-                    ImGuiEx.IconWithText(modeIcon, $"{modeType} Mode");
+                    ImGuiEx.IconWithText(modeIcon, $"{modeType}模式");
 
                     ImGui.SameLine(0, 10 * scale);
 
@@ -95,7 +95,7 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
                     float yOffset = (textHeight - buttonHeight) / 2f;
                     ImGui.SetCursorPosY(ImGui.GetCursorPosY() + yOffset);
 
-                    if (ImGuiEx.IconButtonWithText(FontAwesomeIcon.Play, "Mode Selection"))
+                    if (ImGuiEx.IconButtonWithText(FontAwesomeIcon.Play, "選擇模式"))
                     {
                         ImGui.OpenPopup("Mode Select | Select Mode Window");
                     }
@@ -122,7 +122,7 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
                             if (table)
                             {
                                 ImGui.TableSetupColumn("Icon", ImGuiTableColumnFlags.WidthFixed, 24);
-                                ImGui.TableSetupColumn("Name", ImGuiTableColumnFlags.WidthStretch);
+                                ImGui.TableSetupColumn("名稱", ImGuiTableColumnFlags.WidthStretch);
 
                                 foreach (var jobId in JobOptions)
                                 {
@@ -187,7 +187,7 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
                     ImGui.SameLine();
                     using (ImRaii.Disabled(SelectedOption == PlaylistOptions.None))
                     {
-                        if (ImGui.Button("Add to Cosmic Agenda"))
+                        if (ImGui.Button("加入宇宙計畫"))
                         {
                             var mode = ModeSelect.Standard;
                             if (SelectedOption is PlaylistOptions.SelectedRelicLv
@@ -223,11 +223,11 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
                     }
                     if (ImGui.BeginPopup("Agenda Info: Profile Save"))
                     {
-                        ImGui.InputText("Name", ref profileName);
-                        ImGui.InputTextMultiline("Description", ref profileDescription);
+                        ImGui.InputText("名稱", ref profileName);
+                        ImGui.InputTextMultiline("說明", ref profileDescription);
                         using (ImRaii.Disabled(profileName == string.Empty))
                         {
-                            if (ImGui.Button("Save"))
+                            if (ImGui.Button("儲存"))
                             {
                                 AgendaProfileInfo newProfile = new()
                                 {
@@ -253,7 +253,7 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
                     ImGui.EndTabItem();
                 }
 
-                if (ImGui.BeginTabItem("Saved Agenda's"))
+                if (ImGui.BeginTabItem("已儲存計畫"))
                 {
                     List<AgendaProfileInfo> listToRemove = new();
 
@@ -269,7 +269,7 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
                     ImGui.SetNextItemWidth(300);
                     ImGui.InputText("##ImportBox", ref _importBuffer, 5028);
                     ImGui.SameLine();
-                    if (ImGui.Button("Import"))
+                    if (ImGui.Button("匯入"))
                     {
                         if (TryImportProfile(_importBuffer, out var imported))
                         {
@@ -339,7 +339,7 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
                             bool cntrlHeld = ImGui.IsKeyDown(ImGuiKey.LeftCtrl) || ImGui.IsKeyDown(ImGuiKey.RightCtrl);
                             using (ImRaii.Disabled(!cntrlHeld))
                             {
-                                if (ImGui.Button("Delete Profile"))
+                                if (ImGui.Button("刪除設定檔"))
                                     listToRemove.Add(SelectedAgenda);
                             }
                             if (!cntrlHeld && ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenDisabled))
@@ -349,7 +349,7 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
 
                             if (ImGui.BeginTable("Agenda Missions Table: Favorites Info", 4, ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.SizingFixedFit))
                             {
-                                ImGui.TableSetupColumn("Job");
+                                ImGui.TableSetupColumn("職業");
                                 ImGui.TableSetupColumn("Agenda");
                                 ImGui.TableSetupColumn("Run Until..");
                                 ImGui.TableSetupColumn("Mode Select");
@@ -418,7 +418,7 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
         {
             return mode switch
             {
-                ModeSelect.Standard => "Standard",
+                ModeSelect.Standard => "標準",
                 ModeSelect.RelicMode => "Relic Grind Mode",
                 ModeSelect.LevelMode => "Leveling Mode",
                 // ModeSelect.ScoreMode => "Scoring Mode",
@@ -445,12 +445,12 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
                 if (PlaylistTable)
                 {
                     ImGui.TableSetupColumn("##Reorder");
-                    ImGui.TableSetupColumn("Job");
+                    ImGui.TableSetupColumn("職業");
                     ImGui.TableSetupColumn("Agenda");
                     ImGui.TableSetupColumn("Run Until..");
                     ImGui.TableSetupColumn("Mode Select");
-                    ImGui.TableSetupColumn("Remove");
-                    ImGui.TableSetupColumn("Progress", ImGuiTableColumnFlags.WidthStretch);
+                    ImGui.TableSetupColumn("移除");
+                    ImGui.TableSetupColumn("進度", ImGuiTableColumnFlags.WidthStretch);
 
                     ImGui.TableHeadersRow();
 
@@ -482,7 +482,7 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
                             if (ImGui.BeginTable("JobTable", 2, ImGuiTableFlags.BordersInnerV))
                             {
                                 ImGui.TableSetupColumn("Icon", ImGuiTableColumnFlags.WidthFixed, 24);
-                                ImGui.TableSetupColumn("Name", ImGuiTableColumnFlags.WidthStretch);
+                                ImGui.TableSetupColumn("名稱", ImGuiTableColumnFlags.WidthStretch);
 
                                 foreach (var jobId in JobOptions)
                                 {

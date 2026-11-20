@@ -1,4 +1,4 @@
-﻿using Dalamud.Interface.Utility.Raii;
+using Dalamud.Interface.Utility.Raii;
 using ICE.Utilities.Cosmic_Helper;
 using System.Collections.Generic;
 
@@ -38,7 +38,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Tables
             }
 
             ImGui.SameLine();
-            if (ImGui.Button("Clear"))
+            if (ImGui.Button("清除"))
             {
                 MissionList.Clear();
             }
@@ -57,10 +57,10 @@ namespace ICE.Ui.Debug_Tabs.Debug_Tables
                 if (ImGui.BeginTable("Quick Mission Add", 5, ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit))
                 {
                     ImGui.TableSetupColumn("ID");
-                    ImGui.TableSetupColumn("Job");
+                    ImGui.TableSetupColumn("職業");
                     ImGui.TableSetupColumn("Added");
-                    ImGui.TableSetupColumn("Level");
-                    ImGui.TableSetupColumn("Name");
+                    ImGui.TableSetupColumn("等級");
+                    ImGui.TableSetupColumn("名稱");
 
                     ImGui.TableHeadersRow();
 

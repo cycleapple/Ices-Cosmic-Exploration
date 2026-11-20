@@ -1,4 +1,4 @@
-﻿using Dalamud.Interface;
+using Dalamud.Interface;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility.Raii;
 using ECommons.GameHelpers;
@@ -203,6 +203,7 @@ public static unsafe partial class CosmicHelper
                                 SquadronManualId = src.SquadronManualId,
                                 ArtisanSolverType = src.ArtisanSolverType,
                                 MacroName = src.MacroName,
+                                SolverOverrideName = src.SolverOverrideName,
                                 SkillUsageAmount = src.SkillUsageAmount,
                                 MinStepsForMiracle = src.MinStepsForMiracle,
                                 ExpertProfileId = src.ExpertProfileId,
@@ -276,7 +277,7 @@ public static unsafe partial class CosmicHelper
                         {
                             return type switch
                             {
-                                ArtisanCraftType.Default => "Default",
+                                ArtisanCraftType.Default => "預設",
                                 ArtisanCraftType.Raphael => "Raphael Solver",
                                 ArtisanCraftType.ProgressOnly => "Progress Only Solver",
                                 ArtisanCraftType.Standard => "Standard Solver",
@@ -287,7 +288,7 @@ public static unsafe partial class CosmicHelper
                         }
                         string GetFoodLable(uint foodId)
                         {
-                            if (foodId == 0) return "Default";
+                            if (foodId == 0) return "預設";
                             var item = ConsumableInfo.CrafterFood.FirstOrDefault(x => x.Id == foodId);
                             PlayerHelper.GetItemCount(item.Id, out var nq, includeHq: false, includeNq: true);
                             PlayerHelper.GetItemCount(item.Id, out var hq, includeHq: true, includeNq: false);
@@ -295,7 +296,7 @@ public static unsafe partial class CosmicHelper
                         }
                         string GetPotionLable(uint potionId)
                         {
-                            if (potionId == 0) return "Default";
+                            if (potionId == 0) return "預設";
                             var item = ConsumableInfo.Pots.FirstOrDefault(x => x.Id == potionId);
                             PlayerHelper.GetItemCount(item.Id, out var nq, includeHq: false, includeNq: true);
                             PlayerHelper.GetItemCount(item.Id, out var hq, includeHq: true, includeNq: false);
@@ -303,14 +304,14 @@ public static unsafe partial class CosmicHelper
                         }
                         string GetManualLabel(uint manualId)
                         {
-                            if (manualId == 0) return "Default";
+                            if (manualId == 0) return "預設";
                             var item = ConsumableInfo.Manuals.FirstOrDefault(x => x.Id == manualId);
                             PlayerHelper.GetItemCount(item.Id, out var nq, includeHq: false, includeNq: true);
                             return BuildItemLabel(item.Name, nq, 0);
                         }
                         string GetSquadronManualLabel(uint squadManualId)
                         {
-                            if (squadManualId == 0) return "Default";
+                            if (squadManualId == 0) return "預設";
                             var item = ConsumableInfo.SquadronManuals.FirstOrDefault(x => x.Id == squadManualId);
                             PlayerHelper.GetItemCount(item.Id, out var nq, includeHq: false, includeNq: true);
                             return BuildItemLabel(item.Name, nq, 0);
@@ -323,7 +324,7 @@ public static unsafe partial class CosmicHelper
                             return string.Join(" / ", parts);
                         }
 
-                        var recipe_Solver = GetSolverLabel(recipeConfig.ArtisanSolverType);
+                        var recipe_Solver = recipeConfig.SolverOverrideName.Length > 0 ? recipeConfig.SolverOverrideName : GetSolverLabel(recipeConfig.ArtisanSolverType);
                         var recipe_FoodLabel = GetFoodLable(recipeConfig.FoodId);
                         var recipe_PotionLabel = GetPotionLable(recipeConfig.PotionId);
                         var recipe_ManualLabel = GetManualLabel(recipeConfig.ManualId);
@@ -379,7 +380,7 @@ public static unsafe partial class CosmicHelper
                             ImGuiEx.Icon(new Vector4(1.0f, 0.4f, 0.0f, 1.0f), FontAwesomeIcon.Diamond);
                             if (ImGui.IsItemHovered())
                             {
-                                ImGui.SetTooltip("Expert Craft");
+                                ImGui.SetTooltip("專家配方");
                             }
                         }
 
@@ -394,7 +395,7 @@ public static unsafe partial class CosmicHelper
                         ImGui.Text($"{craft.Value.ItemName}");
 
                         ImGui.TableNextColumn();
-                        ImGui.Text("Solver");
+                        ImGui.Text("求解器");
 
                         ImGui.TableNextColumn();
                         ImGui.SetNextItemWidth(recipe_ComboWidth);
@@ -408,6 +409,7 @@ public static unsafe partial class CosmicHelper
                                     if (ImGui.Selectable(GetSolverLabel(type), isSelected))
                                     {
                                         recipeConfig.ArtisanSolverType = type;
+                                        recipeConfig.SolverOverrideName = "";
                                         C.Save();
                                     }
                                     if (isSelected)
@@ -422,6 +424,7 @@ public static unsafe partial class CosmicHelper
                                     if (ImGui.Selectable(GetSolverLabel(type), isSelected))
                                     {
                                         recipeConfig.ArtisanSolverType = type;
+                                        recipeConfig.SolverOverrideName = "";
                                         C.Save();
                                     }
                                     if (isSelected)
@@ -501,14 +504,14 @@ public static unsafe partial class CosmicHelper
                         if (supportedArtisan)
                         {
                             ImGui.TableNextColumn();
-                            ImGui.Text("Food");
+                            ImGui.Text("食物");
 
                             ImGui.TableNextColumn();
                             ImGui.SetNextItemWidth(recipe_ComboWidth);
                             if (ImGui.BeginCombo("##FoodSelection", recipe_FoodLabel))
                             {
                                 bool isDefaultSelected = recipeConfig.FoodId == 0;
-                                if (ImGui.Selectable("Default", isDefaultSelected))
+                                if (ImGui.Selectable("預設", isDefaultSelected))
                                 {
                                     recipeConfig.FoodId = 0;
                                     recipeConfig.FoodHQ = false;
@@ -556,7 +559,7 @@ public static unsafe partial class CosmicHelper
                         if (supportedArtisan)
                         {
                             ImGui.TableNextColumn();
-                            ImGui.Text("Potion");
+                            ImGui.Text("藥水");
 
                             ImGui.TableNextColumn();
                             ImGui.SetNextItemWidth(recipe_ComboWidth);
@@ -564,7 +567,7 @@ public static unsafe partial class CosmicHelper
                             {
                                 // Default option
                                 bool isDefaultSelected = recipeConfig.PotionId == 0;
-                                if (ImGui.Selectable("Default", isDefaultSelected))
+                                if (ImGui.Selectable("預設", isDefaultSelected))
                                 {
                                     recipeConfig.PotionId = 0;
                                     recipeConfig.PotionHQ = false;
@@ -602,207 +605,22 @@ public static unsafe partial class CosmicHelper
 
                         #endregion
 
-                        #region Quality + Manual
-
                         ImGui.TableNextRow();
                         ImGui.TableSetColumnIndex(0);
-                        ImGui.AlignTextToFramePadding();
-                        ImGui.Text($"Quality: {craft.Value.RecipeInfo.Quality}");
-
-                        if (supportedArtisan)
+                        ImGui.TextWrapped("手冊、專家設定檔與技能次數請在 Artisan 調整。");
+                        ImGui.TableNextColumn();
+                        if (recipeConfig.ManualId != 0 || recipeConfig.SquadronManualId != 0
+                            || recipeConfig.ExpertProfileId != 0 || recipeConfig.SkillUsageAmount != -1
+                            || recipeConfig.MinStepsForMiracle != -1)
                         {
-                            ImGui.TableNextColumn();
-                            ImGui.AlignTextToFramePadding();
-                            ImGui.Text("Manual");
-
-                            ImGui.TableNextColumn();
-                            ImGui.SetNextItemWidth(recipe_ComboWidth);
-                            if (ImGui.BeginCombo("##StandardManual", recipe_ManualLabel))
+                            if (ImGui.Button($"清除不支援的覆寫##{craft.Key}"))
                             {
-                                // Default option
-                                bool isDefaultSelected = recipeConfig.ManualId == 0;
-                                if (ImGui.Selectable("Default", isDefaultSelected))
-                                {
-                                    recipeConfig.ManualId = 0;
-                                    C.Save();
-                                }
-                                if (isDefaultSelected)
-                                    ImGui.SetItemDefaultFocus();
-
-                                ImGui.Separator();
-
-                                foreach (var item in ConsumableInfo.Manuals)
-                                {
-                                    PlayerHelper.GetItemCount(item.Id, out var nqCount, includeHq: false, includeNq: true);
-
-                                    if (nqCount == 0) continue;
-
-                                    bool isSelected = recipeConfig.ManualId == item.Id;
-                                    string label = BuildItemLabel(item.Name, nqCount, 0) + $"###{item.Id}";
-
-                                    if (ImGui.Selectable(label, isSelected))
-                                    {
-                                        recipeConfig.ManualId = item.Id;
-                                        C.Save();
-                                    }
-
-                                    if (isSelected)
-                                        ImGui.SetItemDefaultFocus();
-                                }
-
-                                ImGui.EndCombo();
+                                recipeConfig.ManualId = 0; recipeConfig.SquadronManualId = 0;
+                                recipeConfig.ExpertProfileId = 0; recipeConfig.SkillUsageAmount = -1;
+                                recipeConfig.MinStepsForMiracle = -1; C.Save();
                             }
                         }
 
-                        #endregion
-
-                        #region Squadron Manual
-
-                        if (!globalArtisan)
-                        {
-                            ImGui.TableNextRow();
-                            ImGui.TableSetColumnIndex(1);
-                            ImGui.Text("Squadron Manual");
-
-                            ImGui.TableNextColumn();
-                            ImGui.SetNextItemWidth(recipe_ComboWidth);
-                            if (ImGui.BeginCombo("##StandardSquadManual", recipe_SquadManualLabel))
-                            {
-                                // Default option
-                                bool isDefaultSelected = recipeConfig.SquadronManualId == 0;
-                                if (ImGui.Selectable("Default", isDefaultSelected))
-                                {
-                                    recipeConfig.SquadronManualId = 0;
-                                    C.Save();
-                                }
-                                if (isDefaultSelected)
-                                    ImGui.SetItemDefaultFocus();
-
-                                ImGui.Separator();
-
-                                foreach (var item in ConsumableInfo.SquadronManuals)
-                                {
-                                    PlayerHelper.GetItemCount(item.Id, out var nqCount, includeHq: false, includeNq: true);
-
-                                    if (nqCount == 0) continue;
-
-                                    bool isSelected = recipeConfig.SquadronManualId == item.Id;
-                                    string label = BuildItemLabel(item.Name, nqCount, 0) + $"###{item.Id}";
-
-                                    if (ImGui.Selectable(label, isSelected))
-                                    {
-                                        recipeConfig.SquadronManualId = item.Id;
-                                        C.Save();
-                                    }
-
-                                    if (isSelected)
-                                        ImGui.SetItemDefaultFocus();
-                                }
-
-                                ImGui.EndCombo();
-                            }
-                        }
-
-                        #endregion
-
-                        #region ActionUsage
-
-                        var actionInfo = mission.TemporaryAction;
-                        if (actionInfo.ActionId != 0)
-                        {
-                            ImGui.TableNextRow();
-                            ImGui.TableSetColumnIndex(0);
-                            var name = actionInfo.Name;
-                            var icon = actionInfo.Icon.GetWrapOrEmpty();
-                            ImGui.Image(icon.Handle, new(24, 24));
-                            ImGui.AlignTextToFramePadding();
-                            ImGui.SameLine();
-                            ImGui.Text($"{name}");
-
-                            if (supportedArtisan)
-                            {
-                                ImGui.TableNextColumn();
-                                ImGui.Text($"Max use");
-
-                                ImGui.TableNextColumn();
-                                var maxUsage = recipeConfig.SkillUsageAmount;
-                                ImGui.SetNextItemWidth(recipe_ComboWidth);
-                                string skillUsageLabel = maxUsage == -1 ? "Default" : $"{maxUsage}";
-                                if (ImGui.SliderInt("##MaxSkillUsage", ref maxUsage, -1, (int)actionInfo.UseAmount, skillUsageLabel))
-                                {
-                                    recipeConfig.SkillUsageAmount = maxUsage;
-                                    C.SaveDebounced();
-                                }
-
-                                ImGui.TableNextRow();
-                                ImGui.TableSetColumnIndex(0);
-#if DEBUG
-                                if (ImGui.Button("Test Apply"))
-                                {
-                                    var key = craft.Key;
-                                    var useAmount = recipeConfig.SkillUsageAmount;
-                                    var miracleSteps = recipeConfig.MinStepsForMiracle;
-                                    IceLogging.Verbose($"Was Expert: {craft.Value.ExpertCraft}", "Test Apply Skills");
-                                    if (craft.Value.ExpertCraft)
-                                    {
-                                        if (recipeConfig.SkillUsageAmount != -1)
-                                        {
-                                            P.Artisan.ChangeExpertMaxSteadyUses(key, (uint)useAmount, true);
-                                            P.Artisan.ChangeExpertMaxMaterialMiracleUses(key, (uint)useAmount, true);
-                                        }
-                                        else
-                                        {
-                                            P.Artisan.SetTempExpertMaxSteadyUsesBackToNormal(key);
-                                            P.Artisan.SetTempExpertMaxMaterialMiracleUsesBackToNormal(key);
-                                        }
-
-                                        if (miracleSteps != -1)
-                                            P.Artisan.ChangeExpertMinimumStepsBeforeMiracle(key, (uint)miracleSteps, true);
-                                        else
-                                            P.Artisan.SetTempExpertMinimumStepsBeforeMiracleBackToNormal(key);
-                                    }
-                                    else
-                                    {
-                                        if (useAmount != -1)
-                                        {
-                                            P.Artisan.ChangeStandardMaxMaterialMiracleUses((uint)useAmount, true);
-                                        }
-                                        else
-                                        {
-                                            P.Artisan.SetTempStandardMaxMaterialMiracleUsesBackToNormal();
-                                        }
-
-                                        if (miracleSteps != 1)
-                                        {
-                                            P.Artisan.ChangeStandardMinimumStepsBeforeMiracle((uint)miracleSteps, true);
-                                        }
-                                        else
-                                        {
-                                            P.Artisan.SetTempStandardMinimumStepsBeforeMiracleBackToNormal();
-                                        }
-                                    }
-                                }
-#endif
-
-                                if (mission.TemporaryAction.ActionId == 41269 && !globalArtisan)
-                                {
-                                    ImGui.TableSetColumnIndex(1);
-                                    ImGui.Text("Use after this many steps");
-
-                                    ImGui.TableNextColumn();
-                                    var minSteps = recipeConfig.MinStepsForMiracle;
-                                    string skillMinStepsName = minSteps == -1 ? "Default" : $"{minSteps}";
-                                    ImGui.SetNextItemWidth(recipe_ComboWidth);
-                                    if (ImGui.SliderInt("##MinMiracleSteps", ref minSteps, -1, 20, skillMinStepsName))
-                                    {
-                                        recipeConfig.MinStepsForMiracle = minSteps;
-                                        C.SaveDebounced();
-                                    }
-                                }
-                            }
-                        }
-
-                        #endregion
                     }
                     else
                     {

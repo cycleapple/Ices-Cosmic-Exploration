@@ -41,7 +41,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Ui
                     entry = currentPos;
                 }
                 ImGui.SameLine();
-                if (ImGui.Button($"Remove###Remove_{entry}_{i}"))
+                if (ImGui.Button($"移除###Remove_{entry}_{i}"))
                 {
                     finalPath.Remove(entry);
                     i--;

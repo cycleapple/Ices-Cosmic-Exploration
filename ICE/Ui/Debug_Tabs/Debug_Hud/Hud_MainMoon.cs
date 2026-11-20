@@ -1,4 +1,4 @@
-﻿using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
+using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
 
 namespace ICE.Ui.Debug_Tabs.Debug_Hud
 {
@@ -8,7 +8,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Hud
         {
             if (GenericHelpers.TryGetAddonMaster<WKSHud>("WKSHud", out var HudAddon))
             {
-                if (ImGui.Button("Mission"))
+                if (ImGui.Button("任務"))
                 {
                     HudAddon.Mission();
                 }

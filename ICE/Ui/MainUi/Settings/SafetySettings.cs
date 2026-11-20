@@ -17,7 +17,7 @@ namespace ICE.Ui.MainUi.Settings
 
         public static void Draw()
         {
-            ImGuiEx.IconWithText(FontAwesomeIcon.ExclamationTriangle, "Safety Settings");
+            ImGuiEx.IconWithText(FontAwesomeIcon.ExclamationTriangle, "安全設定");
             ImGui.Dummy(new Vector2(0, 5));
 
             if (ImGui.Checkbox("Ignore non-Cosmic prompts", ref rejectUnknownYesNo))

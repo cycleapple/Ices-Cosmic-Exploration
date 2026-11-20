@@ -1,4 +1,4 @@
-﻿using Dalamud.Interface.Utility;
+using Dalamud.Interface.Utility;
 using ECommons.GameHelpers;
 using ICE.Utilities.Cosmic_Helper;
 using Lumina.Excel.Sheets;
@@ -157,7 +157,7 @@ namespace ICE.Ui.MainUi.Settings
                         {
                             ImGui.TableSetupColumn("Icon");
                             ImGui.TableSetupColumn("Unlocked");
-                            ImGui.TableSetupColumn("Name");
+                            ImGui.TableSetupColumn("名稱");
                             ImGui.TableSetupColumn("Weight");
 
                             ImGui.TableHeadersRow();

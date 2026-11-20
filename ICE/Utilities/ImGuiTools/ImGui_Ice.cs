@@ -267,7 +267,7 @@ public static partial class ImGui_Ice
             // This is not hypothetical on TC: the game's UI icon sheet stops at 065131, so every
             // Cosmic Exploration icon added after game 7.2 is simply not in the client's sqpack.
             // Probed against D:\...\game\sqpack via Lumina: 065100-065126 and 065130-065131 are
-            // PRESENT, 065127-065129 and 065132+ are absent. 65127 is "Gambling Settings"
+            // PRESENT, 065127-065129 and 065132+ are absent. 65127 is "幸運轉盤設定"
             // (Cosmic Fortune, game 7.3).
             //
             // So reserve the same space unconditionally, and draw a FontAwesome stand-in when the

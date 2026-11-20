@@ -1,4 +1,4 @@
-﻿using ICE.Utilities.Cosmic_Helper;
+using ICE.Utilities.Cosmic_Helper;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -29,7 +29,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Ui
             }
 
             ImGui.SetNextItemWidth(100);
-            ImGui.InputUInt("Mission", ref mission);
+            ImGui.InputUInt("任務", ref mission);
 
             if (ImGui.Button("Abandon Mission"))
             {
@@ -46,7 +46,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Ui
             ImGui.Text($"Current waypoint list count: {pathTo.Count}");
 
             ImGui.SetNextItemWidth(250);
-            ImGui.InputFloat3("Destination", ref pathToArea);
+            ImGui.InputFloat3("目的地", ref pathToArea);
             if (ImGui.Button("Set Area"))
             {
                 pathToArea = ECommons.GameHelpers.Player.Position;

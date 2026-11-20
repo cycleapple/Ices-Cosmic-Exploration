@@ -1,6 +1,6 @@
 {
   "date": "2026-11-20",
-  "purpose": "API13 source-rebuildable 1.0.0.4 candidate, based on lilasrepo 1.0.0.3; not a stable release",
+  "purpose": "API13 1.0.0.5 candidate with legacy YAML import and core zh-TW interface",
   "baseRepository": "https://github.com/lilasrepo/Ices-Cosmic-Exploration",
   "baseCommit": "8fb4f8510264bf231453fa57b32765b71677f39c",
   "branch": "api13-next-evaluation",
@@ -14,9 +14,9 @@
   "sourceBuild": {
     "success": true,
     "errors": 0,
-    "warnings": 175,
-    "log": "../../diagnostics/ice-next-api13-candidate-rebuild.log",
-    "type": "Full Release rebuild of all source ProjectReferences"
+    "log": "../../diagnostics/ice-next-api13-1005-final-rebuild.log",
+    "type": "Full source Release rebuild",
+    "warnings": 177
   },
   "diagnosticBinaryDependencyBuild": {
     "success": false,
@@ -43,7 +43,12 @@
     "Tested collectable watchdog integrated into active GatherInteractV2 path",
     "Direct initial cast integrated into active FishCheckV2 path",
     "Gather arrival stops navigation and dismounts before interaction",
-    "Hub return and aethernet shortcuts default disabled"
+    "Hub return and aethernet shortcuts default disabled",
+    "Legacy YAML import with source preservation, atomic destination writes, backups, hash-checked preview/apply and migration reports",
+    "Imported craft profile solver names retained exactly and validated by Artisan",
+    "Main interface, sidebar, mode explanations, stop/travel/recipe settings localized into zh-TW",
+    "Unsupported Artisan override controls removed and replaced with clear guidance and reset actions",
+    "Removed fake speed toggles and production clown-head mutation behavior"
   ],
   "migrationWork": [
     {
@@ -90,24 +95,41 @@
       "Vendored OtterGui source has no OtterGui.Log.Logger definition"
     ]
   },
-  "candidateVersion": "1.0.0.4",
+  "candidateVersion": "1.0.0.5",
   "candidateConfigDirectory": "ICE.Next.API13",
   "verification": {
     "watchdogChecks": 123,
-    "compiledIpcAndArtisanTransactionChecks": 22,
+    "ipcAdapterAndMigrationChecks": 50,
     "inGameTested": false
   },
   "remainingBeforeStableRelease": [
-    "Game runtime validation of mission state/score, timers, gathering and fishing",
-    "Explicit migration of 0.0.73.x settings/profiles/Agenda to the new schema",
-    "Port zh-TW user interface to the renamed/restructured new UI",
-    "Support or hide newer Artisan-only manual/expert-profile/skill-count overrides; currently they stop with a diagnostic instead of being ignored",
-    "Review optional debug legacy IPC endpoints; active crafting uses only validated Extended endpoints"
+    "Game runtime validation of startup/import UI, mission scores/timers, gathering and fishing",
+    "Complete remaining detailed zh-TW tooltips and debugging text",
+    "Recreate restricted-rank gold goals that cannot yet be represented in the new Agenda schema",
+    "Validate native layout/agent behavior against the exact supported client"
   ],
   "restoredSource": {
     "path": "OtterGui/Log/Logger.cs",
     "origin": "Existing API13 ICE/OtterGui working source",
     "sha256": "ceaf4ec4b54fcfe37239006c43106aa67281676488b6497c571d91e8477043e9",
     "reason": "Directory was omitted by the vendored repository ignore rules"
+  },
+  "configurationMigration": {
+    "automatic": "Imports only when the candidate has no existing DefaultConfig.json",
+    "manual": "Preview and explicit apply UI backs up existing candidate settings; source hash is rechecked",
+    "sourcePreserved": true,
+    "backup": "Legacy-Mission-Config-<hash>.yaml and .before-import-<guid>.json",
+    "report": "Legacy-Import-Report.json",
+    "supported": [
+      "Shared preferences and stop conditions",
+      "Mission enable flags, gathering profiles, turn-in thresholds and counters",
+      "Per-recipe solver/food/potion settings; craft profiles expanded per recipe",
+      "All six legacy Agenda goal kinds with exact targets"
+    ],
+    "restricted": [
+      "Manual/no-auto-turnin missions are imported disabled with warnings",
+      "Restricted-rank gold goals are rejected rather than widened"
+    ],
+    "failure": "Persisted error blocks start until resolved or explicitly skipped"
   }
 }

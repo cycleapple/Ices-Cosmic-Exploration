@@ -1,0 +1,192 @@
+{
+  "scope": "Core user interface translated; remaining detailed tooltips and debug text are tracked as incomplete",
+  "replacements": 366,
+  "files": [
+    {
+      "path": "ICE/Ui/DebugWindow.cs",
+      "literalReplacements": 2
+    },
+    {
+      "path": "ICE/Ui/InfoWindow.cs",
+      "literalReplacements": 8
+    },
+    {
+      "path": "ICE/Ui/MainWindow.cs",
+      "literalReplacements": 10
+    },
+    {
+      "path": "ICE/Ui/OverlayWindow.cs",
+      "literalReplacements": 13
+    },
+    {
+      "path": "ICE/Ui/Relic_XP.cs",
+      "literalReplacements": 3
+    },
+    {
+      "path": "ICE/Ui/Window_ExternalDetails.cs",
+      "literalReplacements": 9
+    },
+    {
+      "path": "ICE/Ui/DebugWindowTabs/Ipc_Artisan.cs",
+      "literalReplacements": 1
+    },
+    {
+      "path": "ICE/Ui/MainUi/SelectableSidebar.cs",
+      "literalReplacements": 19
+    },
+    {
+      "path": "ICE/Ui/MainUi/HelpFolder/helpSelect_Logs.cs",
+      "literalReplacements": 14
+    },
+    {
+      "path": "ICE/Ui/MainUi/HelpFolder/helpSelect_Required.cs",
+      "literalReplacements": 10
+    },
+    {
+      "path": "ICE/Ui/MainUi/HelpFolder/helpSelect_Tips.cs",
+      "literalReplacements": 2
+    },
+    {
+      "path": "ICE/Ui/MainUi/ModeSelect_Modes/Cosmic_Agenda.cs",
+      "literalReplacements": 22
+    },
+    {
+      "path": "ICE/Ui/MainUi/ModeSelect_Modes/Expedition_Log.cs",
+      "literalReplacements": 4
+    },
+    {
+      "path": "ICE/Ui/MainUi/ModeSelect_Modes/Mission_Setup.cs",
+      "literalReplacements": 39
+    },
+    {
+      "path": "ICE/Ui/MainUi/Settings/Character_Settings.cs",
+      "literalReplacements": 60
+    },
+    {
+      "path": "ICE/Ui/MainUi/Settings/GambaWheel.cs",
+      "literalReplacements": 1
+    },
+    {
+      "path": "ICE/Ui/MainUi/Settings/GatherSettings.cs",
+      "literalReplacements": 29
+    },
+    {
+      "path": "ICE/Ui/MainUi/Settings/Misc_Settings.cs",
+      "literalReplacements": 18
+    },
+    {
+      "path": "ICE/Ui/MainUi/Settings/Priority_Settings.cs",
+      "literalReplacements": 3
+    },
+    {
+      "path": "ICE/Ui/MainUi/Settings/SafetySettings.cs",
+      "literalReplacements": 1
+    },
+    {
+      "path": "ICE/Ui/MainUi/Settings/Settings_TableColumns.cs",
+      "literalReplacements": 7
+    },
+    {
+      "path": "ICE/Ui/MainUi/Settings/Shop_Credits.cs",
+      "literalReplacements": 1
+    },
+    {
+      "path": "ICE/Ui/MainUi/Settings/Shop_Dronebit.cs",
+      "literalReplacements": 1
+    },
+    {
+      "path": "ICE/Ui/MainUi/Settings/Shop_Tokens.cs",
+      "literalReplacements": 1
+    },
+    {
+      "path": "ICE/Ui/MainUi/Settings/TravelSettings.cs",
+      "literalReplacements": 5
+    },
+    {
+      "path": "ICE/Ui/MainUi/ModeSelect_Modes/CosmicTable/Mission_Table.cs",
+      "literalReplacements": 30
+    },
+    {
+      "path": "ICE/Ui/MainUi/HelpFolder/Tips_Folder/ModeSelection.cs",
+      "literalReplacements": 7
+    },
+    {
+      "path": "ICE/Ui/Debug_Tabs/Debug_CS/CS_Missions.cs",
+      "literalReplacements": 2
+    },
+    {
+      "path": "ICE/Ui/Debug_Tabs/Debug_Hud/Hud_CollectableGathering.cs",
+      "literalReplacements": 1
+    },
+    {
+      "path": "ICE/Ui/Debug_Tabs/Debug_Hud/Hud_MainMoon.cs",
+      "literalReplacements": 1
+    },
+    {
+      "path": "ICE/Ui/Debug_Tabs/Debug_Hud/Hud_Mission.cs",
+      "literalReplacements": 2
+    },
+    {
+      "path": "ICE/Ui/Debug_Tabs/Debug_Hud/Hud_WheelofFortune.cs",
+      "literalReplacements": 1
+    },
+    {
+      "path": "ICE/Ui/Debug_Tabs/Debug_Tables/Table_MissionInfo.cs",
+      "literalReplacements": 10
+    },
+    {
+      "path": "ICE/Ui/Debug_Tabs/Debug_Tables/Table_MissionSelect.cs",
+      "literalReplacements": 4
+    },
+    {
+      "path": "ICE/Ui/Debug_Tabs/Debug_Tables/Table_MissionText.cs",
+      "literalReplacements": 1
+    },
+    {
+      "path": "ICE/Ui/Debug_Tabs/Debug_Ui/Ui_Fish_HoleEditor.cs",
+      "literalReplacements": 2
+    },
+    {
+      "path": "ICE/Ui/Debug_Tabs/Debug_Ui/Ui_GatherEditor.cs",
+      "literalReplacements": 1
+    },
+    {
+      "path": "ICE/Ui/Debug_Tabs/Debug_Ui/Ui_Gearsets.cs",
+      "literalReplacements": 1
+    },
+    {
+      "path": "ICE/Ui/Debug_Tabs/Debug_Ui/Ui_IPCTesting.cs",
+      "literalReplacements": 1
+    },
+    {
+      "path": "ICE/Ui/Debug_Tabs/Debug_Ui/Ui_NavmeshTesting.cs",
+      "literalReplacements": 1
+    },
+    {
+      "path": "ICE/Ui/Debug_Tabs/Debug_Ui/Ui_NpcViewer.cs",
+      "literalReplacements": 1
+    },
+    {
+      "path": "ICE/Ui/Debug_Tabs/Debug_Ui/Ui_PlayerInfo.cs",
+      "literalReplacements": 1
+    },
+    {
+      "path": "ICE/Ui/Debug_Tabs/Debug_Ui/Ui_RelicInfo.cs",
+      "literalReplacements": 2
+    },
+    {
+      "path": "ICE/Ui/Debug_Tabs/Debug_Ui/Ui_TaskManagerInfo.cs",
+      "literalReplacements": 2
+    },
+    {
+      "path": "ICE/Utilities/ImGuiTools/ImGui_Ice.cs",
+      "literalReplacements": 1
+    },
+    {
+      "path": "ICE/Utilities/Cosmic_Helper/CosmicHelper.cs",
+      "literalReplacements": 11
+    }
+  ],
+  "additionalLiteralReplacements": 71,
+  "modeExplanationsTranslated": 5
+}

@@ -1,4 +1,4 @@
-﻿using Dalamud.Interface;
+using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Utility.Raii;
@@ -54,8 +54,70 @@ namespace ICE.Ui
             using (var mainBody = ImRaii.Child("mainBody_WindowV3", windowSizeRemaining, true))
             {
                 if (!mainBody.Success) return;
+                DrawLegacyImport();
+                if (LegacyImportError.Length != 0)
+                {
+                    ImGui.TextWrapped("舊設定未匯入：" + LegacyImportError);
+                    ImGui.TextWrapped("原始設定檔未變更。目前使用獨立的新設定，開始執行前請選擇是否略過匯入。");
+                    if (ImGui.Button("略過匯入，使用獨立新設定"))
+                    {
+                        LegacyImportError = "";
+                        C.LegacyImportFailure = "";
+                        C.Save();
+                    }
+                    ImGui.Separator();
+                }
+                if (C.LegacyImportWarnings.Length > 0 && ImGui.CollapsingHeader("舊設定匯入報告"))
+                    foreach (var warning in C.LegacyImportWarnings) ImGui.TextWrapped(warning);
                 MainBody();
             }
+        }
+
+        private static LegacyConfigImporter.ImportResult? importPreview;
+        private static string importHash = "";
+        private static string importMessage = "";
+        private static void DrawLegacyImport()
+        {
+            var source = System.IO.Path.Combine(Svc.PluginInterface.GetPluginConfigDirectory(), "Mission Config.yaml");
+            using (ImRaii.Disabled(SchedulerMain.State != IceState.Idle))
+            {
+                if (ImGui.Button("預覽匯入舊版設定"))
+                {
+                    try
+                    {
+                        importHash = LegacyConfigImporter.SourceHash(source);
+                        importPreview = LegacyConfigImporter.ConvertYaml(System.IO.File.ReadAllText(source));
+                        importMessage = "";
+                        ImGui.OpenPopup("匯入舊版設定");
+                    }
+                    catch (Exception error) { importMessage = "無法預覽：" + error.Message; }
+                }
+            }
+            if (importMessage.Length > 0) ImGui.TextWrapped(importMessage);
+            if (ImGui.BeginPopup("匯入舊版設定"))
+            {
+                ImGui.TextWrapped("將匯入任務、採集設定、配方與宇宙計畫。套用前會備份目前候選版設定，原始 YAML 不會變更。");
+                if (importPreview != null)
+                    foreach (var warning in importPreview.Warnings) ImGui.TextWrapped(warning);
+                using (ImRaii.Disabled(importPreview == null || SchedulerMain.State != IceState.Idle))
+                {
+                    if (ImGui.Button("備份目前設定並套用匯入"))
+                    {
+                        try
+                        {
+                            var result = LegacyConfigImporter.ReplaceImport(source, ECommons.Configuration.EzConfig.DefaultConfigurationFileName, importHash);
+                            P.ApplyImportedSettings(result.Json);
+                            importMessage = "已匯入舊設定，請檢查任務與宇宙計畫後再開始。";
+                            ImGui.CloseCurrentPopup();
+                        }
+                        catch (Exception error) { importMessage = "匯入失敗：" + error.Message; }
+                    }
+                }
+                ImGui.SameLine();
+                if (ImGui.Button("取消")) ImGui.CloseCurrentPopup();
+                ImGui.EndPopup();
+            }
+            ImGui.Separator();
         }
 
         private static readonly Dictionary<WindowSelection, Action> SelectedView = new()
@@ -107,35 +169,35 @@ namespace ICE.Ui
             bool goldMode = C.SelectedMode == ModeSelect.MissionGoldMode;
             bool agendaMode = C.SelectedMode == ModeSelect.AgendaMode;
 
-            ImGui.Text("Select Mode");
+            ImGui.Text("選擇模式");
             ImGui.Separator();
 
-            if (ImGui.RadioButton("Standard", standard))
+            if (ImGui.RadioButton("標準", standard))
             {
                 C.SelectedMode = ModeSelect.Standard;
                 C.Save();
             }
             ImGuiEx.HelpMarker(HelpInfoText(ModeSelect.Standard));
-            if (ImGui.RadioButton("Relic Grind", relicMode))
+            if (ImGui.RadioButton("宇宙工具培養", relicMode))
             {
                 C.SelectedMode = ModeSelect.RelicMode;
                 C.Save();
             }
             ImGuiEx.HelpMarker(HelpInfoText(ModeSelect.RelicMode));
 
-            if (ImGui.RadioButton("Leveling Grind", xpLeveling))
+            if (ImGui.RadioButton("職業練等", xpLeveling))
             {
                 C.SelectedMode = ModeSelect.LevelMode;
                 C.Save();
             }
             ImGuiEx.HelpMarker(HelpInfoText(ModeSelect.LevelMode));
-            if (ImGui.RadioButton("Gold Completion Grind", goldMode))
+            if (ImGui.RadioButton("任務金牌收集", goldMode))
             {
                 C.SelectedMode = ModeSelect.MissionGoldMode;
                 C.Save();
             }
             ImGuiEx.HelpMarker(HelpInfoText(ModeSelect.MissionGoldMode));
-            if (ImGui.RadioButton("Agenda Mode", agendaMode))
+            if (ImGui.RadioButton("宇宙計畫", agendaMode))
             {
                 C.SelectedMode = ModeSelect.AgendaMode;
                 C.Save();
@@ -146,36 +208,12 @@ namespace ICE.Ui
         {
             return mode switch
             {
-                ModeSelect.Standard =>
-                    "Standard Mode \n" +
-                    "-> Used to select which missions you want to grind. It'll priortize in the following order by default:\n" +
-                    "-> Critical -> Provisional [Sequence/Timed/Weather] -> Standard [A->D] -> Mastery (if applicable)\n" +
-                    "-> Select which missions you want to do, and go at it.\n" +
-                    "-> If you would like to change the priority, set it in Settings -> Mission Priority",
-                ModeSelect.LevelMode =>
-                    "Leveling Grind\n" +
-                    "-> Will automatically select which mission is the best for leveling your current class based on what level bracket you're in\n" +
-                    "-> These are hand picked by me, and determined by the time it takes to complete it\n" +
-                    "-> For crafters it's whatever missions take the least amount of progress" +
-                    "-> For gathering, it's whatever is the least pain to do w/ the minimum amount of skills\n" +
-                    "**These will automatically set settings for using these modes temporarily**",
-                ModeSelect.RelicMode =>
-                    "Relic Grind\n" +
-                    "-> Automatically select which missions that are best to finish up your relic\n" +
-                    "-> These are weighed based on what is needed to complete the tool to the next step\n" +
-                    "-> If you want to only do certain missions, enable the option and select which ones you want to do",
-                ModeSelect.AgendaMode =>
-                    "This mode is if you want to do a series of things in a particular order. So for example, if you wanted to grind out all the relics on all the classes back to back\n" +
-                    "Or if you wanted to do the relic on WVR -> Then farm score on BTN -> Farm credits on BSM\n" +
-                    "Really is the \"I want to do this order of things\" kind of thing.\n" +
-                    "Note. I'm not responsible if you leave this on and get banned for it. I'm not one for leaving things at their pc, but people are watching always. Keep this in mind",
-                ModeSelect.MissionGoldMode =>
-                    "Gold Completion Mode\n" +
-                    "-> Will automatically pick all the missions that you do not have currently gold, AND ONLY THOSE MISSIONS.\n" +
-                    "-> If it is apart of a sequence chain, it will grab the mission that are needed previously to help complete it, and the missions post if necessary\n" +
-                    "-> If it runs out of missions to reroll, it will just continually swap tabs until the mission is available (via provisional or critical)\n" +
-                    "**This will respect the want to grind off class provisionals, and criticals if you have those enabled",
-                _ => "???? For some reason we're missing this. Please Report this to I"
+                ModeSelect.Standard => "標準模式\n選擇要反覆執行的任務。預設依緊急任務、臨時任務、標準任務與工具精通任務排序。\n可在「設定 → 任務優先順序」調整。",
+                ModeSelect.LevelMode => "職業練等\n依目前職業與等級選擇建議任務，執行期間會暫時套用對應設定。",
+                ModeSelect.RelicMode => "宇宙工具培養\n依工具下一階段所需的研究資料選擇任務，也可限制為僅執行已啟用的任務。",
+                ModeSelect.AgendaMode => "宇宙計畫\n依清單順序完成各職業的工具培養、等級、分數或信用點數目標；全部完成後停止。",
+                ModeSelect.MissionGoldMode => "任務金牌收集\n選擇尚未取得金牌的任務，持續執行直到符合完成條件。",
+                _ => "選擇執行模式。"
             };
         }
     }

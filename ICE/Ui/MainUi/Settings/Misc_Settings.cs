@@ -35,38 +35,38 @@ namespace ICE.Ui.MainUi.Settings
 
         public static void OverlaySettings()
         {
-            ImGuiEx.IconWithText(FontAwesomeIcon.WindowMaximize, "Overlay Window");
+            ImGuiEx.IconWithText(FontAwesomeIcon.WindowMaximize, "資訊浮層");
             ImGui.Dummy(new (0, 5));
 
             bool showOverlay = C.ShowOverlay;
-            if (ImGui.Checkbox("Auto-Open Overlay", ref showOverlay))
+            if (ImGui.Checkbox("自動開啟浮動視窗", ref showOverlay))
             {
                 C.ShowOverlay = showOverlay;
                 C.Save();
             }
             ImGui.SameLine();
-            if (ImGui.Button("Open Overlay"))
+            if (ImGui.Button("開啟浮動視窗"))
             {
                 if (!P.overlayWindow.IsOpen)
                     P.overlayWindow.IsOpen = true;
             }
             ImGui.SameLine();
             bool useCogsIcon = C.Overlay_UseCogsIcon;
-            if (ImGui.Checkbox("Use cogs button instead of home", ref useCogsIcon))
+            if (ImGui.Checkbox("使用齒輪按鈕圖示", ref useCogsIcon))
             {
                 C.Overlay_UseCogsIcon = useCogsIcon;
                 C.Save();
             }
 
             bool ShowSeconds = C.ShowSeconds;
-            if (ImGui.Checkbox("Show Seconds", ref ShowSeconds))
+            if (ImGui.Checkbox("顯示秒數", ref ShowSeconds))
             {
                 C.ShowSeconds = ShowSeconds;
                 C.Save();
             }
 
             bool showExpOverlay = C.ShowExpBars;
-            if (ImGui.Checkbox("Show Experience Bars on Overlay", ref showExpOverlay))
+            if (ImGui.Checkbox("在浮層顯示經驗值條", ref showExpOverlay))
             {
                 C.ShowExpBars = showExpOverlay;
                 C.Save();
@@ -75,7 +75,7 @@ namespace ICE.Ui.MainUi.Settings
             {
                 ImGui.SameLine();
                 bool hideWhenMaxed = C.ShowExpBars_HideWhenMaxed;
-                if (ImGui.Checkbox("Until maxed only", ref hideWhenMaxed))
+                if (ImGui.Checkbox("僅在尚未達上限時顯示", ref hideWhenMaxed))
                 {
                     C.ShowExpBars_HideWhenMaxed = hideWhenMaxed;
                     C.Save();
@@ -83,28 +83,28 @@ namespace ICE.Ui.MainUi.Settings
             }
 
             bool showClassScore = C.ShowCurrentScore;
-            if (ImGui.Checkbox("Show Current Class Score", ref showClassScore))
+            if (ImGui.Checkbox("顯示目前職業分數", ref showClassScore))
             {
                 C.ShowCurrentScore = showClassScore;
                 C.Save();
             }
             ImGui.SameLine();
             bool showTotalScore = C.ShowTotalScore;
-            if (ImGui.Checkbox("Show Total Score", ref showTotalScore))
+            if (ImGui.Checkbox("顯示總分", ref showTotalScore))
             {
                 C.ShowTotalScore = showTotalScore;
                 C.Save();
             }
             ImGui.SameLine();
             bool showMasteryScore = C.ShowMasteryScore;
-            if (ImGui.Checkbox("Show Mastery Score", ref showMasteryScore))
+            if (ImGui.Checkbox("顯示工具精通分數", ref showMasteryScore))
             {
                 C.ShowMasteryScore = showMasteryScore;
                 C.Save();
             }
 
             bool AutoResize = C.Overlay_AutoResize;
-            if (ImGui.Checkbox("Auto Resize Overlay", ref AutoResize))
+            if (ImGui.Checkbox("自動調整浮動視窗大小", ref AutoResize))
             {
                 C.Overlay_AutoResize = AutoResize;
                 C.Save();
@@ -112,21 +112,21 @@ namespace ICE.Ui.MainUi.Settings
 
 
             bool highlightTokenWeather = C.Overlay_HighlightTokenWeather;
-            if (ImGui.Checkbox("Highlight EX+ token weathers", ref highlightTokenWeather))
+            if (ImGui.Checkbox("標示 EX+ 兌換道具對應天氣", ref highlightTokenWeather))
             {
                 C.Overlay_HighlightTokenWeather = highlightTokenWeather;
                 C.Save();
             }
 
             bool showSelectedWeatherMissions = C.Overlay_WeatherSelected;
-            if (ImGui.Checkbox($"Show enabled missions on weather hover", ref showSelectedWeatherMissions))
+            if (ImGui.Checkbox($"滑鼠停在天氣上時顯示已啟用任務", ref showSelectedWeatherMissions))
             {
                 C.Overlay_WeatherSelected = showSelectedWeatherMissions;
                 C.Save();
             }
 
             bool filterByCurrentJob = C.Overlay_FilterByCurrentJob;
-            if (ImGui.Checkbox("Filter by current job only", ref filterByCurrentJob))
+            if (ImGui.Checkbox("僅顯示目前職業", ref filterByCurrentJob))
             {
                 C.Overlay_FilterByCurrentJob = filterByCurrentJob;
                 C.Save();
@@ -164,24 +164,24 @@ namespace ICE.Ui.MainUi.Settings
             }
 
             bool disableHudClipping = C.DisableHudClipping;
-            if (ImGui.Checkbox("Disable HUD Clipping", ref disableHudClipping))
+            if (ImGui.Checkbox("允許浮動視窗覆蓋遊戲介面", ref disableHudClipping))
             {
                 C.DisableHudClipping = disableHudClipping;
                 C.Save();
             }
             if (ImGui.IsItemHovered())
             {
-                ImGui.SetTooltip("When enabled, overlays will render over the native UI elements");
+                ImGui.SetTooltip("啟用後，浮動視窗可顯示在遊戲原生介面上方。");
             }
 
         }
         private static void AutoUse()
         {
-            ImGuiEx.IconWithText(FontAwesomeIcon.PersonRays, "Auto-Use");
+            ImGuiEx.IconWithText(FontAwesomeIcon.PersonRays, "自動使用");
             ImGui.Dummy(new Vector2(0, 5));
 
             bool DisableLunarAura = C.RemoveStellarStatus;
-            if (ImGui.Checkbox("Auto-Remove Stellar Status", ref DisableLunarAura))
+            if (ImGui.Checkbox("自動移除星極狀態", ref DisableLunarAura))
             {
                 C.RemoveStellarStatus = DisableLunarAura;
                 C.Save();
@@ -192,7 +192,7 @@ namespace ICE.Ui.MainUi.Settings
                                    "The buff restores itself when you re-enter the zone.");
 
             bool autoStartOnMoonEnter = C.StartUponEnterMoon;
-            if (ImGui.Checkbox("Auto start upon entering a Cosmic Exploration area", ref autoStartOnMoonEnter))
+            if (ImGui.Checkbox("進入宇宙探索區域後自動開始", ref autoStartOnMoonEnter))
             {
                 C.StartUponEnterMoon = autoStartOnMoonEnter;
                 C.Save();
@@ -207,10 +207,10 @@ namespace ICE.Ui.MainUi.Settings
         }
         private static void GoldMissionRemover()
         {
-            ImGuiEx.IconWithText(FontAwesomeIcon.Medal, "Post Mission Settings");
+            ImGuiEx.IconWithText(FontAwesomeIcon.Medal, "任務完成後設定");
 
             bool removeGold = C.RemoveAfterGold;
-            if (ImGui.Checkbox("Remove Mission Upon Gold Completion", ref removeGold))
+            if (ImGui.Checkbox("取得金牌後移除任務", ref removeGold))
             {
                 C.RemoveAfterGold = removeGold;
                 C.Save();
@@ -228,12 +228,12 @@ namespace ICE.Ui.MainUi.Settings
         }
         private static void TimeRecords()
         {
-            ImGuiEx.IconWithText(FontAwesomeIcon.Clock, "Record Settings");
+            ImGuiEx.IconWithText(FontAwesomeIcon.Clock, "紀錄設定");
             ImGui.Dummy(new Vector2(0, 5));
 
             int TimeHistory = C.TimeHistoryLimit;
             ImGui.SetNextItemWidth(100);
-            if (ImGui.InputInt("Average Time History to keep", ref TimeHistory))
+            if (ImGui.InputInt("保留的平均耗時紀錄數", ref TimeHistory))
             {
                 C.TimeHistoryLimit = TimeHistory;
                 C.Save();
@@ -242,20 +242,20 @@ namespace ICE.Ui.MainUi.Settings
             ImGui.TextDisabled("?");
             if (ImGui.IsItemHovered())
             {
-                ImGui.SetTooltip("Anything below 0 to keep all logs\n" +
-                                 "Above 0 to keep a set limit");
+                ImGui.SetTooltip("設為 0 以下可保留全部紀錄\n" +
+                                 "設為 0 以上則依指定數量保留");
             }
         }
         private static void PostMissionCommands()
         {
-            ImGuiEx.IconWithText(FontAwesomeIcon.Play, "Post Mission Commands");
+            ImGuiEx.IconWithText(FontAwesomeIcon.Play, "任務完成後指令");
             ImGui.Dummy(new Vector2(0, 5));
 
-            ImGui.TextWrapped("Input below a list of commands that you would like to run after a run has been completed. \n" +
-                              "This is kind of my way of letting you somewhat script/set up a sequence of other things that you would like to do that might not be included in the plugin itself. \n" +
-                              "If you want something more complex, just make an SND script at that point. And have this run that script post lol.");
+            ImGui.TextWrapped("在下方輸入每次任務完成後要執行的指令清單。\n" +
+                              "可用來依序執行本插件未內建的其他操作。\n" +
+                              "若需要更複雜的流程，建議建立 SND 腳本，再由此處於任務完成後執行。");
 
-            if (ImGui.Button("Add New Command"))
+            if (ImGui.Button("新增指令"))
             {
                 C.PostMissionCommands.Add(new MissionCommand
                 {
@@ -268,11 +268,11 @@ namespace ICE.Ui.MainUi.Settings
             MissionCommand? toRemove = null;
             int entryCounter = 0;
 
-            if (ImGui.BeginTable("Mission Commands", 3, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders))
+            if (ImGui.BeginTable("任務完成後指令", 3, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders))
             {
-                ImGui.TableSetupColumn("Command");
-                ImGui.TableSetupColumn("Delay");
-                ImGui.TableSetupColumn("Remove");
+                ImGui.TableSetupColumn("指令");
+                ImGui.TableSetupColumn("延遲");
+                ImGui.TableSetupColumn("移除");
 
                 ImGui.TableHeadersRow();
 
@@ -319,37 +319,16 @@ namespace ICE.Ui.MainUi.Settings
         }
         private static void FunSettings()
         {
-            ImGuiEx.IconWithText(FontAwesomeIcon.Heart, "Dev Favorites");
+            ImGuiEx.IconWithText(FontAwesomeIcon.Heart, "其他顯示選項");
             var crazyEnabled = C.CrazyTaxiArrow;
-            if (ImGui.Checkbox("Show Crazy Taxi Arrow when navmeshing", ref crazyEnabled))
+            if (ImGui.Checkbox("導航時顯示方向箭頭", ref crazyEnabled))
             {
                 C.CrazyTaxiArrow = crazyEnabled;
                 C.Save();
             }
 
-            var placiboEffect = C.PlaceboCheckbox;
-            if (ImGui.Checkbox("Increase Gathering & Crafting Speed", ref placiboEffect))
-            {
-                C.PlaceboCheckbox = placiboEffect;
-                C.Save();
-            }
-            ImGui.SameLine();
-            ImGuiEx.IconWithTooltip(FontAwesomeIcon.QuestionCircle, "This does abosolutely nothing\n" +
-                "But I know there's going to be people who enable this and don't read, so it's a tehe.\n" +
-                "Thanks for using my plugin though, it means a lot <3");
-
-            var fakeFishing = C.FakeIncreaseFisher;
-            ImGui.Dummy(new(0, 0));
-            if (ImGui.Checkbox("Increase Fishing Speed", ref fakeFishing))
-            {
-                C.FakeIncreaseFisher = fakeFishing;
-                C.SaveDebounced();
-            }
-            ImGui.SameLine();
-            ImGuiEx.IconWithTooltip(FontAwesomeIcon.QuestionCircle, 
-                "This is your warning, this will just apply a clown head to you every minute or so from glamourer.\n" +
-                "100% a joke setting, don't take it seriously. I don't have the technology for this");
         }
+
         private static void Separator()
         {
             ImGui.Dummy(new Vector2(0, 5));

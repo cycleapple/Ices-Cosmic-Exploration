@@ -1,4 +1,4 @@
-﻿using Dalamud.Interface;
+using Dalamud.Interface;
 using Dalamud.Interface.Colors;
 using Dalamud.Interface.Textures;
 using Dalamud.Interface.Textures.TextureWraps;
@@ -60,7 +60,7 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
             if (ImGui.BeginTable("Class Selection Table", 2, ImGuiTableFlags.SizingFixedFit))
             {
                 ImGui.TableSetupColumn("Icon");
-                ImGui.TableSetupColumn("Name");
+                ImGui.TableSetupColumn("名稱");
 
                 foreach (var jobInfo in CosmicHelper.ClassInfoDict.OrderBy(x => x.Key))
                 {
@@ -318,10 +318,10 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
 
                 if (ImGui.BeginTable("Class Progress: All", 7, ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit))
                 {
-                    ImGui.TableSetupColumn("Job");
+                    ImGui.TableSetupColumn("職業");
                     ImGui.TableSetupColumn("Relic");
                     ImGui.TableSetupColumn("##Relic_XPBar");
-                    ImGui.TableSetupColumn("Score");
+                    ImGui.TableSetupColumn("分數");
                     ImGui.TableSetupColumn("##Score_XPBar");
                     ImGui.TableSetupColumn("Mastery");
                     ImGui.TableSetupColumn("##Mastery_XPBar");
@@ -414,7 +414,7 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);
-                    ImGui_Ice.Table_FullCenterText($"Class Score");
+                    ImGui_Ice.Table_FullCenterText($"職業分數");
 
                     ImGui.TableNextRow();
                     ImGui.TableSetColumnIndex(0);

@@ -66,8 +66,8 @@ namespace ICE.Ui
             {
                 ImGui.TableSetupColumn("##Planets");
                 ImGui.TableSetupColumn("##Icons");
-                ImGui.TableSetupColumn("Current");
-                ImGui.TableSetupColumn("Next");
+                ImGui.TableSetupColumn("目前");
+                ImGui.TableSetupColumn("下一頁");
 
                 ImGui.TableHeadersRow();
 
@@ -153,11 +153,11 @@ namespace ICE.Ui
 
             var modeName = C.SelectedMode switch
             {
-                ModeSelect.Standard => "Standard",
-                ModeSelect.RelicMode => "Relic Grind",
-                ModeSelect.LevelMode => "Leveling Grind",
-                ModeSelect.AgendaMode => "Cosmic Agenda",
-                ModeSelect.MissionGoldMode => "Gold Completion Grind",
+                ModeSelect.Standard => "標準",
+                ModeSelect.RelicMode => "宇宙工具培養",
+                ModeSelect.LevelMode => "職業練等",
+                ModeSelect.AgendaMode => "宇宙計畫",
+                ModeSelect.MissionGoldMode => "任務金牌收集",
                 _ => C.SelectedMode.ToString(),
             };
             ImGui.Text($"{modeName} - {SchedulerMain.State}");
@@ -178,7 +178,7 @@ namespace ICE.Ui
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.Text(running ? "Stop" : "Start");
+                ImGui.Text(running ? "停止" : "開始");
                 ImGui.EndTooltip();
             }
 
@@ -323,8 +323,8 @@ namespace ICE.Ui
                         if (ImGui.BeginTable($"Enabled Mission Table", 3, ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit))
                         {
                             ImGui.TableSetupColumn("Icon");
-                            ImGui.TableSetupColumn("Mission");
-                            ImGui.TableSetupColumn("Name");
+                            ImGui.TableSetupColumn("任務");
+                            ImGui.TableSetupColumn("名稱");
                             foreach (var mission in enabledWeathers)
                             {
                                 var sheetInfo = CosmicHelper.SheetMissionDict[mission];
@@ -510,7 +510,7 @@ namespace ICE.Ui
             if (ImGui.IsItemHovered())
             {
                 ImGui.BeginTooltip();
-                ImGui.Text(icon == FontAwesomeIcon.Cloud ? "Weather" : "Timed");
+                ImGui.Text(icon == FontAwesomeIcon.Cloud ? "天氣" : "限時");
                 ImGui.EndTooltip();
             }
         }
@@ -669,7 +669,7 @@ namespace ICE.Ui
                 if (open)
                 {
                     bool stopWhen = C.StopAtRelicLv;
-                    if (ImGui.Checkbox("Stop At Relic Lv.", ref stopWhen))
+                    if (ImGui.Checkbox("達到指定工具階段時停止", ref stopWhen))
                     {
                         C.StopAtRelicLv = stopWhen;
                         C.Save();

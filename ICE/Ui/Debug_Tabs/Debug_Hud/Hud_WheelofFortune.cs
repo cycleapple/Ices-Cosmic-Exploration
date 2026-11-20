@@ -1,4 +1,4 @@
-﻿using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
+using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
 
 namespace ICE.Ui.Debug_Tabs.Debug_Hud
 {
@@ -27,7 +27,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Hud
                 }
 
                 ImGui.SameLine();
-                if (ImGui.Button($"Confirm"))
+                if (ImGui.Button($"確認"))
                 {
                     lotto.ConfirmButton();
                 }

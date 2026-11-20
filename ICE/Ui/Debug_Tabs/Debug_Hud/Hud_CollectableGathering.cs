@@ -1,4 +1,4 @@
-﻿using ECommons.GameHelpers;
+using ECommons.GameHelpers;
 using ICE.Utilities.Cosmic_Helper;
 using ICE.Utilities.GatheringHelper;
 using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
@@ -121,7 +121,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Hud
                     ImGui.EndTable();
                 }
             }
-            else if (GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady)
+            else if (GenericHelpers.TryGetAddonMaster<Gathering>("採集", out var gather) && gather.IsAddonReady)
             {
                 if (ImGui.Button("Increase collectability"))
                 {

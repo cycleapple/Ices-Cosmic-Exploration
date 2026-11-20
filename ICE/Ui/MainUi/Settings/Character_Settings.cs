@@ -149,24 +149,24 @@ namespace ICE.Ui.MainUi.Settings
         // -------------------------------------------------------------------------
         private static void RepairSettings(CharacterOverride? ov)
         {
-            ImGuiEx.IconWithText(FontAwesomeIcon.Hammer, "Repair Settings");
+            ImGuiEx.IconWithText(FontAwesomeIcon.Hammer, "修理設定");
             ImGui.Dummy(new Vector2(0, 5));
 
             if (ov == null)
             {
                 // ── Global ──────────────────────────────────────────────────────
                 bool repairAtVendor = C.RepairAtVendor;
-                if (ImGui.Checkbox("Repair at Vendor", ref repairAtVendor))
+                if (ImGui.Checkbox("向 NPC 修理", ref repairAtVendor))
                 { C.RepairAtVendor = repairAtVendor; C.Save(); }
 
                 using (ImRaii.Disabled(repairAtVendor))
                 {
                     bool selfRepairGather = C.SelfRepairGather;
-                    if (ImGui.Checkbox("Self Repair Gather", ref selfRepairGather))
+                    if (ImGui.Checkbox("採集職自行修理", ref selfRepairGather))
                     { C.SelfRepairGather = selfRepairGather; C.Save(); }
 
                     bool selfRepairCrafter = C.SelfRepairCrafter;
-                    if (ImGui.Checkbox("Self Repair Crafter", ref selfRepairCrafter))
+                    if (ImGui.Checkbox("製作職業自行修理", ref selfRepairCrafter))
                     { C.SelfRepairCrafter = selfRepairCrafter; C.Save(); }
                 }
 
@@ -198,7 +198,7 @@ namespace ICE.Ui.MainUi.Settings
                     v => ov.RepairAtVendor = v,
                     current => {
                         bool v = current;
-                        if (ImGui.Checkbox("Repair at Vendor", ref v) && ov.RepairAtVendor.HasValue)
+                        if (ImGui.Checkbox("向 NPC 修理", ref v) && ov.RepairAtVendor.HasValue)
                         { ov.RepairAtVendor = v; C.Save(); }
                     });
 
@@ -209,7 +209,7 @@ namespace ICE.Ui.MainUi.Settings
                         v => ov.SelfRepairGather = v,
                         current => {
                             bool v = current;
-                            if (ImGui.Checkbox("Self Repair Gather", ref v) && ov.SelfRepairGather.HasValue)
+                            if (ImGui.Checkbox("採集職自行修理", ref v) && ov.SelfRepairGather.HasValue)
                             { ov.SelfRepairGather = v; C.Save(); }
                         });
 
@@ -217,7 +217,7 @@ namespace ICE.Ui.MainUi.Settings
                         v => ov.SelfRepairCrafter = v,
                         current => {
                             bool v = current;
-                            if (ImGui.Checkbox("Self Repair Crafter", ref v) && ov.SelfRepairCrafter.HasValue)
+                            if (ImGui.Checkbox("製作職業自行修理", ref v) && ov.SelfRepairCrafter.HasValue)
                             { ov.SelfRepairCrafter = v; C.Save(); }
                         });
                 }
@@ -313,7 +313,7 @@ namespace ICE.Ui.MainUi.Settings
 
             string GetSolverLabel(ArtisanCraftType type) => type switch
             {
-                ArtisanCraftType.Default => "Default",
+                ArtisanCraftType.Default => "預設",
                 ArtisanCraftType.Raphael => "Raphael Solver",
                 ArtisanCraftType.ProgressOnly => "Progress Only Solver",
                 ArtisanCraftType.Standard => "Standard Solver",
@@ -323,7 +323,7 @@ namespace ICE.Ui.MainUi.Settings
 
             string GetFoodLabel(uint foodId)
             {
-                if (foodId == 0) return "Default";
+                if (foodId == 0) return "預設";
                 var item = ConsumableInfo.CrafterFood.FirstOrDefault(x => x.Id == foodId);
                 PlayerHelper.GetItemCount(item.Id, out var nq, includeHq: false, includeNq: true);
                 PlayerHelper.GetItemCount(item.Id, out var hq, includeHq: true, includeNq: false);
@@ -331,7 +331,7 @@ namespace ICE.Ui.MainUi.Settings
             }
             string GetPotionLabel(uint potionId)
             {
-                if (potionId == 0) return "Default";
+                if (potionId == 0) return "預設";
                 var item = ConsumableInfo.Pots.FirstOrDefault(x => x.Id == potionId);
                 PlayerHelper.GetItemCount(item.Id, out var nq, includeHq: false, includeNq: true);
                 PlayerHelper.GetItemCount(item.Id, out var hq, includeHq: true, includeNq: false);
@@ -339,14 +339,14 @@ namespace ICE.Ui.MainUi.Settings
             }
             string GetManualLabel(uint manualId)
             {
-                if (manualId == 0) return "Default";
+                if (manualId == 0) return "預設";
                 var item = ConsumableInfo.Manuals.FirstOrDefault(x => x.Id == manualId);
                 PlayerHelper.GetItemCount(item.Id, out var nq, includeHq: false, includeNq: true);
                 return BuildItemLabel(item.Name, nq, 0);
             }
             string GetSquadManualLabel(uint squadManualId)
             {
-                if (squadManualId == 0) return "Default";
+                if (squadManualId == 0) return "預設";
                 var item = ConsumableInfo.SquadronManuals.FirstOrDefault(x => x.Id == squadManualId);
                 PlayerHelper.GetItemCount(item.Id, out var nq, includeHq: false, includeNq: true);
                 return BuildItemLabel(item.Name, nq, 0);
@@ -461,7 +461,7 @@ namespace ICE.Ui.MainUi.Settings
                         ImGui.TableNextRow();
                         ImGui.TableSetColumnIndex(0);
                         ImGui.AlignTextToFramePadding();
-                        ImGui.Text("Food");
+                        ImGui.Text("食物");
 
                         ImGui.TableNextColumn();
                         using (ImRaii.Disabled(stdDisabled))
@@ -469,7 +469,7 @@ namespace ICE.Ui.MainUi.Settings
                             ImGui.SetNextItemWidth(std_ComboWidth);
                             if (ImGui.BeginCombo("##StandardFood", std_FoodLabel))
                             {
-                                if (ImGui.Selectable("Default", craft_Standard.FoodId == 0))
+                                if (ImGui.Selectable("預設", craft_Standard.FoodId == 0))
                                 { 
                                     craft_Standard.FoodId = 0; 
                                     craft_Standard.FoodHQ = false; 
@@ -504,7 +504,7 @@ namespace ICE.Ui.MainUi.Settings
                             ImGui.SetNextItemWidth(exp_ComboWidth);
                             if (ImGui.BeginCombo("##ExpertFood", exp_FoodLabel))
                             {
-                                if (ImGui.Selectable("Default", craft_Expert.FoodId == 0))
+                                if (ImGui.Selectable("預設", craft_Expert.FoodId == 0))
                                 { 
                                     craft_Expert.FoodId = 0; 
                                     craft_Expert.FoodHQ = false; 
@@ -546,7 +546,7 @@ namespace ICE.Ui.MainUi.Settings
                             ImGui.SetNextItemWidth(std_ComboWidth);
                             if (ImGui.BeginCombo("##StandardPotion", std_PotionLabel))
                             {
-                                if (ImGui.Selectable("Default", craft_Standard.PotionId == 0))
+                                if (ImGui.Selectable("預設", craft_Standard.PotionId == 0))
                                 { 
                                     craft_Standard.PotionId = 0; 
                                     craft_Standard.PotionHQ = false; 
@@ -581,7 +581,7 @@ namespace ICE.Ui.MainUi.Settings
                             ImGui.SetNextItemWidth(exp_ComboWidth);
                             if (ImGui.BeginCombo("##ExpertPotion", exp_PotionLabel))
                             {
-                                if (ImGui.Selectable("Default", craft_Expert.PotionId == 0))
+                                if (ImGui.Selectable("預設", craft_Expert.PotionId == 0))
                                 { 
                                     craft_Expert.PotionId = 0; 
                                     craft_Expert.PotionHQ = false; 
@@ -611,144 +611,18 @@ namespace ICE.Ui.MainUi.Settings
                         }
                         #endregion
 
-                        #region Manual Row
                         ImGui.TableNextRow();
                         ImGui.TableSetColumnIndex(0);
-                        ImGui.AlignTextToFramePadding();
-                        ImGui.Text("Manual");
-
+                        ImGui.TextWrapped("手冊設定請在 Artisan 調整。");
                         ImGui.TableNextColumn();
-                        using (ImRaii.Disabled(stdDisabled))
-                        {
-                            ImGui.SetNextItemWidth(std_ComboWidth);
-                            if (ImGui.BeginCombo("##StandardManual", std_ManualLabel))
-                            {
-                                if (ImGui.Selectable("Default", craft_Standard.ManualId == 0))
-                                { 
-                                    craft_Standard.ManualId = 0; 
-                                    SaveArtisan(); 
-                                }
-                                if (craft_Standard.ManualId == 0) 
-                                    ImGui.SetItemDefaultFocus();
-                                ImGui.Separator();
-                                foreach (var item in ConsumableInfo.Manuals)
-                                {
-                                    PlayerHelper.GetItemCount(item.Id, out var nq, includeHq: false, includeNq: true);
-                                    if (nq == 0) 
-                                        continue;
-                                    bool sel = craft_Standard.ManualId == item.Id;
-                                    if (ImGui.Selectable(BuildItemLabel(item.Name, nq, 0) + $"###{item.Id}", sel))
-                                    { 
-                                        craft_Standard.ManualId = item.Id; 
-                                        SaveArtisan(); }
-                                    if (sel) 
-                                        ImGui.SetItemDefaultFocus();
-                                }
-                                ImGui.EndCombo();
-                            }
-                        }
-
+                        if ((craft_Standard.ManualId != 0 || craft_Standard.SquadronManual != 0)
+                            && ImGui.Button("清除標準配方手冊覆寫"))
+                        { craft_Standard.ManualId = 0; craft_Standard.SquadronManual = 0; SaveArtisan(); }
                         ImGui.TableNextColumn();
-                        using (ImRaii.Disabled(expDisabled))
-                        {
-                            ImGui.SetNextItemWidth(exp_ComboWidth);
-                            if (ImGui.BeginCombo("##ExpertManual", exp_ManualLabel))
-                            {
-                                if (ImGui.Selectable("Default", craft_Expert.ManualId == 0))
-                                { 
-                                    craft_Expert.ManualId = 0; 
-                                    SaveArtisan(); 
-                                }
-                                if (craft_Expert.ManualId == 0) 
-                                    ImGui.SetItemDefaultFocus();
-                                ImGui.Separator();
-                                foreach (var item in ConsumableInfo.Manuals)
-                                {
-                                    PlayerHelper.GetItemCount(item.Id, out var nq, includeHq: false, includeNq: true);
-                                    if (nq == 0) continue;
-                                    bool sel = craft_Expert.ManualId == item.Id;
-                                    if (ImGui.Selectable(BuildItemLabel(item.Name, nq, 0) + $"###{item.Id}", sel))
-                                    { 
-                                        craft_Expert.ManualId = item.Id; 
-                                        SaveArtisan(); 
-                                    }
-                                    if (sel) 
-                                        ImGui.SetItemDefaultFocus();
-                                }
-                                ImGui.EndCombo();
-                            }
-                        }
-                        #endregion
+                        if ((craft_Expert.ManualId != 0 || craft_Expert.SquadronManual != 0)
+                            && ImGui.Button("清除專家配方手冊覆寫"))
+                        { craft_Expert.ManualId = 0; craft_Expert.SquadronManual = 0; SaveArtisan(); }
 
-                        #region Squadron Manual Row
-                        ImGui.TableNextRow();
-                        ImGui.TableSetColumnIndex(0);
-                        ImGui.AlignTextToFramePadding();
-                        ImGui.Text("Squadron Manual");
-
-                        ImGui.TableNextColumn();
-                        using (ImRaii.Disabled(stdDisabled))
-                        {
-                            ImGui.SetNextItemWidth(std_ComboWidth);
-                            if (ImGui.BeginCombo("##StandardSquadManual", std_SquadLabel))
-                            {
-                                if (ImGui.Selectable("Default", craft_Standard.SquadronManual == 0))
-                                { 
-                                    craft_Standard.SquadronManual = 0; 
-                                    SaveArtisan(); 
-                                }
-                                if (craft_Standard.SquadronManual == 0) 
-                                    ImGui.SetItemDefaultFocus();
-                                ImGui.Separator();
-                                foreach (var item in ConsumableInfo.SquadronManuals)
-                                {
-                                    PlayerHelper.GetItemCount(item.Id, out var nq, includeHq: false, includeNq: true);
-                                    if (nq == 0) continue;
-                                    bool sel = craft_Standard.SquadronManual == item.Id;
-                                    if (ImGui.Selectable(BuildItemLabel(item.Name, nq, 0) + $"###{item.Id}", sel))
-                                    { 
-                                        craft_Standard.SquadronManual = item.Id; 
-                                        SaveArtisan(); 
-                                    }
-                                    if (sel) 
-                                        ImGui.SetItemDefaultFocus();
-                                }
-                                ImGui.EndCombo();
-                            }
-                        }
-
-                        ImGui.TableNextColumn();
-                        using (ImRaii.Disabled(expDisabled))
-                        {
-                            ImGui.SetNextItemWidth(exp_ComboWidth);
-                            if (ImGui.BeginCombo("##ExpertSquadManual", exp_SquadLabel))
-                            {
-                                if (ImGui.Selectable("Default", craft_Expert.SquadronManual == 0))
-                                { 
-                                    craft_Expert.SquadronManual = 0; 
-                                    SaveArtisan(); 
-                                }
-                                if (craft_Expert.SquadronManual == 0) 
-                                    ImGui.SetItemDefaultFocus();
-
-                                ImGui.Separator();
-                                foreach (var item in ConsumableInfo.SquadronManuals)
-                                {
-                                    PlayerHelper.GetItemCount(item.Id, out var nq, includeHq: false, includeNq: true);
-                                    if (nq == 0) continue;
-                                    bool sel = craft_Expert.SquadronManual == item.Id;
-                                    if (ImGui.Selectable(BuildItemLabel(item.Name, nq, 0) + $"###{item.Id}", sel))
-                                    { 
-                                        craft_Expert.SquadronManual = item.Id; 
-                                        SaveArtisan(); 
-                                    }
-                                    if (sel) 
-                                        ImGui.SetItemDefaultFocus();
-                                }
-                                ImGui.EndCombo();
-                            }
-                        }
-                        #endregion
                     }
 
                     ImGui.EndTable();
@@ -768,7 +642,7 @@ namespace ICE.Ui.MainUi.Settings
 
         private static unsafe void MountSelection(CharacterOverride? ov)
         {
-            ImGuiEx.IconWithText(FontAwesomeIcon.Feather, "Mount Settings");
+            ImGuiEx.IconWithText(FontAwesomeIcon.Feather, "坐騎設定");
             ImGui.Dummy(new Vector2(0, 5));
 
             // Resolve effective values for display
@@ -782,11 +656,11 @@ namespace ICE.Ui.MainUi.Settings
             // Mount picker button
             if (ov == null)
             {
-                if (ImGui.Button("Select Mounting Option"))
+                if (ImGui.Button("選擇坐騎"))
                     OpenMountPopup();
                 ImGui.SameLine();
                 ImGui.AlignTextToFramePadding();
-                ImGui.Text($"Mount: {C.MountName}");
+                ImGui.Text($"坐騎：{C.MountName}");
             }
             else
             {
@@ -805,7 +679,7 @@ namespace ICE.Ui.MainUi.Settings
 
                 using (ImRaii.Disabled(!hasMountOverride))
                 {
-                    if (ImGui.Button("Select Mounting Option##charMount"))
+                    if (ImGui.Button("選擇坐騎##charMount"))
                         OpenMountPopup();
                     ImGui.SameLine();
                     ImGui.AlignTextToFramePadding();
@@ -816,7 +690,7 @@ namespace ICE.Ui.MainUi.Settings
             // Shared popup — writes to ov if present, else to C directly
             if (ImGui.BeginPopup("Mount Options"))
             {
-                ImGui.InputText("Search", ref _mountSearchText, 100);
+                ImGui.InputText("搜尋", ref _mountSearchText, 100);
 
                 var filtered = _availableMounts
                     .Where(kvp => string.IsNullOrEmpty(_mountSearchText) ||
@@ -841,12 +715,12 @@ namespace ICE.Ui.MainUi.Settings
                 }
 
                 ImGui.Separator();
-                if (ImGui.Button("Previous") && _mountDisplayOffset > 0)
+                if (ImGui.Button("上一頁") && _mountDisplayOffset > 0)
                     _mountDisplayOffset = Math.Max(0, _mountDisplayOffset - _mountItemsPerPage);
                 ImGui.SameLine();
                 ImGui.Text($"{_mountDisplayOffset + 1}-{Math.Min(_mountDisplayOffset + _mountItemsPerPage, total)} of {total}");
                 ImGui.SameLine();
-                if (ImGui.Button("Next") && _mountDisplayOffset < maxOffset)
+                if (ImGui.Button("下一頁") && _mountDisplayOffset < maxOffset)
                     _mountDisplayOffset = Math.Min(maxOffset, _mountDisplayOffset + _mountItemsPerPage);
 
                 ImGui.EndPopup();
@@ -856,33 +730,33 @@ namespace ICE.Ui.MainUi.Settings
             if (ov == null)
             {
                 bool mountOutside = C.UseMountOutsideMission;
-                if (ImGui.Checkbox("Use mount outside mission", ref mountOutside))
+                if (ImGui.Checkbox("任務外使用坐騎", ref mountOutside))
                 { C.UseMountOutsideMission = mountOutside; C.Save(); }
 
                 bool mountInMission = C.UseMountInMission;
-                if (ImGui.Checkbox("Use mount in mission", ref mountInMission))
+                if (ImGui.Checkbox("任務中使用坐騎", ref mountInMission))
                 { C.UseMountInMission = mountInMission; C.Save(); }
 
                 float minRange = C.MountRadius;
                 ImGui.SetNextItemWidth(100);
-                if (ImGui.DragFloat("Minimum Mounting Range", ref minRange, 1))
+                if (ImGui.DragFloat("最小騎乘距離", ref minRange, 1))
                 { C.MountRadius = minRange; C.Save(); }
                 ImGui.SameLine();
-                ImGui.Checkbox("Visualize radius", ref _visualizeRadius);
+                ImGui.Checkbox("顯示範圍", ref _visualizeRadius);
 
                 float dismount = C.DismountRadius;
                 ImGui.SetNextItemWidth(100);
-                if (ImGui.DragFloat("Dismount Target Range", ref dismount, 1))
+                if (ImGui.DragFloat("下坐騎目標距離", ref dismount, 1))
                 { C.DismountRadius = dismount; C.Save(); }
                 ImGui.SameLine();
-                ImGui.Checkbox("Visualize Dismount Radius", ref _visualizeDismountRadius);
+                ImGui.Checkbox("顯示下坐騎範圍", ref _visualizeDismountRadius);
             }
             else
             {
                 // These four are global-only — always read/write C regardless of character tab.
                 // Show them as editable but with a tooltip clarifying they affect all characters.
                 bool mountOutside = C.UseMountOutsideMission;
-                if (ImGui.Checkbox("Use mount outside mission##global", ref mountOutside))
+                if (ImGui.Checkbox("任務外使用坐騎##global", ref mountOutside))
                 { 
                     C.UseMountOutsideMission = mountOutside; 
                     C.Save(); 
@@ -890,13 +764,13 @@ namespace ICE.Ui.MainUi.Settings
                 if (ImGui.IsItemHovered()) ImGui.SetTooltip("Global setting — applies to all characters.");
 
                 bool mountInMission = C.UseMountInMission;
-                if (ImGui.Checkbox("Use mount in mission##global", ref mountInMission))
+                if (ImGui.Checkbox("任務中使用坐騎##global", ref mountInMission))
                 { C.UseMountInMission = mountInMission; C.Save(); }
                 if (ImGui.IsItemHovered()) ImGui.SetTooltip("Global setting — applies to all characters.");
 
                 float minRange = C.MountRadius;
                 ImGui.SetNextItemWidth(100);
-                if (ImGui.DragFloat("Minimum Mounting Range##global", ref minRange, 1))
+                if (ImGui.DragFloat("最小騎乘距離##global", ref minRange, 1))
                 { 
                     C.MountRadius = minRange; 
                     C.Save(); 
@@ -904,11 +778,11 @@ namespace ICE.Ui.MainUi.Settings
                 if (ImGui.IsItemHovered()) 
                     ImGui.SetTooltip("Global setting — applies to all characters.");
                 ImGui.SameLine();
-                ImGui.Checkbox("Visualize radius", ref _visualizeRadius);
+                ImGui.Checkbox("顯示範圍", ref _visualizeRadius);
 
                 float dismount = C.DismountRadius;
                 ImGui.SetNextItemWidth(100);
-                if (ImGui.DragFloat("Dismount Target Range##global", ref dismount, 1))
+                if (ImGui.DragFloat("下坐騎目標距離##global", ref dismount, 1))
                 { 
                     C.DismountRadius = dismount; 
                     C.Save(); 
@@ -916,7 +790,7 @@ namespace ICE.Ui.MainUi.Settings
                 if (ImGui.IsItemHovered()) 
                     ImGui.SetTooltip("Global setting — applies to all characters.");
                 ImGui.SameLine();
-                ImGui.Checkbox("Visualize Dismount Radius", ref _visualizeDismountRadius);
+                ImGui.Checkbox("顯示下坐騎範圍", ref _visualizeDismountRadius);
             }
 
             // Pictomancy visualisation (always uses resolved values)
@@ -936,7 +810,7 @@ namespace ICE.Ui.MainUi.Settings
         private static unsafe void OpenMountPopup()
         {
             _availableMounts.Clear();
-            _availableMounts[0] = "Mount Roulette";
+            _availableMounts[0] = "隨機坐騎";
             var mountSheet = Svc.Data.GetExcelSheet<Mount>();
             foreach (var mountItem in mountSheet)
             {
@@ -966,7 +840,7 @@ namespace ICE.Ui.MainUi.Settings
                     C.Save(); 
                 }
 
-                string currentJobName = BattleJobs.FirstOrDefault(x => x.Value == C.Relic_BattleJob).Key ?? "None";
+                string currentJobName = BattleJobs.FirstOrDefault(x => x.Value == C.Relic_BattleJob).Key ?? "無";
                 ImGui.SetNextItemWidth(200);
                 if (ImGui.BeginCombo("Battle Job##relicJob", currentJobName))
                 {
@@ -1007,7 +881,7 @@ namespace ICE.Ui.MainUi.Settings
                 OverrideField("Relic_BattleJob", C.Relic_BattleJob, ov.Relic_BattleJob,
                     v => ov.Relic_BattleJob = v,
                     current => {
-                        string currentJobName = BattleJobs.FirstOrDefault(x => x.Value == current).Key ?? "None";
+                        string currentJobName = BattleJobs.FirstOrDefault(x => x.Value == current).Key ?? "無";
                         ImGui.SetNextItemWidth(200);
                         if (ImGui.BeginCombo("Battle Job##relicJobOv", currentJobName))
                         {
@@ -1045,16 +919,16 @@ namespace ICE.Ui.MainUi.Settings
         private static readonly Dictionary<string, uint> BattleJobs = new()
         {
             // Tanks
-            { "Paladin",    19 }, { "Warrior",     21 }, { "Dark Knight", 32 }, { "Gunbreaker",  37 },
+            { "騎士",    19 }, { "戰士",     21 }, { "暗黑騎士", 32 }, { "絕槍戰士",  37 },
             // Healers
-            { "White Mage", 24 }, { "Scholar",     28 }, { "Astrologian", 33 }, { "Sage",        40 },
+            { "白魔法師", 24 }, { "學者",     28 }, { "占星術士", 33 }, { "賢者",        40 },
             // Melee DPS
-            { "Monk",       20 }, { "Dragoon",     22 }, { "Ninja",       30 }, { "Samurai",     34 },
-            { "Reaper",     39 }, { "Viper",       41 },
+            { "武僧",       20 }, { "龍騎士",     22 }, { "忍者",       30 }, { "武士",     34 },
+            { "鐮刀師",     39 }, { "蝰蛇劍士",       41 },
             // Physical Ranged DPS
-            { "Bard",       23 }, { "Machinist",   31 }, { "Dancer",      38 },
+            { "吟遊詩人",       23 }, { "機工士",   31 }, { "舞者",      38 },
             // Magical Ranged DPS
-            { "Black Mage", 25 }, { "Summoner",    27 }, { "Red Mage",    35 }, { "Pictomancer", 42 },
+            { "黑魔法師", 25 }, { "召喚師",    27 }, { "赤魔法師",    35 }, { "繪靈法師", 42 },
         };
     }
 }

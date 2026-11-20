@@ -1,4 +1,4 @@
-﻿using FFXIVClientStructs.FFXIV.Client.Game.UI;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using ICE.Ui.MainUi.HelpFolder.Tips_Folder;
 using System;
 using System.Collections.Generic;
@@ -23,8 +23,8 @@ namespace ICE.Ui.MainUi.HelpFolder
             return tipSelected switch
             {
                 Help_Selection.Welcome => "Welcome",
-                Help_Selection.ModeSelection => "Mode Selection",
-                Help_Selection.AgendaMode => "Cosmic Agenda",
+                Help_Selection.ModeSelection => "選擇模式",
+                Help_Selection.AgendaMode => "宇宙計畫",
                 _ => tipSelected.ToString()
             };
         }

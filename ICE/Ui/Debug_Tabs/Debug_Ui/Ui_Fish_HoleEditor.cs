@@ -71,7 +71,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Ui
                 }
             }
 
-            ImGui.Checkbox("Show fishing spot raycast", ref _fishingDebug.ShowFishRay);
+            ImGui.Checkbox("顯示釣點方向判定", ref _fishingDebug.ShowFishRay);
             if (Player.Object is { } player && _fishingDebug.ShowFishRay)
             {
                 _fishingDebug.Draw();
@@ -173,7 +173,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Ui
                             P.Navmesh.Stop();
                         }
                         ImGui.SameLine();
-                        if (ImGui.Button("Mount"))
+                        if (ImGui.Button("坐騎"))
                         {
                             Utils.MountAction();
                         }
@@ -255,7 +255,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Ui
                             }
                             if (ImGui.BeginPopup("Option to Delete"))
                             {
-                                if (ImGui.MenuItem("Delete"))
+                                if (ImGui.MenuItem("刪除"))
                                 {
                                     fishingHole.RemoveAt(i);
                                     if (selectedSpotIndex >= i) selectedSpotIndex--;

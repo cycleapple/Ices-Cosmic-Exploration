@@ -1,4 +1,4 @@
-﻿using Dalamud.Interface.Utility.Raii;
+using Dalamud.Interface.Utility.Raii;
 using ICE.Utilities.Cosmic_Helper;
 using ICE.Utilities.ImGuiTools;
 
@@ -7,9 +7,9 @@ namespace ICE.Ui.MainUi.Settings;
 public static class Settings_TableColumns
 {
     private static string[] missionSortOptions = 
-        ["Id", "Name", "Cosmo Credits", "Lunar Credits", 
+        ["Id", "名稱", "宇宙信用點數", "月面信用點數",
         "Exp I", "Exp II", "Exp III", "Exp IV", "Exp V", 
-        "Map Location", "Class Score", "Class Exp"];
+        "Map Location", "職業分數", "Class Exp"];
 
     public static void ColumnSettings()
     {
@@ -121,15 +121,15 @@ public static class Settings_TableColumns
             ImGui.Text("Select Turnin Options");
             ImGui.Dummy(new Vector2(0, 2));
 
-            if (ImGui.RadioButton("Gold", HighestTurnin is TurninState.Gold))
+            if (ImGui.RadioButton("金牌", HighestTurnin is TurninState.Gold))
             {
                 HighestTurnin = TurninState.Gold;
             }
-            if (ImGui.RadioButton("Silver", HighestTurnin is TurninState.Silver))
+            if (ImGui.RadioButton("銀牌", HighestTurnin is TurninState.Silver))
             {
                 HighestTurnin = TurninState.Silver;
             }
-            if (ImGui.RadioButton("Bronze", HighestTurnin is TurninState.Bronze))
+            if (ImGui.RadioButton("銅牌", HighestTurnin is TurninState.Bronze))
             {
                 HighestTurnin = TurninState.Bronze;
             }

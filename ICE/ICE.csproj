@@ -28,7 +28,7 @@
 
 
 	<PropertyGroup>
-		<Version>1.0.0.4</Version>
+		<Version>1.0.0.5</Version>
 		<Description>Who said we couldn't explore the moon!.</Description>
 		<PackageProjectUrl>https://github.com/goatcorp/ICE</PackageProjectUrl>
 		<PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
@@ -90,6 +90,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\ECommons\ECommons\ECommons.csproj" />
 		<PackageReference Include="NAudio" Version="2.3.0" />
+        <PackageReference Include="YamlDotNet" Version="16.3.0" />
 		<ProjectReference Include="..\ffxiv_pictomancy\Pictomancy\Pictomancy.csproj" />
 	</ItemGroup>
 

@@ -1,4 +1,4 @@
-﻿using Dalamud.Interface;
+using Dalamud.Interface;
 using Dalamud.Interface.Utility.Raii;
 using ICE.Utilities.Cosmic_Helper;
 using ICE.Utilities.GatheringHelper;
@@ -32,11 +32,11 @@ public static class CosmicTables
             return item switch
             {
                 ItemFilter.NoItems => "No Items",
-                ItemFilter.Enabled => "Enabled",
-                ItemFilter.Disabled => "Disabled",
+                ItemFilter.Enabled => "已啟用",
+                ItemFilter.Disabled => "已停用",
                 // ItemFilter.NotCompleted => "Not Completed",
-                // ItemFilter.Completed => "Completed",
-                // ItemFilter.Gold => "Gold",
+                // ItemFilter.Completed => "已完成",
+                // ItemFilter.Gold => "金牌",
                 _ => "Unknown",
             };
         }
@@ -146,18 +146,18 @@ public static class CosmicTables
         // TODO: Create default width's for all of these...
 
         private readonly EnabledColumn _enabledColumn;
-        private readonly NameColumn _nameColumn = new() { Label = "Name" };
+        private readonly NameColumn _nameColumn = new() { Label = "名稱" };
         private readonly IdColumn _idColumn = new() { Label = "ID" };
-        private readonly JobColumn _jobColumn = new() { Label = "Job" };
+        private readonly JobColumn _jobColumn = new() { Label = "職業" };
         private readonly MissionColumn _missionColumn = new() { Label = "Rank" };
         private readonly CompletionColumn _completionColumn = new() { Label = "Status" };
-        private readonly ClassScoreColumn _classScoreColumn = new() { Label = "Class" };
+        private readonly ClassScoreColumn _classScoreColumn = new() { Label = "職業" };
         private readonly CosmocreditColumn _cosmoColumn = new() { Label = "Cosmo" };
         private readonly LunarCreditColumn _lunarColumn = new() { Label = "Lunar" };
         private readonly DroneCreditColumn _droneColumn = new() { Label = "Dronebits" };
-        private readonly PlanetTokensColumn _planetTokenColumn = new() { Label = "Mount" };
+        private readonly PlanetTokensColumn _planetTokenColumn = new() { Label = "坐騎" };
         private readonly SPMColumn _spmColumn = new() { Label = "SPM" };
-        private readonly TurninColumn _turninColumn = new() { Label = "Goal" };
+        private readonly TurninColumn _turninColumn = new() { Label = "目標" };
         private readonly PlanetColumn _planetColumn = new() { Label = "Moons" };
         private readonly ProfileColumn _profileColumn = new() { Label = "Profile" };
         private readonly NotesColumn _notesColumn = new() { Label = "Notes" };
@@ -165,7 +165,7 @@ public static class CosmicTables
 
         public Mission_Table(List<MissionInfo> itemList) : base("Item_Table_V2", itemList)
         {
-            _enabledColumn = new EnabledColumn(this) { Label = "Enabled" };
+            _enabledColumn = new EnabledColumn(this) { Label = "已啟用" };
 
             List<Column<MissionInfo>> headers = [
                 _enabledColumn, _completionColumn, _idColumn, _planetColumn,
@@ -201,13 +201,13 @@ public static class CosmicTables
     }
     public class Completion_Table : Table<MissionInfo>, IDisposable
     {
-        private readonly EnabledColumn_NF _enabledColumn = new() { Label = "Enabled" };
-        private readonly NameColumn _nameColumn = new() { Label = "Name" };
+        private readonly EnabledColumn_NF _enabledColumn = new() { Label = "已啟用" };
+        private readonly NameColumn _nameColumn = new() { Label = "名稱" };
         private readonly IdColumn_NF _idColumn = new() { Label = "ID" };
         private readonly JobColumn_NF _jobColumn = new() { Label = "Jobs" };
         private readonly MissionColumn_NF _missionColumn = new() { Label = "Rank" };
         private readonly CompletionColumn_NF _completionColumn = new() { Label = "Status" };
-        private readonly TurninColumn_NF _turninColumn = new() { Label = "Goal" };
+        private readonly TurninColumn_NF _turninColumn = new() { Label = "目標" };
         private readonly ProfileColumn_NF _profileColumn = new() { Label = "Profile" };
         private readonly NotesColumn_NF _notesColumn = new() { Label = "Notes" };
 
@@ -244,7 +244,7 @@ public static class CosmicTables
             _table = table;
             Flags = ImGuiTableColumnFlags.NoHide | ImGuiTableColumnFlags.NoResize;
             SetFlags(ItemFilter.Enabled, ItemFilter.Disabled);
-            SetNames("Enabled", "Disabled");
+            SetNames("已啟用", "已停用");
         }
 
         public override int Compare(MissionInfo lhs, MissionInfo rhs)
@@ -400,7 +400,7 @@ public static class CosmicTables
         public CompletionColumn()
         {
             SetFlags(ItemFilter.NotCompleted, ItemFilter.Completed, ItemFilter.Gold);
-            SetNames("Not Completed", "Completed", "Gold");
+            SetNames("Not Completed", "已完成", "金牌");
         }
         public override float Width => Math.Max(
             ImGui.CalcTextSize(Label + "xxx").X + ImGui.GetStyle().CellPadding.X * 2,
@@ -715,7 +715,7 @@ public static class CosmicTables
         {
             Flags = ImGuiTableColumnFlags.NoResize;
             SetFlags(MissionFilter.RedAlert, MissionFilter.Sequence, MissionFilter.Weather, MissionFilter.Timed, MissionFilter.ARank, MissionFilter.BRank, MissionFilter.CRank, MissionFilter.DRank, MissionFilter.Master);
-            SetNames("Red Alert", "Sequence", "Weather", "Timed", "A Rank", "B Rank", "C Rank", "D Rank", "Master");
+            SetNames("Red Alert", "連續任務", "天氣", "限時", "A 級", "B 級", "C 級", "D 級", "Master");
         }
         public override float Width => Math.Max(ImGui.CalcTextSize(Label + "XX").X + ImGui.GetStyle().CellPadding.X * 2, ImGui.GetFrameHeight() + ImGui.GetStyle().CellPadding.X * 2);
 
@@ -912,7 +912,7 @@ public static class CosmicTables
                     if (ImGui.BeginTable($"Score Info Table_{item.SheetInfo.MissionId}", 5, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders))
                     {
                         ImGui.TableSetupColumn("Kind");
-                        ImGui.TableSetupColumn("Score");
+                        ImGui.TableSetupColumn("分數");
                         ImGui.TableSetupColumn("Credits");
                         ImGui.TableSetupColumn("Planetary");
                         ImGui.TableSetupColumn("Tokens");
@@ -962,7 +962,7 @@ public static class CosmicTables
         {
             Flags = ImGuiTableColumnFlags.NoResize;
             SetFlags(ItemFilter.TurninGold, ItemFilter.TurninSilver, ItemFilter.TurninBronze);
-            SetNames("Gold", "Silver", "Bronze");
+            SetNames("金牌", "銀牌", "銅牌");
         }
         public override float Width
         {
@@ -1420,7 +1420,7 @@ public static class CosmicTables
         {
             Flags = ImGuiTableColumnFlags.NoResize;
             SetFlags(ItemFilter.BestSPM, ItemFilter.Sequence, ItemFilter.Unlock, ItemFilter.NoNotes);
-            SetNames("Best Score Per Minute", "Sequence", "Needs Unlocked", "No Notes");
+            SetNames("Best Score Per Minute", "連續任務", "Needs Unlocked", "No Notes");
         }
         public override float Width => Math.Max(
             ImGui.CalcTextSize(Label + "xxx").X + ImGui.GetStyle().CellPadding.X * 2,
@@ -1751,7 +1751,7 @@ public static class CosmicTables
         }
         public override float Width =>
             Math.Max(
-                ImGui.CalcTextSize("Completed").X + ImGui.GetStyle().CellPadding.X * 2 + 20f,
+                ImGui.CalcTextSize("已完成").X + ImGui.GetStyle().CellPadding.X * 2 + 20f,
                 ImGui.GetFrameHeight()
             );
         public override int Compare(MissionInfo lhs, MissionInfo rhs) => lhs.SheetInfo.CompletionStatus.CompareTo(rhs.SheetInfo.CompletionStatus);

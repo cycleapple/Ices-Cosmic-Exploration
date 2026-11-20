@@ -29,7 +29,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Ui
 
             if (ImGui.BeginTable("Relic Info", 15, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders))
             {
-                ImGui.TableSetupColumn("Class");
+                ImGui.TableSetupColumn("職業");
                 ImGui.TableSetupColumn("Stage");
                 for (int i = 0; i < XPtypes.Count; i++)
                 {
@@ -37,7 +37,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Ui
                     ImGui.TableSetupColumn($"{XPtypes[i]} - Need");
                     ImGui.TableSetupColumn($"{XPtypes[i]} - Max");
                 }
-                ImGui.TableSetupColumn("Score");
+                ImGui.TableSetupColumn("分數");
 
                 ImGui.TableHeadersRow();
 

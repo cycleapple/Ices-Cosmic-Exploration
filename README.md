@@ -1,75 +1,45 @@
-# Ice's Cosmic Exploration（繁中移植版 · TC13） / Traditional-Chinese Port
+# Ice's Cosmic Exploration — API13 新基底候選版
 
-> 把月球的苦工變成自動化。<br>
-> Turn the moon grind into automation.
+目前候選版本：**1.0.0.5**，分支 `api13-next-evaluation`。
 
-**繁體中文**：這是 **[Ice's Cosmic Exploration](https://github.com/LeontopodiumNivale14/Ices-Cosmic-Exploration)** 的繁體中文客戶端移植版，對應 **FFXIV 7.20 / yanmucorp Dalamud API13（.NET 9）**。本專案僅做相容性移植，**非官方、非原作維護**；所有原始功能與設計著作權歸原作者 **LeontopodiumNivale14**。
+以 [lilasrepo 的 1.0.0.3 移植原始碼](https://github.com/lilasrepo/Ices-Cosmic-Exploration/tree/8fb4f8510264bf231453fa57b32765b71677f39c) 為基礎，對接 Extended 庫使用的 API13 SDK、.NET 9 與 Artisan。原插件由 [LeontopodiumNivale14](https://github.com/LeontopodiumNivale14/Ices-Cosmic-Exploration) 開發，遵循本倉庫 AGPL 授權。
 
-**English**: A Traditional-Chinese-client port of **[Ice's Cosmic Exploration](https://github.com/LeontopodiumNivale14/Ices-Cosmic-Exploration)** targeting **FFXIV 7.20 / yanmucorp Dalamud API13 (.NET 9)**. Compatibility port only — **unofficial and not maintained by the original author**. All original work © **LeontopodiumNivale14**.
+## 本輪變更
 
----
+- 從原始碼重建 ECommons、OtterGui、Pictomancy、Glamourer.Api 與 ICE。
+- 修正採集到點交接、收藏品停滯復原、釣魚啟動與 AutoHook 換餌接口。
+- Artisan 使用已驗證的暫時求解器、食物與藥水設定，失敗時清除，停止時還原。
+- 匯入 0.0.73.x 的任務、採集設定、配方與宇宙計畫，並提供核心繁中介面。
 
-## 這是什麼 / About
+## 舊設定匯入
 
-自動化宇宙探索（Cosmic Exploration）的任務循環：重骰任務、自動接取、移動、製作／採集／釣魚、依你設定的評價門檻交件，然後接下一輪。適合刷金評價成就、刷神器工具經驗，或把各職業推到 50 萬點。
+候選版使用獨立的 `ICE.Next.API13` 設定目錄。首次啟動且尚無候選版設定時，會讀取原 `ICE` 目錄的 `Mission Config.yaml`。
 
-Automates the Cosmic Exploration mission loop — reroll, accept, travel, craft/gather/fish, turn in at your chosen rank threshold, repeat. Useful for grinding gold-rank titles, relic tool experience, or 500k points per class.
+已使用較早候選版的人，可在主視窗選擇「預覽匯入舊版設定」，確認後以「備份目前設定並套用匯入」套用。候選版執行中會停用匯入按鈕。
 
-## 依賴插件 / Required plugins
+原 YAML 會保持不變。候選目錄會保存 YAML 備份、`Legacy-Import-Report.json`，以及手動匯入前的候選設定備份。製作設定檔會展開至各配方；原始名稱與內容保存在 YAML 備份。
 
-| 用途 / For | 插件 / Plugin |
-|---|---|
-| 製作 / Crafting | Artisan |
-| 釣魚 / Fishing | AutoHook |
-| 採集與移動 / Gathering & travel | vnavmesh |
+手動／不自動繳交的任務會保持停用並顯示說明。部分任務等級金牌目標尚無等價條件，會拒絕匯入並提示重新設定。匯入錯誤會阻止開始執行，也可明確選擇略過匯入、使用獨立新設定。
 
-三者在本插件庫都有對應的繁中移植版，請一併安裝。插件內也有說明視窗，會列出各任務類型的需求。<br>
-All three are available as Traditional-Chinese ports in this same repository — install them alongside. The plugin also ships an in-game window explaining what each mission type needs.
+手冊、專家設定檔與技能次數請在 Artisan 中調整。ICE 的對應覆寫控制已移除，已有值可在介面清除。
 
-## 安裝 / Installation
+## 建置與檢查
 
-**繁體中文**
-1. 使用 **XIVTCLauncher** 啟動繁體中文客戶端。
-2. 遊戲內輸入 `/xlsettings` → 切到 **Experimental** 分頁 → **Custom Plugin Repositories（自訂插件庫）**。
-3. 貼上下列網址並按 **+** 儲存：
-   ```
-   https://raw.githubusercontent.com/lilasrepo/DalamudPlugins/main/pluginmaster.json
-   ```
-4. 輸入 `/xlplugins`，搜尋 **Ice's Cosmic Exploration (TC13)** → 安裝 → 啟用。
+使用 .NET 10 編譯器支援 C# 14 語法，產物仍以 **.NET 9／API13** 為目標：
 
-**English**
-1. Launch the Traditional-Chinese client with **XIVTCLauncher**.
-2. In-game, type `/xlsettings` → **Experimental** tab → **Custom Plugin Repositories**.
-3. Add this URL and save with **+**:
-   ```
-   https://raw.githubusercontent.com/lilasrepo/DalamudPlugins/main/pluginmaster.json
-   ```
-4. Type `/xlplugins`, search **Ice's Cosmic Exploration (TC13)** → Install → Enable.
+```powershell
+./evaluation/Build-Api13Candidate.ps1 -DalamudHome <API13-SDK目錄> -Dotnet <dotnet10.exe>
+```
 
-## 對應版本 / Compatibility
+套件位於 `ICE/bin/Release/ICE/latest.zip`。測試以 .NET 9 執行：
 
-| 項目 / Item | 版本 / Version |
-|---|---|
-| 遊戲 / Game | FFXIV 7.20（繁中客戶端 / TC client） |
-| Dalamud | yanmucorp API13（.NET 9） |
-| 移植自上游 / Ported from upstream | v1.0.0.1 |
+```powershell
+dotnet run --project tests/CollectableProgress -c Release
+dotnet run --project tests/Api13Contracts -c Release -- . <Artisan的Release目錄> <API13-SDK目錄>
+```
 
-## 繁中客戶端的差異 / Differences on the TC client
+目前完整重建 0 錯誤、177 警告；173 項離線檢查通過。檢查包含採集復原、實際編譯組件的接口、Artisan 設定回復，以及 YAML 匯入、備份、重複匯入與來源變更處理。
 
-**繁體中文**
-- 繁中客戶端目前**只有 Sinus Ardorum（第一顆星球）**。上游的 Phaenna、Oizys、Auxesia 在此不存在，相關介面會留白而不會報錯。
-- 少數上游圖示不在繁中客戶端的資源檔中，會以替代圖示顯示。
+候選版尚未完成遊戲內驗證，也仍有詳細提示與除錯文字待翻譯。正式 Extended 庫維持 0.0.73.54。候選版與正式版共用 `InternalName=ICE`，測試時請只啟用其中一版。
 
-**English**
-- The TC client currently has **only Sinus Ardorum**. Upstream's Phaenna, Oizys and Auxesia do not exist here; their UI renders blank rather than throwing.
-- A few upstream icons are absent from the TC client's assets and fall back to substitutes.
-
-## 原作與授權 / Credits & License
-
-本專案 fork 自 **[LeontopodiumNivale14/Ices-Cosmic-Exploration](https://github.com/LeontopodiumNivale14/Ices-Cosmic-Exploration)**，授權沿用上游；所有原始功能著作權歸 **LeontopodiumNivale14**。<br>
-Forked from **[LeontopodiumNivale14/Ices-Cosmic-Exploration](https://github.com/LeontopodiumNivale14/Ices-Cosmic-Exploration)**. License follows upstream; all original work © **LeontopodiumNivale14**.
-
-## 免責聲明 / Disclaimer
-
-第三方插件，使用風險自負。**移植相關問題請回報到本 repo 的 Issues，請勿打擾上游原作者。**<br>
-Third-party plugin — use at your own risk. **For port-specific issues please open an Issue here; do not contact the upstream author.**
+完整移植紀錄見 [baseline-audit.json](evaluation/baseline-audit.json)。

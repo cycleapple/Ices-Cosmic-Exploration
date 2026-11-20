@@ -1,4 +1,4 @@
-﻿using Dalamud.Interface;
+using Dalamud.Interface;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Utility.Raii;
 using ECommons.GameHelpers;
@@ -15,35 +15,35 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
         private static readonly Dictionary<string, uint> BattleJobs = new()
         {
             // Tanks
-            { "Paladin", 19 },
-            { "Warrior", 21 },
-            { "Dark Knight", 32 },
-            { "Gunbreaker", 37 },
+            { "騎士", 19 },
+            { "戰士", 21 },
+            { "暗黑騎士", 32 },
+            { "絕槍戰士", 37 },
     
             // Healers
-            { "White Mage", 24 },
-            { "Scholar", 28 },
-            { "Astrologian", 33 },
-            { "Sage", 40 },
+            { "白魔法師", 24 },
+            { "學者", 28 },
+            { "占星術士", 33 },
+            { "賢者", 40 },
     
             // Melee DPS
-            { "Monk", 20 },
-            { "Dragoon", 22 },
-            { "Ninja", 30 },
-            { "Samurai", 34 },
-            { "Reaper", 39 },
-            { "Viper", 41 },
+            { "武僧", 20 },
+            { "龍騎士", 22 },
+            { "忍者", 30 },
+            { "武士", 34 },
+            { "鐮刀師", 39 },
+            { "蝰蛇劍士", 41 },
     
             // Physical Ranged DPS
-            { "Bard", 23 },
-            { "Machinist", 31 },
-            { "Dancer", 38 },
+            { "吟遊詩人", 23 },
+            { "機工士", 31 },
+            { "舞者", 38 },
     
             // Magical Ranged DPS
-            { "Black Mage", 25 },
-            { "Summoner", 27 },
-            { "Red Mage", 35 },
-            { "Pictomancer", 42 }
+            { "黑魔法師", 25 },
+            { "召喚師", 27 },
+            { "赤魔法師", 35 },
+            { "繪靈法師", 42 }
         };
 
         public static CosmicTables.Mission_Table? MissionTable;
@@ -76,29 +76,29 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
 
 
                 if (standard)
-                    modeType = "Standard";
+                    modeType = "標準";
                 else if (relicMode)
                 {
-                    modeType = "Relic Grind";
+                    modeType = "宇宙工具培養";
                     modeIcon = FontAwesomeIcon.ArrowUpRightDots;
                 }
                 else if (xpLeveling)
                 {
-                    modeType = "Leveling Grind";
+                    modeType = "職業練等";
                     modeIcon = FontAwesomeIcon.Leaf;
                 }
                 else if (goldMode)
                 {
-                    modeType = "Gold Completion Grind";
+                    modeType = "任務金牌收集";
                     modeIcon = FontAwesomeIcon.Trophy;
                 }
                 else if (agendaMode)
                 {
-                    modeType = "Cosmic Agenda";
+                    modeType = "宇宙計畫";
                     modeIcon = FontAwesomeIcon.ClipboardList;
                 }
 
-                ImGuiEx.IconWithText(modeIcon, $"{modeType} Mode");
+                ImGuiEx.IconWithText(modeIcon, $"{modeType}模式");
 
                 ImGui.SameLine(0, 10 * scale);
 
@@ -108,7 +108,7 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
                 float yOffset = (textHeight - buttonHeight) / 2f;
                 ImGui.SetCursorPosY(ImGui.GetCursorPosY() + yOffset);
 
-                if (ImGuiEx.IconButtonWithText(FontAwesomeIcon.Play, "Mode Selection"))
+                if (ImGuiEx.IconButtonWithText(FontAwesomeIcon.Play, "選擇模式"))
                 {
                     ImGui.OpenPopup("Mode Select | Select Mode Window");
                 }
@@ -137,7 +137,7 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
                     {
                         ImGui.BeginTooltip();
 
-                        ImGui.Text("It appears that you have on of the following enabled");
+                        ImGui.Text("目前已啟用以下停止條件：");
                         if (C.StopOnceHitCosmicScore)
                             ImGui.BulletText($"Stop at Cosmic Score [{C.CosmicScoreCap:N0}]");
                         if (C.StopWhenLevel)
@@ -149,9 +149,9 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
                         if (C.StopOnceRelicFinished)
                             ImGui.BulletText($"Stop once relic completed");
                         if (C.StopOnceStandardMissionsGolded)
-                            ImGui.BulletText("Stop when all standard missions are golded");
+                            ImGui.BulletText("所有標準任務取得金牌時停止");
 
-                        ImGui.Text("So if you stop and you're unsure why... this might be why");
+                        ImGui.Text("若插件自動停止，請先檢查以上條件。");
 
                         ImGui.EndTooltip();
                     }
@@ -168,7 +168,7 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
                 // Leveling on a hub requires QuickLevelList entries; gathering still needs route YAML per territory
                 using (ImRaii.Disabled(SchedulerMain.State != IceState.Idle || !usingSupportedJob || unsupportedMoon))
                 {
-                    if (ImGui.Button("Start", new Vector2(150 * scale, 0)))
+                    if (ImGui.Button("開始", new Vector2(150 * scale, 0)))
                     {
                         SchedulerMain.EnablePlugin();
                     }
@@ -182,8 +182,8 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
                     if (ImGui.IsItemHovered())
                     {
                         ImGui.BeginTooltip();
-                        ImGui.Text("Hey! You need to update artisan to use this mode, please update to at minimum:");
-                        ImGui.Text("4.0.4.29");
+                        ImGui.Text("此模式需要更新 Artisan，最低支援版本：");
+                        ImGui.Text("4.0.4.25");
                         ImGui.EndTooltip();
                     }
                 }
@@ -230,7 +230,7 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
                     using (ImRaii.PushColor(ImGuiCol.ButtonHovered, new Vector4(0.9f, 0.3f, 0.3f, 1.0f)))
                     using (ImRaii.PushColor(ImGuiCol.ButtonActive, new Vector4(0.7f, 0.1f, 0.1f, 1.0f)))
                     {
-                        if (ImGui.Button("Stop", new Vector2(150 * scale, 0)))
+                        if (ImGui.Button("停止", new Vector2(150 * scale, 0)))
                         {
                             SchedulerMain.DisablePlugin();
                         }
@@ -240,7 +240,7 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
                 ImGui.SameLine(0, 10 * scale);
                 ImGui.SetCursorPosY(ImGui.GetCursorPosY() + yOffset);
 
-                if (ImGui.Button("Mission Settings"))
+                if (ImGui.Button("任務設定"))
                 {
                     ImGui.OpenPopup("Mission Settings: Popup");
                 }
@@ -267,7 +267,7 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
                         $"(So if you're on crp, but a bsm red alert pops up)");
 
                     bool removeGold = C.RemoveAfterGold;
-                    if (ImGui.Checkbox("Remove Mission Upon Gold Completion", ref removeGold))
+                    if (ImGui.Checkbox("取得金牌後移除任務", ref removeGold))
                     {
                         C.RemoveAfterGold = removeGold;
                         C.Save();
@@ -282,7 +282,7 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
                         }
                     }
 
-                    ImGui.Checkbox("Stop after current mission", ref Mission_Settings.StopAfterCurrent);
+                    ImGui.Checkbox("完成目前任務後停止", ref Mission_Settings.StopAfterCurrent);
                     bool relicTurnin = C.TurninRelic;
                     if (ImGui.Checkbox($"Turnin if relic is complete##RelicTurnin_GeneralSetting", ref relicTurnin))
                     {
@@ -367,7 +367,7 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
 
                             if (ImGui.BeginTable($"Preset: TableViewer", 3, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders))
                             {
-                                ImGui.TableSetupColumn("Name");
+                                ImGui.TableSetupColumn("名稱");
                                 ImGui.TableSetupColumn("Amount Enabled");
 
                                 ImGui.TableHeadersRow();
@@ -452,14 +452,14 @@ namespace ICE.Ui.MainUi.ModeSelect_Modes
                         return;
 
                     ImGui_Ice.DrawRankButton("Red Alert", MissionFilter.RedAlert, MissionTable);
-                    ImGui_Ice.DrawRankButton("Sequence", MissionFilter.Sequence, MissionTable);
-                    ImGui_Ice.DrawRankButton("Weather", MissionFilter.Weather, MissionTable);
-                    ImGui_Ice.DrawRankButton("Timed", MissionFilter.Timed, MissionTable);
+                    ImGui_Ice.DrawRankButton("連續任務", MissionFilter.Sequence, MissionTable);
+                    ImGui_Ice.DrawRankButton("天氣", MissionFilter.Weather, MissionTable);
+                    ImGui_Ice.DrawRankButton("限時", MissionFilter.Timed, MissionTable);
                     ImGui_Ice.DrawRankButton("Master", MissionFilter.Master, MissionTable);
-                    ImGui_Ice.DrawRankButton("A Rank", MissionFilter.ARank, MissionTable);
-                    ImGui_Ice.DrawRankButton("B Rank", MissionFilter.BRank, MissionTable);
-                    ImGui_Ice.DrawRankButton("C Rank", MissionFilter.CRank, MissionTable);
-                    ImGui_Ice.DrawRankButton("D Rank", MissionFilter.DRank, MissionTable);
+                    ImGui_Ice.DrawRankButton("A 級", MissionFilter.ARank, MissionTable);
+                    ImGui_Ice.DrawRankButton("B 級", MissionFilter.BRank, MissionTable);
+                    ImGui_Ice.DrawRankButton("C 級", MissionFilter.CRank, MissionTable);
+                    ImGui_Ice.DrawRankButton("D 級", MissionFilter.DRank, MissionTable);
 
                     ImGui_Ice.EndCategoryButtonRow();
                 }
