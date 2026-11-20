@@ -43,7 +43,7 @@ public static class ECommonsMain
 {
     public static object Instance { get; private set; } = null;
     /// <summary>
-    /// Represents unique plugin identifier stored as UniqueId. It is guaranteed to be different for each plugin instance. 
+    /// Represents unique plugin identifier stored as UniqueId. It is guaranteed to be different for each plugin instance.
     /// </summary>
     public static uint InstanceUniqueId { get; private set; }
     private static ConcurrentDictionary<uint, string> UniqueIdConcurrentDictionary;
@@ -52,7 +52,7 @@ public static class ECommonsMain
     public static unsafe nint* MainWindowHandle { get; private set; }
 
     /// <summary>
-    /// Set this to true to significantly reduce amount of logging ECommons will do. You can change it any time. 
+    /// Set this to true to significantly reduce amount of logging ECommons will do. You can change it any time.
     /// </summary>
     public static bool ReducedLogging = false;
 
@@ -128,7 +128,7 @@ var type = "unknown build";
         GenericHelpers.Safe(CmdManager.Init);
         if(modules.ContainsAny(Module.VfxTracking, Module.All))
         {
-            GenericHelpers.Safe(VfxManager.Init);
+            throw new NotSupportedException("VfxTracking is unavailable in this API13 build.");
         }
         if(modules.ContainsAny(Module.All, Module.ObjectFunctions))
         {
@@ -204,9 +204,9 @@ var type = "unknown build";
         GenericHelpers.Safe(MapEffect.Dispose);
         GenericHelpers.Safe(SendAction.Dispose);
         GenericHelpers.Safe(ActorVfx.Dispose);
-        GenericHelpers.Safe(StaticVfx.Dispose);
+
         GenericHelpers.Safe(GameObjectCtor.Dispose);
-        GenericHelpers.Safe(VfxManager.Dispose);
+
         GenericHelpers.Safe(Automation.LegacyTaskManager.TaskManager.DisposeAll);
         GenericHelpers.Safe(Automation.NeoTaskManager.TaskManager.DisposeAll);
  // Type or member is obsolete

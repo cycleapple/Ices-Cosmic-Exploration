@@ -3,7 +3,7 @@
 //
 // Upstream resolves the Cosmic hub NPCs by ENpcResident id:
 //
-//     Utils.TryGetObjectByDataId(npcEntry.NpcId, out var npc);   // x.BaseId == dataId
+//     Utils.TryGetObjectByDataId(npcEntry.NpcId, out var npc);   // x.DataId == dataId
 //
 // Those ids do not match on the TC client. Measured live at the Sinus Ardorum hub on
 // 2026-08-04: upstream records Researchingway as 1052605, and the object standing at
@@ -86,7 +86,7 @@ internal static class TcNpc
                     .Select(o => (o, d: Vector3.Distance(o.Position, npc.Location_Npc)))
                     .OrderBy(t => t.d)
                     .Take(5)
-                    .Select(t => $"{t.o.BaseId}:{t.o.Name}({t.d:F1}y off)");
+                    .Select(t => $"{t.o.DataId}:{t.o.Name}({t.d:F1}y off)");
 
                 IceLogging.Warning(
                     $"'{npc.Name}' unresolved: id {npc.NpcId} matched nothing and no EventNpc is " +
@@ -102,8 +102,8 @@ internal static class TcNpc
         {
             IceLogging.Warning(
                 $"'{npc.Name}' did not match recorded id {npc.NpcId}; resolved by position to " +
-                $"BaseId {best.BaseId} ('{best.Name}') at {bestDistance:F2}y. " +
-                $"Update NpcData.MoonNpcs with {best.BaseId} to skip this fallback.", "[TcNpc]");
+                $"BaseId {best.DataId} ('{best.Name}') at {bestDistance:F2}y. " +
+                $"Update NpcData.MoonNpcs with {best.DataId} to skip this fallback.", "[TcNpc]");
         }
 
         gameObject = best;

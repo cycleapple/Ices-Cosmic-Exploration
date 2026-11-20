@@ -112,12 +112,12 @@ namespace ICE.Ui.Debug_Tabs.Debug_Ui
             {
                 route.Nodes ??= [];
                 var playerPos = Player.Position;
-                if (route.Nodes.Any(x => x.NodeId == target.BaseId))
+                if (route.Nodes.Any(x => x.NodeId == target.DataId))
                     return;
 
                 var newNode = new NodeInfo()
                 {
-                    NodeId = target.BaseId,
+                    NodeId = target.DataId,
                     Position = target.Position,
                     LandZone = playerPos  // temporary fallback
                 };
@@ -196,10 +196,10 @@ namespace ICE.Ui.Debug_Tabs.Debug_Ui
                             .OrderBy(x => Player.DistanceTo(x.Position)).ToList();
                         foreach (var node in objectList)
                         {
-                            if (!GatheringRouteLoader.AddedNodes().Contains(node.BaseId))
+                            if (!GatheringRouteLoader.AddedNodes().Contains(node.DataId))
                             {
-                                ImGui.PushID($"{node.BaseId}##{node.BaseId}_{node.Position}");
-                                if (ImGui.Button($"{node.BaseId} | {Player.DistanceTo(node.Position):N2}"))
+                                ImGui.PushID($"{node.DataId}##{node.DataId}_{node.Position}");
+                                if (ImGui.Button($"{node.DataId} | {Player.DistanceTo(node.Position):N2}"))
                                 {
                                     AddNode(routeInfo, node);
                                 }

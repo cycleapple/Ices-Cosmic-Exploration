@@ -1,4 +1,4 @@
-﻿using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Game.ClientState.Objects.Types;
 using ECommons.DalamudServices;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using Lumina.Excel.Sheets;
@@ -39,7 +39,7 @@ public readonly unsafe record struct ActionEffectSet
     {
         switch(effectHeader->ActionType)
         {
-            case ActionType.EventItem:
+            case ActionType.KeyItem:
                 EventItem = Svc.Data.GetExcelSheet<EventItem>()!.GetRowOrDefault(effectHeader->ActionID);
                 Name = EventItem?.Singular.ToString() ?? string.Empty;
                 IconId = EventItem?.Icon ?? 0;

@@ -2,7 +2,7 @@ using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.ClientState.Statuses;
-using Dalamud.Game.Player;
+
 using ECommons.DalamudServices;
 using ECommons.ExcelServices;
 using ECommons.GameFunctions;
@@ -51,8 +51,8 @@ public static unsafe class Player
     public static ulong CID => Svc.ClientState.LocalContentId;
     public static StatusList Status => Object?.StatusList ?? default!;
     // porting-note(api13): qualify the type -- an unqualified `Sex` binds to nothing here, and
-    // `using Dalamud.Game.Player;` collides with this file's own ECommons.GameHelpers.Player.
-    public static Dalamud.Game.Player.Sex Sex => Svc.PlayerState.Sex;
+    // `` collides with this file's own ECommons.GameHelpers.Player.
+    public static byte Sex => PlayerState.Instance()->Sex;
 
     /// <remarks>Unsynced level</remarks>
     public static int Level => Object?.Level ?? 0;
@@ -60,10 +60,10 @@ public static unsafe class Player
     public static bool IsLevelSynced => PlayerState.Instance()->IsLevelSynced;
     public static int SyncedLevel => PlayerState.Instance()->SyncedLevel;
     /// <remarks>Unsynced level</remarks>
-    public static int GetLevel(Job job) => Svc.PlayerState.GetClassJobLevel(job.GetGameData().Value);
+    public static int GetLevel(Job job) => PlayerState.Instance()->ClassJobLevels[job.GetGameData().Value.ExpArrayIndex];
 
     #region Excel
-    public static RowRef<Race> Race => Svc.PlayerState.Race;
+    public static RowRef<Race> Race => Lumina.Excel.Sheets.Race.GetRef(PlayerState.Instance()->Race);
     public static RowRef<Tribe> Tribe => Lumina.Excel.Sheets.Tribe.GetRef(PlayerState.Instance()->Tribe);
     public static RowRef<World> HomeWorld => Object?.HomeWorld ?? default;
     public static RowRef<World> CurrentWorld => Object?.CurrentWorld ?? default;
@@ -82,7 +82,7 @@ public static unsafe class Player
     public static string CurrentDataCenterName => CurrentWorld.ValueNullable?.DataCenter.ValueNullable?.Name.ToString();
     #endregion
 
-    public static FFXIVClientStructs.FFXIV.Client.Enums.TerritoryIntendedUse CsTerritoryIntendedUseEnum => (FFXIVClientStructs.FFXIV.Client.Enums.TerritoryIntendedUse)TerritoryIntendedUse.RowId;
+    public static TerritoryIntendedUseEnum CsTerritoryIntendedUseEnum => (TerritoryIntendedUseEnum)TerritoryIntendedUse.RowId;
     public static TerritoryIntendedUseEnum TerritoryIntendedUseEnum => (TerritoryIntendedUseEnum)TerritoryIntendedUse.RowId;
 
     public static bool IsInDuty => GameMain.Instance()->CurrentContentFinderConditionId != 0;

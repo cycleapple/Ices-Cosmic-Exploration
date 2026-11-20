@@ -147,6 +147,27 @@ namespace ICE.Scheduler.Tasks
                 _lastGatherNodeKey = nodeKey;
             }
 
+            // Finish movement before handing control to gathering, even if navmesh
+            // still reports running at its final waypoint. Do not stop on another floor.
+            bool withinRange = Vector2.Distance(new(Player.Position.X, Player.Position.Z), new(nodePos.X, nodePos.Z)) <= distance
+                && MathF.Abs(Player.Position.Y - nodePos.Y) <= 3f;
+            if (withinRange)
+            {
+                if (P.Navmesh.IsRunning())
+                {
+                    P.Navmesh.Stop();
+                    return false;
+                }
+                if (mounted && !stayMounted)
+                {
+                    if (EzThrottler.Throttle("Gather arrival dismount", 1000)) Utils.Dismount();
+                    return false;
+                }
+                if (Player.IsMoving || Player.IsJumping || Player.Mounting) return false;
+                ResetGatherMove();
+                return true;
+            }
+
             Vector3 cachedPos = _cachedGatherPositions[nodeKey];
             float distanceToTarget = Player.DistanceTo(nodePos);
 
@@ -1303,7 +1324,7 @@ namespace ICE.Scheduler.Tasks
                     }
                     else
                     {
-                        var aethernet = Svc.Objects.Where(x => x.BaseId == targetId).FirstOrDefault();
+                        var aethernet = Svc.Objects.Where(x => x.DataId == targetId).FirstOrDefault();
                         if (aethernet != null)
                         {
                             if (Player.Mounted || Player.IsJumping)
@@ -1417,7 +1438,7 @@ namespace ICE.Scheduler.Tasks
                         if (EzThrottler.Throttle("Log Message"))
                             IceLogging.Verbose("Should be interacting here...", tag);
 
-                        var npc = Svc.Objects.Where(x => x.BaseId == redAlertNpc.NpcId).FirstOrDefault();
+                        var npc = Svc.Objects.Where(x => x.DataId == redAlertNpc.NpcId).FirstOrDefault();
                         if (npc != null)
                         {
                             if (Player.Mounted || Player.IsJumping)

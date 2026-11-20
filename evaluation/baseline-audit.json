@@ -1,6 +1,6 @@
 {
   "date": "2026-11-20",
-  "purpose": "Evaluate ICE 1.0.0.3 as the next API13 baseline; not a release candidate",
+  "purpose": "API13 source-rebuildable 1.0.0.4 candidate, based on lilasrepo 1.0.0.3; not a stable release",
   "baseRepository": "https://github.com/lilasrepo/Ices-Cosmic-Exploration",
   "baseCommit": "8fb4f8510264bf231453fa57b32765b71677f39c",
   "branch": "api13-next-evaluation",
@@ -12,14 +12,11 @@
     "references": "E:/FFXIV/XIVLauncher/api13-work/dalamud/"
   },
   "sourceBuild": {
-    "success": false,
-    "errors": 56,
-    "warnings": 85,
-    "log": "../../diagnostics/ice-next-api13-build.log",
-    "findings": [
-      "ECommons references IPlayerState, IUnlockState and IReliableFileStorage absent in the selected API13 SDK",
-      "Vendored OtterGui source has no OtterGui.Log.Logger definition"
-    ]
+    "success": true,
+    "errors": 0,
+    "warnings": 175,
+    "log": "../../diagnostics/ice-next-api13-candidate-rebuild.log",
+    "type": "Full Release rebuild of all source ProjectReferences"
   },
   "diagnosticBinaryDependencyBuild": {
     "success": false,
@@ -35,7 +32,18 @@
   },
   "confirmedFixesApplied": [
     "AutoHook.SwapBaitById consumer returns bool, matching current Extended AutoHook",
-    "Debug bait swap runs once on caller thread rather than two background calls"
+    "Debug bait swap runs once on caller thread rather than two background calls",
+    "API13 ECommons services/player APIs; unused unsupported VfxTracking explicitly unavailable",
+    "Restored missing OtterGui Logger source",
+    "Mapped managed BaseId uses back to DataId",
+    "Mapped item unlock query to native API13 EXD/UIState functions",
+    "Used guarded API13 mission-HUD timeout rather than a newer native todo layout",
+    "Artisan settings validated using existing Extended endpoints, rollback on failure and cleanup on stop/dispose/mission change",
+    "Craft requests wait for Artisan acknowledgement and surface Raphael failures",
+    "Tested collectable watchdog integrated into active GatherInteractV2 path",
+    "Direct initial cast integrated into active FishCheckV2 path",
+    "Gather arrival stops navigation and dismounts before interaction",
+    "Hub return and aethernet shortcuts default disabled"
   ],
   "migrationWork": [
     {
@@ -69,7 +77,37 @@
       "required": "Verify TcMissionState offsets against the exact supported client/FFXIVClientStructs, including rank failure guards"
     }
   ],
-  "verdict": "Suitable as a migration starting point, not directly buildable/releasable against our selected API13 SDK",
+  "verdict": "Source-rebuildable API13 candidate with 145 offline checks passed; not approved for replacement of the stable repository version",
   "published": false,
-  "inGameTested": false
+  "inGameTested": false,
+  "previousSourceBuild": {
+    "success": false,
+    "errors": 56,
+    "warnings": 85,
+    "log": "../../diagnostics/ice-next-api13-build.log",
+    "findings": [
+      "ECommons references IPlayerState, IUnlockState and IReliableFileStorage absent in the selected API13 SDK",
+      "Vendored OtterGui source has no OtterGui.Log.Logger definition"
+    ]
+  },
+  "candidateVersion": "1.0.0.4",
+  "candidateConfigDirectory": "ICE.Next.API13",
+  "verification": {
+    "watchdogChecks": 123,
+    "compiledIpcAndArtisanTransactionChecks": 22,
+    "inGameTested": false
+  },
+  "remainingBeforeStableRelease": [
+    "Game runtime validation of mission state/score, timers, gathering and fishing",
+    "Explicit migration of 0.0.73.x settings/profiles/Agenda to the new schema",
+    "Port zh-TW user interface to the renamed/restructured new UI",
+    "Support or hide newer Artisan-only manual/expert-profile/skill-count overrides; currently they stop with a diagnostic instead of being ignored",
+    "Review optional debug legacy IPC endpoints; active crafting uses only validated Extended endpoints"
+  ],
+  "restoredSource": {
+    "path": "OtterGui/Log/Logger.cs",
+    "origin": "Existing API13 ICE/OtterGui working source",
+    "sha256": "ceaf4ec4b54fcfe37239006c43106aa67281676488b6497c571d91e8477043e9",
+    "reason": "Directory was omitted by the vendored repository ignore rules"
+  }
 }

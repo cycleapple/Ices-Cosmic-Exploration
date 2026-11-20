@@ -216,7 +216,7 @@ namespace ICE.Ui.Debug_Tabs.Debug_Ui
             {
                 foreach (var obect in Svc.Objects.OrderBy(x => Player.DistanceTo(x.Position)))
                 {
-                    ImGui.Text($"Name: {obect.Name} : {obect.BaseId}");
+                    ImGui.Text($"Name: {obect.Name} : {obect.DataId}");
                 }
             }
         }

@@ -68,37 +68,37 @@ public static unsafe class Utils
     public static bool? TargetgameObjectTask(IGameObject? gameObject)
     {
         var x = gameObject;
-        if (Svc.Targets.Target != null && Svc.Targets.Target.BaseId == x.BaseId)
+        if (Svc.Targets.Target != null && Svc.Targets.Target.DataId == x.DataId)
             return true;
 
         if (!GenericHelpers.IsOccupied())
         {
             if (x != null)
             {
-                if (EzThrottler.Throttle($"Throttle Targeting {x.BaseId}"))
+                if (EzThrottler.Throttle($"Throttle Targeting {x.DataId}"))
                 {
                     Svc.Targets.SetTarget(x);
-                    IceLogging.Info($"Setting the target to {x.BaseId}");
+                    IceLogging.Info($"Setting the target to {x.DataId}");
                 }
             }
         }
         return false;
     }
-    internal static bool TryGetObjectByDataId(ulong dataId, out IGameObject? gameObject) => (gameObject = Svc.Objects.OrderBy(Player.DistanceTo).FirstOrDefault(x => x.BaseId == dataId)) != null;
+    internal static bool TryGetObjectByDataId(ulong dataId, out IGameObject? gameObject) => (gameObject = Svc.Objects.OrderBy(Player.DistanceTo).FirstOrDefault(x => x.DataId == dataId)) != null;
     public static IGameObject? TryGetObjectNearestEventObject()
     {
         return Svc.Objects.OrderBy(Player.DistanceTo).FirstOrDefault(x => x.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.EventObj);
     }
     public static IGameObject? TryGetObjectCollectionPoint()
     {
-        return Svc.Objects.OrderBy(Player.DistanceTo).FirstOrDefault(x => x.BaseId == 2014616 || x.BaseId == 2014618);
+        return Svc.Objects.OrderBy(Player.DistanceTo).FirstOrDefault(x => x.DataId == 2014616 || x.DataId == 2014618);
     }
     public static void TargetgameObject(IGameObject? gameObject)
     {
         var x = gameObject;
 
         // porting-note: upstream declares the parameter nullable and guards with `if (x != null)`
-        // further down, but dereferences x.BaseId above that guard -- so a null argument throws
+        // further down, but dereferences x.DataId above that guard -- so a null argument throws
         // instead of being ignored. All six call sites feed it `Utils.TryGetObjectByDataId(id, out
         // var o)` while DISCARDING the bool, so whenever the NPC or node is not currently spawned
         // nearby the object is null and this NREs inside per-frame TaskManager work. Hit live on
@@ -117,7 +117,7 @@ public static unsafe class Utils
                     .Where(o => o != null && Player.DistanceTo(o) < 30f)
                     .OrderBy(Player.DistanceTo)
                     .Take(8)
-                    .Select(o => $"{o.BaseId}:{o.Name}({o.ObjectKind},{Player.DistanceTo(o):F1}y)");
+                    .Select(o => $"{o.DataId}:{o.Name}({o.ObjectKind},{Player.DistanceTo(o):F1}y)");
 
                 IceLogging.Warning(
                     $"asked to target a null object -- the caller's TryGetObjectByDataId found no match. " +
@@ -127,16 +127,16 @@ public static unsafe class Utils
         }
 
         var currentTarget = Svc.Targets.Target;
-        if (currentTarget != null && currentTarget.DataId == x.BaseId)
+        if (currentTarget != null && currentTarget.DataId == x.DataId)
             return;
 
         if (!GenericHelpers.IsOccupied())
         {
             if (x != null)
             {
-                if (EzThrottler.Throttle($"Throttle targeting: {x.BaseId}"))
+                if (EzThrottler.Throttle($"Throttle targeting: {x.DataId}"))
                 {
-                    IceLogging.Info($"Attempting to set the target to: {x.BaseId} | {x.Name}", "[Target Game Object]");
+                    IceLogging.Info($"Attempting to set the target to: {x.DataId} | {x.Name}", "[Target Game Object]");
                     Svc.Targets.SetTarget(x);
                 }
             }

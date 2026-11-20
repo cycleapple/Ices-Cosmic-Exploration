@@ -35,26 +35,13 @@ namespace ICE.Utilities
 
         internal unsafe static bool IsMissionTimedOut()
         {
-            var c = UIState.Instance()->MassivePcContentTodo.Director;
-            if (c != null)
-            {
-                var todo = c->MassivePcContentTodos[1];
-                if (todo[1].Enabled)
-                {
-                    var t = todo[1];
-                    var timeRemaining = t.EndTimestamp - Framework.GetServerTime();
-                    if (timeRemaining > 0)
-                        return false;
-                    else
-                        return true;
-                }
-                else
-                    return false;
-            }
-            else
-            {
+            // Use the established API13 mission HUD timeout indicator. The newer nested
+            // MassivePcContentTodos layout is not present in this SDK.
+            if (!GenericHelpers.TryGetAddonMaster<WKSMissionInfomation>("WKSMissionInfomation", out var missionInfo)
+                || !missionInfo.IsAddonReady)
                 return false;
-            }
+            var timeout = AddonHelper.GetAtkTextNode("WKSMissionInfomation", 23);
+            return timeout != null && timeout->IsVisible();
         }
 
         public enum WKSEvents

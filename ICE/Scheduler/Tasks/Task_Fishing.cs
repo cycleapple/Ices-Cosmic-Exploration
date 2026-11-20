@@ -1,4 +1,4 @@
-﻿using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Game.ClientState.Conditions;
 using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
@@ -80,6 +80,13 @@ namespace ICE.Scheduler.Tasks
                     return false;
                 }
 
+                if (P.Navmesh.IsRunning())
+                {
+                    P.Navmesh.Stop();
+                    return false;
+                }
+                if (Player.IsMoving || Player.IsCasting || Player.IsAnimationLocked) return false;
+
                 var hasBait = false;
                 uint firstBait = 0;
                 foreach (var bait in GatheringUtil.MoonBaits)
@@ -150,7 +157,7 @@ namespace ICE.Scheduler.Tasks
                     if (EzThrottler.Throttle("Started Fishing Throttle", 500))
                     {
                         IceLogging.Verbose($"+1 to waiting for fishing to actually start [Might be waiting on gp/buffs]... {StartedFishing}", handle);
-                        Svc.Commands.ProcessCommand("/ahstart");
+                        ActionManager.Instance()->UseAction(ActionType.Action, 289);
                     }
                 }
                 else

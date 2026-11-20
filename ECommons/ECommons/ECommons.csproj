@@ -126,4 +126,6 @@
             <Private>False</Private>
         </Reference>
     </ItemGroup>
+  <!-- ICE does not enable VfxTracking. Newer VFX hooks are not compatible with this API13 SDK. -->
+  <ItemGroup><Compile Remove="Hooks/StaticVfx.cs;GameHelpers/VfxManager.cs" /></ItemGroup>
 </Project>

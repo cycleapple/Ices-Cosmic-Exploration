@@ -1,4 +1,4 @@
-﻿using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Game.ClientState.Conditions;
 using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -300,7 +300,7 @@ namespace ICE.Scheduler.Tasks
         {
             string tag = "[Task_Artifact: Drone Interact]";
 
-            var artifact = Svc.Objects.Where(x => x.BaseId == 2015138).FirstOrDefault();
+            var artifact = Svc.Objects.Where(x => x.DataId == 2015138).FirstOrDefault();
 
             if (artifact != null)
             {

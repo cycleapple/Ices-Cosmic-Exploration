@@ -1,4 +1,4 @@
-﻿using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -50,8 +50,11 @@ namespace ICE.Scheduler.Tasks
         }
 
         private static uint throttleCounter = 0;
+        private static bool artisanRequestSent;
         private static void InsertArtisanWait(KeyValuePair<ushort, CosmicHelper.CraftingInfo> item, int amount)
         {
+            artisanRequestSent = false;
+            throttleCounter = 0;
             P.TaskManager.InsertMulti(
                 new(() => ThrottleArtisanTaskV2(item, amount), "Telling artisan to craft"),
                 new(() => WaitingForArtisan(), "Waiting for artisan")
@@ -70,18 +73,15 @@ namespace ICE.Scheduler.Tasks
             var missionId = CosmicHelper.CurrentLunarMission;
             var missionConfig = C.MissionConfig[missionId];
 
-            if (missionConfig.CraftSettings.TryGetValue(recipeId, out var recipeConfig))
-            {
-                if (EzThrottler.Throttle("Applying Config States", 1000))
-                {
-                    IceLogging.Info($"Applying config states for the following recipeID: {recipeId}");
-                    P.Artisan.CheckArtisanSettings((ushort)recipeId, CosmicHelper.CurrentLunarMission, expert, Mission_Settings.Mode == ModeSelect.LevelMode);
-                }
-            }
-            else
+            if (!missionConfig.CraftSettings.ContainsKey(recipeId))
             {
                 missionConfig.CraftSettings[recipeId] = new();
                 C.Save();
+            }
+            if (!P.Artisan.CheckArtisanSettings((ushort)recipeId, CosmicHelper.CurrentLunarMission, expert, Mission_Settings.Mode == ModeSelect.LevelMode))
+            {
+                SchedulerMain.DisablePlugin();
+                return true;
             }
 
             if (EzThrottler.Throttle("Waiting X Amount of seconds for artisan", delay))
@@ -91,13 +91,22 @@ namespace ICE.Scheduler.Tasks
 
             if (throttleCounter >= 3)
             {
-                if (EzThrottler.Throttle("Artisan Crafting Task"))
+                var status = P.Artisan.GetRaphaelStatus(craftId);
+                if (status == 1) return false;
+                if (status == 2)
+                {
+                    IceLogging.Error($"Artisan recipe {craftId}: {P.Artisan.GetRaphaelFailure(craftId)}", "[Artisan / Raphael]");
+                    SchedulerMain.DisablePlugin();
+                    return true;
+                }
+                if (!artisanRequestSent && EzThrottler.Throttle("Artisan Crafting Task"))
                 {
                     IceLogging.Debug($"Telling Artisan to craft: {itemId} -> {amount} times");
                     P.Artisan.CraftItem(craftId, amount);
+                    artisanRequestSent = true;
                 }
 
-                if (P.TaskManager.IsBusy)
+                if (artisanRequestSent && P.Artisan.IsBusy())
                 {
                     throttleCounter = 0;
                     return true;

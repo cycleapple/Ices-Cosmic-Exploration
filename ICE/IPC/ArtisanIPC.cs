@@ -1,4 +1,4 @@
-﻿using ECommons.EzIpcManager;
+using ECommons.EzIpcManager;
 using ECommons.Reflection;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using ICE.Utilities.Cosmic_Helper;
@@ -58,84 +58,51 @@ namespace ICE.IPC
 
         [EzIPC] public Func<List<(string, int)>> ReturnMacroInfo;
 
-        private void AssignArtisanRecipe(uint recipeId, ArtisanSettings recipeConfig, bool isExpert)
+        [EzIPC] public Func<uint, string, bool> SetTemporarySolver;
+        [EzIPC] public Func<uint, uint, bool, bool> SetTemporaryFood;
+        [EzIPC] public Func<uint, uint, bool, bool> SetTemporaryPotion;
+        [EzIPC] public Action<uint> ClearTemporaryRecipeSettings;
+        [EzIPC] public Action ClearAllTemporarySettings;
+        [EzIPC] public Func<uint, string[]> GetAvailableSolvers;
+        [EzIPC] public Func<ushort, int> GetRaphaelStatus;
+        [EzIPC] public Func<ushort, string> GetRaphaelFailure;
+
+        public void ClearAppliedSettings()
         {
-            if (recipeConfig.ArtisanSolverType != ArtisanCraftType.Default)
+            if (Utils.HasPlugin(Name)) ClearAllTemporarySettings();
+            CraftSettings.Clear();
+            appliedMission = null;
+        }
+
+        private bool AssignArtisanRecipe(uint recipeId, ArtisanSettings recipeConfig, bool isExpert)
+        {
+            // Extended Artisan deliberately exposes validated overrides, not the newer
+            // unchecked Change* IPC family. Reject unsupported overrides explicitly.
+            if (recipeConfig.ManualId != 0 || recipeConfig.SquadronManualId != 0
+                || recipeConfig.ExpertProfileId != 0 || recipeConfig.SkillUsageAmount != -1
+                || recipeConfig.MinStepsForMiracle != -1)
+                return false;
+
+            string solver = recipeConfig.ArtisanSolverType switch
             {
-                string ArtisanType = recipeConfig.ArtisanSolverType switch
-                {
-                    ArtisanCraftType.Standard => "Standard Recipe Solver",
-                    ArtisanCraftType.ProgressOnly => "Progress Only Solver",
-                    ArtisanCraftType.Raphael => "Raphael Recipe Solver",
-                    ArtisanCraftType.Macro => $"Macro: {recipeConfig.MacroName}",
-                    ArtisanCraftType.Expert => "Expert Recipe Solver",
-                    _ => "Standard Recipe Solver",
-                };
-                ChangeSolver(recipeId, ArtisanType, true);
-            }
-            else
+                ArtisanCraftType.Default => "",
+                ArtisanCraftType.Standard => "Standard Recipe Solver",
+                ArtisanCraftType.ProgressOnly => "Progress Only Solver",
+                ArtisanCraftType.Raphael => "Raphael Recipe Solver",
+                ArtisanCraftType.Macro => $"Macro: {recipeConfig.MacroName}",
+                ArtisanCraftType.Expert => "Expert Recipe Solver",
+                _ => ""
+            };
+            ClearTemporaryRecipeSettings(recipeId);
+            if ((solver.Length != 0 && !(GetAvailableSolvers(recipeId)?.Contains(solver) == true
+                    && SetTemporarySolver(recipeId, solver)))
+                || !SetTemporaryFood(recipeId, recipeConfig.FoodId, recipeConfig.FoodHQ)
+                || !SetTemporaryPotion(recipeId, recipeConfig.PotionId, recipeConfig.PotionHQ))
             {
-                SetTempSolverBackToNormal(recipeId);
+                ClearTemporaryRecipeSettings(recipeId);
+                return false;
             }
-
-            if (recipeConfig.FoodId != 0)
-                ChangeFood(recipeId, recipeConfig.FoodId, recipeConfig.FoodHQ, true);
-            else
-                SetTempFoodBackToNormal(recipeId);
-
-            if (recipeConfig.PotionId != 0)
-                ChangePotion(recipeId, recipeConfig.PotionId, recipeConfig.PotionHQ, true);
-            else
-                SetTempPotionBackToNormal(recipeId);
-
-            if (recipeConfig.ManualId != 0)
-                ChangeManual(recipeId, recipeConfig.ManualId, true);
-            else
-                SetTempManualBackToNormal(recipeId);
-
-            if (recipeConfig.SquadronManualId != 0)
-                ChangeSquadronManual(recipeId, recipeConfig.SquadronManualId, true);
-            else
-                SetTempSquadronManualBackToNormal(recipeId);
-
-            if (isExpert)
-            {
-                if (recipeConfig.SkillUsageAmount != -1)
-                {
-                    ChangeExpertMaxSteadyUses(recipeId, (uint)recipeConfig.SkillUsageAmount, true);
-                    ChangeExpertMaxMaterialMiracleUses(recipeId, (uint)recipeConfig.SkillUsageAmount, true);
-                }
-                else
-                {
-                    SetTempExpertMaxSteadyUsesBackToNormal(recipeId);
-                    SetTempExpertMaxMaterialMiracleUsesBackToNormal(recipeId);
-                }
-
-                if (recipeConfig.MinStepsForMiracle != -1)
-                    P.Artisan.ChangeExpertMinimumStepsBeforeMiracle(recipeId, (uint)recipeConfig.MinStepsForMiracle, true);
-                else
-                    P.Artisan.SetTempExpertMinimumStepsBeforeMiracleBackToNormal(recipeId);
-            }
-            else
-            {
-                if (recipeConfig.SkillUsageAmount != -1)
-                {
-                    ChangeStandardMaxMaterialMiracleUses((uint)recipeConfig.SkillUsageAmount, true);
-                }
-                else
-                {
-                    SetTempStandardMaxMaterialMiracleUsesBackToNormal();
-                }
-
-                if (recipeConfig.MinStepsForMiracle != -1)
-                {
-                    ChangeStandardMinimumStepsBeforeMiracle((uint)recipeConfig.MinStepsForMiracle, true);
-                }
-                else
-                {
-                    SetTempStandardMinimumStepsBeforeMiracleBackToNormal();
-                }
-            }
+            return true;
         }
 
         private static bool ArtisanSettingsEqual(ArtisanSettings a, ArtisanSettings b) =>
@@ -153,13 +120,19 @@ namespace ICE.IPC
             a.ExpertProfileId == b.ExpertProfileId;
 
         private Dictionary<ushort, ArtisanSettings> CraftSettings = new();
+        private uint? appliedMission;
 
-        public void CheckArtisanSettings(ushort recipeId, uint missionId, bool isExpert, bool isLeveling = false)
+        public bool CheckArtisanSettings(ushort recipeId, uint missionId, bool isExpert, bool isLeveling = false)
         {
+            if (appliedMission != missionId)
+            {
+                ClearAppliedSettings();
+                appliedMission = missionId;
+            }
             if (!C.MissionConfig.TryGetValue(missionId, out var configInfo))
-                return;
+                return true;
             if (!configInfo.CraftSettings.TryGetValue(recipeId, out var recipeSettings))
-                return;
+                return true;
 
             // Resolve the effective settings — global profile or per-recipe config
             ArtisanSettings effectiveSettings;
@@ -182,16 +155,20 @@ namespace ICE.IPC
             }
             else
             {
-                effectiveSettings = recipeSettings;
+                effectiveSettings = Newtonsoft.Json.JsonConvert.DeserializeObject<ArtisanSettings>(Newtonsoft.Json.JsonConvert.SerializeObject(recipeSettings));
             }
 
             if (isLeveling)
                 effectiveSettings.ArtisanSolverType = ArtisanCraftType.ProgressOnly;
 
             if (CraftSettings.TryGetValue(recipeId, out var cached) && ArtisanSettingsEqual(cached, effectiveSettings))
-                return;
+                return true;
 
-            AssignArtisanRecipe(recipeId, effectiveSettings, isExpert);
+            if (!AssignArtisanRecipe(recipeId, effectiveSettings, isExpert))
+            {
+                IceLogging.Error($"Recipe {recipeId}: unsupported or invalid Artisan overrides. ICE has stopped.", "[Artisan Settings]");
+                return false;
+            }
             CraftSettings[recipeId] = new ArtisanSettings
             {
                 UseGlobal = effectiveSettings.UseGlobal,
@@ -207,13 +184,14 @@ namespace ICE.IPC
                 MinStepsForMiracle = effectiveSettings.MinStepsForMiracle,
                 ExpertProfileId = effectiveSettings.ExpertProfileId,
             };
+            return true;
         }
 
         public bool UpdatedArtisan()
         {
             if (DalamudReflector.TryGetDalamudPlugin($"Artisan", out var plogon, false, true))
             {
-                if (plogon.GetType().Assembly.GetName().Version < new Version(4, 0, 4, 45))
+                if (plogon.GetType().Assembly.GetName().Version < new Version(4, 0, 4, 25))
                     return false;
 
                 return true;

@@ -19,11 +19,18 @@ namespace ICE.Scheduler.Tasks
 {
     internal static class Task_Gather
     {
-        private static int _lastCollectability = -1;
-        private static DateTime _lastCollectProgress = DateTime.MinValue;
+        private static readonly CollectableProgressWatchdog collectableWatchdog = new();
+        private static uint currentGatherNodeId;
+        private static bool recoveryLogged;
+        private static void ResetCollectableWatchdog()
+        {
+            collectableWatchdog.Reset();
+            recoveryLogged = false;
+        }
 
         public static void Enqueue()
         {
+            if (!Svc.Condition[ConditionFlag.Gathering]) ResetCollectableWatchdog();
             if (Svc.Condition[ConditionFlag.Gathering])
             {
                 IceLogging.Debug("Current in a gathering session");
@@ -112,6 +119,7 @@ namespace ICE.Scheduler.Tasks
                     // This should prevent us from actually attempting to do another gathering action, while we are currently doing one
                     if (GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady)
                     {
+                        ResetCollectableWatchdog();
                         if (EzThrottler.Throttle("Log message"))
                         {
                             IceLogging.Debug($"Collectable: {collectableItem} | Reduce: {reduceItems}");
@@ -201,6 +209,7 @@ namespace ICE.Scheduler.Tasks
                 }
                 else
                 {
+                    collectableWatchdog.Suspend();
                     IceLogging.Verbose("Currently executing a gathering action, waiting patiently", tag);
                     GatherDelayThrottle = 0;
                     return true;
@@ -208,6 +217,7 @@ namespace ICE.Scheduler.Tasks
             }
             else
             {
+                ResetCollectableWatchdog();
                 GreaterReachCount = 0;
                 HadGreaterReach = false;
                 GatherDelayThrottle = 0;
@@ -228,14 +238,12 @@ namespace ICE.Scheduler.Tasks
             var config = C.MissionConfig[CosmicHelper.CurrentLunarMission];
             var isMaster = CosmicHelper.CurrentMissionInfo.IsMaster;
 
-            // Track collectability progress to detect stuck rotations
-            if (collect_Current != _lastCollectability)
-            {
-                _lastCollectability = collect_Current;
-                _lastCollectProgress = DateTime.Now;
-            }
-            bool isStuck = _lastCollectProgress != DateTime.MinValue
-                        && (DateTime.Now - _lastCollectProgress).TotalSeconds > 5;
+            bool canAct = !Player.IsAnimationLocked && !Player.IsCasting && !Player.IsMoving;
+            bool isStuck = collectableWatchdog.Observe(
+                new(CosmicHelper.CurrentLunarMission, currentGatherNodeId, collectable.ItemID),
+                new(collect_Current, integrity, playerGp, 0, PlayerHelper.HasStatusId(3911)),
+                canAct, Environment.TickCount64);
+            if (!canAct || integrity == 0) return;
 
             if (integrity > 1 && collect_Current < collect_highGrade && !isStuck)
             {
@@ -283,11 +291,15 @@ namespace ICE.Scheduler.Tasks
             else
             {
                 if (isStuck)
-                    IceLogging.Debug("Collectable rotation stuck, falling through to collect");
-
-                // Reset progress tracking when we start collecting
-                _lastCollectability = -1;
-                _lastCollectProgress = DateTime.MinValue;
+                {
+                    if (!recoveryLogged)
+                    {
+                        IceLogging.Warning($"Collectable rotation stalled; collecting remaining items. Mission: {CosmicHelper.CurrentLunarMission}, item: {collectable.ItemID}", "[Gather: Recovery]");
+                        recoveryLogged = true;
+                    }
+                    UseCollectableAction("Collect");
+                    return;
+                }
 
                 // if we've gotten this far, that means we're in a state that we should just be collecting
                 if (collectable.CurrentIntegrity == 1 && CanUseCollectableAction("BonusIntegrityChance", missingDur))
@@ -357,7 +369,7 @@ namespace ICE.Scheduler.Tasks
                     {
                         // We're currently close to a node, time to check and see if it's a viable node, or if we need to pathfind to the next
                         var nodeId = closestDistance.NodeId;
-                        var closestNode = Svc.Objects.Where(x => x.BaseId == nodeId && x.IsTargetable).FirstOrDefault();
+                        var closestNode = Svc.Objects.Where(x => x.DataId == nodeId && x.IsTargetable).FirstOrDefault();
 
                         if (closestNode != null)
                         {
@@ -415,7 +427,7 @@ namespace ICE.Scheduler.Tasks
                 var fallbackIndex = gatherInfo.Select((node, index) => new { Node = node, Index = index })
                                               .Where(x =>
                                               {
-                                                  var obj = Svc.Objects.FirstOrDefault(o => o.ObjectKind == ObjectKind.GatheringPoint && o.BaseId == x.Node.NodeId);
+                                                  var obj = Svc.Objects.FirstOrDefault(o => o.ObjectKind == ObjectKind.GatheringPoint && o.DataId == x.Node.NodeId);
                                                   return obj == null || obj.IsTargetable;
                                               })
                                               .OrderBy(x => Player.DistanceTo(x.Node.Position))
@@ -440,6 +452,7 @@ namespace ICE.Scheduler.Tasks
             }
 
             var location = gatherInfo[Mission_Settings.nodeCounter];
+            currentGatherNodeId = location.NodeId;
 
             if (!Task_NavmeshMove.Task_GatherMove(location).Value)
             {

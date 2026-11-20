@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace ICE.ConfigFiles;
 
@@ -28,8 +28,8 @@ public partial class Config
     public Dictionary<uint, Vector3> CrafterLocations { get; set; } = new();
     public List<MissionCommand> PostMissionCommands { get; set; } = new();
 
-    public bool UseHubReturn { get; set; } = true;
-    public bool UseAethernet { get; set; } = true;
+    public bool UseHubReturn { get; set; } = false;
+    public bool UseAethernet { get; set; } = false;
     public float HubReturn_Distance { get; set; } = 75f;
     public bool UseRedAlertNpc { get; set; } = false;
     public bool HideRewardWindow { get; set; } = true;

@@ -21,6 +21,7 @@ namespace ICE.Scheduler
             IceLogging.Debug("Stopping the plugin state", "[Schedular - Disable Plugin]");
             P.TaskManager.Abort();
             State = IceState.Idle;
+            P.Artisan.ClearAppliedSettings();
             GenericManager.RestorePandoraStates();
             if (P.Navmesh.Installed)
             {

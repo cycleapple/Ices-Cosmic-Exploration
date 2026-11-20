@@ -1,12 +1,12 @@
 {
   "DalamudApiLevel": 13,
   "Author": "Ice",
-  "Name": "Ice's Cosmic Exploration",
+  "Name": "Ice's Cosmic Exploration [API13 Candidate]",
   "Punchline": "The gathering companion that we all needed.",
-  "Description": "A little helper to go gather your heart out.",
+  "Description": "新版基底 API13 移植候選版；尚未完成舊設定遷移及遊戲內驗證。",
   "ApplicableVersion": "any",
   "Tags": [
     "Gatherers"
   ],
-  "RepoUrl": "https://github.com/LeontopodiumNivale14/Ices-Cosmic-Exploration"
+  "RepoUrl": "https://github.com/cycleapple/Ices-Cosmic-Exploration"
 }

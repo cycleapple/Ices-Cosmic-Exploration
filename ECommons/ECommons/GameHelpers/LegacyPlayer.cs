@@ -2,7 +2,7 @@ using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.ClientState.Statuses;
-using Dalamud.Game.Player;
+
 using ECommons.DalamudServices;
 using ECommons.DalamudServices.Legacy;
 using ECommons.ExcelServices;
@@ -43,11 +43,11 @@ public static unsafe class Player
     public static string? Name => Object?.Name.ToString();
     public static string? NameWithWorld => GetNameWithWorld(Object);
     public static string? GetNameWithWorld(this IPlayerCharacter pc) => pc == null ? null : (pc.Name.ToString() + "@" + pc.HomeWorld.ValueNullable?.Name.ToString());
-    public static RowRef<Race> Race => Svc.PlayerState.Race;
-    // porting-note(api13): fully qualified rather than relying on `using Dalamud.Game.Player;`.
+    public static RowRef<Race> Race => Lumina.Excel.Sheets.Race.GetRef(PlayerState.Instance()->Race);
+    // porting-note(api13): fully qualified rather than relying on ``.
     // A using line is the most fragile way to carry a TC-only fix -- both the 3-way merge and
     // the mechanical source transforms drop them. Same form as GameHelpers/Player.cs.
-    public static Dalamud.Game.Player.Sex Sex => Svc.PlayerState.Sex;
+    public static byte Sex => PlayerState.Instance()->Sex;
 
     /// <remarks>Is unaffected by Level Sync</remarks>
     public static int Level => Object?.Level ?? 0;
@@ -55,7 +55,7 @@ public static unsafe class Player
     public static int SyncedLevel => ECommons.GameHelpers.Player.SyncedLevel;
     [Obsolete("Use Level instead")]
     public static int UnsyncedLevel => GetUnsyncedLevel(GetJob(Object));
-    public static int GetUnsyncedLevel(Job job) => Svc.PlayerState.GetClassJobLevel(job.GetGameData().Value);
+    public static int GetUnsyncedLevel(Job job) => PlayerState.Instance()->ClassJobLevels[job.GetGameData().Value.ExpArrayIndex];
 
     public static bool IsInHomeWorld => Available && Object.CurrentWorld.RowId == Object.HomeWorld.RowId;
     public static bool IsInHomeDC => Available && Object.CurrentWorld.Value.DataCenter.RowId == Object.HomeWorld.Value.DataCenter.RowId;

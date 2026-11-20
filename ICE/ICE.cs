@@ -26,7 +26,7 @@ public sealed partial class ICE : IDalamudPlugin
     // and every `PictoService.X` call site is sed'd to `PictoService.X` (same shape AutoDuty/Splatoon use).
 
     // Missing ECommons PluginService. Update to Svc when ECommons get updated
-    [PluginService] public static IUnlockState UnlockState { get; set; } = null!;
+    public static TcUnlockState UnlockState { get; } = new();
     
     public MissionTimer MissionTimer { get; private set; }
 
@@ -60,6 +60,8 @@ public sealed partial class ICE : IDalamudPlugin
     }
     public void Load()
     {
+        // Candidate schema differs from 0.0.73.x. Never rewrite the stable configuration.
+        EzConfig.PluginConfigDirectoryOverride = "ICE.Next.API13";
         EzConfig.Migrate<Config>();
         config = EzConfig.Init<Config>();
 
@@ -201,6 +203,7 @@ public sealed partial class ICE : IDalamudPlugin
 
     public void Dispose()
     {
+        GenericHelpers.Safe(Artisan.ClearAppliedSettings);
         GenericHelpers.Safe(() => Svc.Framework.Update -= Tick);
         GenericHelpers.Safe(() => Svc.PluginInterface.UiBuilder.Draw -= OnDraw);
         GenericHelpers.Safe(() => Svc.PluginInterface.UiBuilder.Draw -= windowSystem.Draw);
