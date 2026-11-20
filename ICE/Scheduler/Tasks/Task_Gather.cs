@@ -25,9 +25,20 @@ namespace ICE.Scheduler.Tasks
         private static uint approachNodeId;
         private static Vector3 approachCenter;
         private static Vector3 approachPosition;
+        private static readonly CollectableProgressWatchdog collectableWatchdog = new();
+        private static bool collectableRecoveryLogged;
+
+        private static void ResetCollectableWatchdog()
+        {
+            collectableWatchdog.Reset();
+            collectableRecoveryLogged = false;
+        }
 
         public static void Enqueue()
         {
+            if (!Svc.Condition[ConditionFlag.Gathering])
+                ResetCollectableWatchdog();
+
             if (!Svc.Condition[ConditionFlag.Gathering] && RecordCompletedLimitedNode())
                 return;
 
@@ -451,6 +462,7 @@ namespace ICE.Scheduler.Tasks
 
                     if (GenericHelpers.TryGetAddonMaster<Gathering>("Gathering", out var gather) && gather.IsAddonReady)
                     {
+                        ResetCollectableWatchdog();
                         // this is the first window that you see. 
                         if (gather.CurrentIntegrity != 0)
                         {
@@ -544,7 +556,24 @@ namespace ICE.Scheduler.Tasks
                         //   -> If missing durability, check to see if increaseInteg Skill is usable
                         //   -> If not missing durability, collect
 
-                        if (Mission_Settings.SelectedRotation == 1)
+                        bool canAct = !Player.IsAnimationLocked && !Player.IsCasting && !Player.IsMoving;
+                        bool recover = collectableWatchdog.Observe(
+                            new(CosmicHelper.CurrentLunarMission, activeGatherNodeId, collectable.ItemID),
+                            new(currentQuality, currentDur, PlayerHelper.GetGp(), Mission_Settings.CollectableStep, PlayerHelper.HasStatusId(3911)),
+                            canAct, Environment.TickCount64);
+                        if (!canAct || currentDur == 0)
+                            return false;
+
+                        if (recover)
+                        {
+                            if (!collectableRecoveryLogged)
+                            {
+                                IceLogging.Warning($"Collectable rotation made no progress for 5 actionable seconds; collecting remaining items. Mission: {CosmicHelper.CurrentLunarMission}, item: {collectable.ItemID}", "[Gather: Recovery]");
+                                collectableRecoveryLogged = true;
+                            }
+                            UseCollectableAction("Collect");
+                        }
+                        else if (Mission_Settings.SelectedRotation == 1)
                         {
                             NormalGpRotation(currentQuality, missingDur);
                         }
@@ -554,9 +583,14 @@ namespace ICE.Scheduler.Tasks
                         }
 
                     }
+                    else
+                    {
+                        ResetCollectableWatchdog();
+                    }
                 }
                 else
                 {
+                    collectableWatchdog.Suspend();
                     P.TaskManager.Insert(() => WaitToGather());
                     return true;
                 }
@@ -564,6 +598,7 @@ namespace ICE.Scheduler.Tasks
             else
             {
                 // No longer gathering an item. Time to check current state
+                ResetCollectableWatchdog();
                 return true;
             }
 

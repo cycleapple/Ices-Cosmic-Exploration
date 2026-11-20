@@ -4,7 +4,7 @@
   "Punchline": "專為宇宙探索準備的採集助手。",
   "Description": "協助宇宙探索中的採集、製作與據點活動。",
   "ApplicableVersion": "any",
-  "ChangeLog": "修正採集到點後未停止導航／下坐騎造成的等待；修正釣魚啟動與反覆換餌，並校正 AutoHook 換餌 IPC 回傳型別。",
+  "ChangeLog": "新增收藏品採集停滯復原：可操作狀態持續 5 秒無進展時改為收集，排除動作動畫、暫停與自然 GP 回復，並於切換任務／採集點／物品時重設。",
   "Tags": [
     "Gatherers"
   ]
