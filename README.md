@@ -1,3 +1,5 @@
+1.0.0.10 對照舊版補上製作等待期間的失敗檢查；送出新要求前不讀取上次失敗，等待 Artisan 確認才接續，15 秒未確認會停止；同一要求不重複送單，設定使用真正 Recipe ID。搭配 Artisan 4.0.4.28，宇宙配方選取與啟動在同一框架工作內確認，選錯時重選、逾時停止。
+
 1.0.0.9 補上宇宙計畫工具階段／工具經驗目標的必要研究交付，依 API13 分析需求判斷可交付階段並固定目標職業，避免換戰鬥職後交錯職業。標準模式仍遵守「自動交付」開關；判定依據是各項資料達到分析需求，並非倉儲上限。紀錄包含職業、階段、解鎖、開關、計畫目標與各項數量，方便確認未交付的原因。
 
 1.0.0.8 修正 MF 回報任務後 ID 0 的金牌檢查錯誤、任務已結束仍等待 HUD，以及直接選餌，不依賴 AutoHook。任務目標 `TimeExpired` 表示時間到才回報；若要金牌立即回報請改成金牌。
@@ -6,7 +8,7 @@
 
 1.0.0.7 改用任務視窗分數判定獎牌，避免採集已金牌仍循環及製作提早繳交；修理改用 API13 按鈕逐分類處理，排除空格與不可修理物品，無進展會停止並提示。MissFisher 相容支援由 MissFisher 1.6.5.14 提供。
 
-目前候選版本：**1.0.0.9**，分支 `api13-next-evaluation`。
+目前候選版本：**1.0.0.10**，分支 `api13-next-evaluation`。
 
 以 [lilasrepo 的 1.0.0.3 移植原始碼](https://github.com/lilasrepo/Ices-Cosmic-Exploration/tree/8fb4f8510264bf231453fa57b32765b71677f39c) 為基礎，對接 Extended 庫使用的 API13 SDK、.NET 9 與 Artisan。原插件由 [LeontopodiumNivale14](https://github.com/LeontopodiumNivale14/Ices-Cosmic-Exploration) 開發，遵循本倉庫 AGPL 授權。
 
@@ -40,12 +42,13 @@
 套件位於 `ICE/bin/Release/Candidate/ICECandidate/latest.zip`。測試以 .NET 9 執行：
 
 ```powershell
+dotnet run --project tests/CraftHandoff -c Release -- ICE/bin/Release/Candidate/ICECandidate.dll <Artisan.dll> <API13-SDK目錄>
 dotnet run --project tests/MissionRepair -c Release
 dotnet run --project tests/CollectableProgress -c Release
 dotnet run --project tests/Api13Contracts -c Release -- . <Artisan的Release目錄> <API13-SDK目錄>
 ```
 
-目前完整重建 0 錯誤、177 警告；280 項離線檢查通過。檢查包含採集復原、實際編譯組件的接口、Artisan 設定回復，以及 YAML 匯入、備份、重複匯入與來源變更處理。
+目前完整重建 0 錯誤、177 警告；319 項離線檢查通過。檢查包含採集復原、實際編譯組件的接口、Artisan 設定回復，以及 YAML 匯入、備份、重複匯入與來源變更處理。
 
 候選版尚未完成遊戲內驗證，也仍有詳細提示與除錯文字待翻譯。正式 Extended 庫維持 0.0.73.54。測試版在 API13 Extended 庫以「Ice's Cosmic Exploration（新版測試版）」獨立列出，`InternalName=ICECandidate`，使用 `/icecandidate` 開啟。正式版的名稱、版本與 `/ice` 指令保持不變。測試版的 IPC 前綴為 `ICECandidate`。
 

@@ -12,6 +12,7 @@ namespace ICE.Scheduler.Tasks
     {
         public static void Enqueue()
         {
+            if (Task_CheckScore.RecoverMissingMission()) return;
             if (P.Artisan.IsBusy())
             {
                 P.TaskManager.Enqueue(() => WaitingForArtisan(), "Waiting for artisan to finish crafting");
@@ -24,10 +25,22 @@ namespace ICE.Scheduler.Tasks
             }
         }
 
-        private static bool? WaitingForArtisan()
+        private static bool? WaitingForArtisan(ushort? recipeId = null)
         {
             string tag = "Craft: Waiting for Artisan";
 
+            if (Task_CheckScore.RecoverMissingMission()) return true;
+            if (recipeId is { } activeRecipe)
+            {
+                var progress = artisanRequest.Observe(Environment.TickCount64,
+                    () => P.Artisan.GetRaphaelStatus(activeRecipe), () => P.Artisan.IsBusy());
+                if (progress is CraftRequestProgress.Failed or CraftRequestProgress.TimedOut)
+                {
+                    StopForCraftFailure(activeRecipe, progress);
+                    return true;
+                }
+                if (progress is CraftRequestProgress.NotSent or CraftRequestProgress.Waiting) return false;
+            }
             if (!P.Artisan.IsBusy())
             {
                 IceLogging.Info("Artisan is no longer running, continuing the process", tag);
@@ -50,38 +63,47 @@ namespace ICE.Scheduler.Tasks
         }
 
         private static uint throttleCounter = 0;
-        private static bool artisanRequestSent;
+        private static readonly ArtisanCraftRequest artisanRequest = new();
+        private static bool artisanSettingsApplied;
         private static void InsertArtisanWait(KeyValuePair<ushort, CosmicHelper.CraftingInfo> item, int amount)
         {
-            artisanRequestSent = false;
+            artisanRequest.Reset();
+            artisanSettingsApplied = false;
             throttleCounter = 0;
             P.TaskManager.InsertMulti(
-                new(() => ThrottleArtisanTaskV2(item, amount), "Telling artisan to craft"),
-                new(() => WaitingForArtisan(), "Waiting for artisan")
+                new(() => ThrottleArtisanTaskV2(item, amount), "Telling artisan to craft", Utils.TaskConfig),
+                new(() => WaitingForArtisan(item.Key), "Waiting for artisan", Utils.TaskConfig)
             );
         }
 
         private static bool? ThrottleArtisanTaskV2(KeyValuePair<ushort, CosmicHelper.CraftingInfo> item, int amount)
         {
+            if (Task_CheckScore.RecoverMissingMission()) return true;
             int delay = C.DelayCraft ? C.DelayCraftIncrease : 25;
 
             var craftId = item.Key;
-            var recipeId = item.Value.RecipeId;
+            // The dictionary key is the actual Recipe row used by Artisan.
+            // Critical mission metadata may carry a WKSRecipe row in Value.RecipeId.
+            var recipeId = craftId;
             var itemId = item.Value.ItemId;
             var expert = item.Value.ExpertCraft;
 
             var missionId = CosmicHelper.CurrentLunarMission;
             var missionConfig = C.MissionConfig[missionId];
 
-            if (!missionConfig.CraftSettings.ContainsKey(recipeId))
+            if (!artisanSettingsApplied)
             {
-                missionConfig.CraftSettings[recipeId] = new();
-                C.Save();
-            }
-            if (!P.Artisan.CheckArtisanSettings((ushort)recipeId, CosmicHelper.CurrentLunarMission, expert, Mission_Settings.Mode == ModeSelect.LevelMode))
-            {
-                SchedulerMain.DisablePlugin();
-                return true;
+                if (!missionConfig.CraftSettings.ContainsKey(recipeId))
+                {
+                    missionConfig.CraftSettings[recipeId] = new();
+                    C.Save();
+                }
+                if (!P.Artisan.CheckArtisanSettings((ushort)recipeId, CosmicHelper.CurrentLunarMission, expert, Mission_Settings.Mode == ModeSelect.LevelMode))
+                {
+                    SchedulerMain.DisablePlugin();
+                    return true;
+                }
+                artisanSettingsApplied = true;
             }
 
             if (EzThrottler.Throttle("Waiting X Amount of seconds for artisan", delay))
@@ -91,22 +113,23 @@ namespace ICE.Scheduler.Tasks
 
             if (throttleCounter >= 3)
             {
-                var status = P.Artisan.GetRaphaelStatus(craftId);
-                if (status == 1) return false;
-                if (status == 2)
+                if (!artisanRequest.Sent)
                 {
-                    IceLogging.Error($"Artisan recipe {craftId}: {P.Artisan.GetRaphaelFailure(craftId)}", "[Artisan / Raphael]");
-                    SchedulerMain.DisablePlugin();
+                    if (EzThrottler.Throttle("Artisan Crafting Task"))
+                    {
+                        IceLogging.Debug($"Telling Artisan to craft: {itemId} -> {amount} times", "Craft Request");
+                        artisanRequest.Send(() => P.Artisan.CraftItem(craftId, amount), Environment.TickCount64);
+                    }
+                    return false;
+                }
+                var progress = artisanRequest.Observe(Environment.TickCount64,
+                    () => P.Artisan.GetRaphaelStatus(craftId), () => P.Artisan.IsBusy());
+                if (progress is CraftRequestProgress.Failed or CraftRequestProgress.TimedOut)
+                {
+                    StopForCraftFailure(craftId, progress);
                     return true;
                 }
-                if (!artisanRequestSent && EzThrottler.Throttle("Artisan Crafting Task"))
-                {
-                    IceLogging.Debug($"Telling Artisan to craft: {itemId} -> {amount} times");
-                    P.Artisan.CraftItem(craftId, amount);
-                    artisanRequestSent = true;
-                }
-
-                if (artisanRequestSent && P.Artisan.IsBusy())
+                if (progress is CraftRequestProgress.Running or CraftRequestProgress.Completed)
                 {
                     throttleCounter = 0;
                     return true;
@@ -116,8 +139,18 @@ namespace ICE.Scheduler.Tasks
             return false;
         }
 
+        private static void StopForCraftFailure(ushort recipeId, CraftRequestProgress progress)
+        {
+            var reason = progress == CraftRequestProgress.TimedOut
+                ? "Artisan 未在 15 秒內確認製作要求，請確認插件已載入。"
+                : P.Artisan.GetRaphaelFailure(recipeId);
+            IceLogging.Error($"Artisan 配方 {recipeId}：{reason}；已停止，避免重複送出製作要求。", "Craft Request");
+            SchedulerMain.DisablePlugin();
+        }
+
         private static bool? CheckMaterials()
         {
+            if (Task_CheckScore.RecoverMissingMission()) return true;
             var id = CosmicHelper.CurrentLunarMission;
             var mission = CosmicHelper.SheetMissionDict[id];
 
