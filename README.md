@@ -1,3 +1,5 @@
+> API13 Extended 0.0.73.55：ICE 直接裝備宇宙釣餌，不依賴 AutoHook；修正 MF 回報任務後仍等待分數視窗、任務 ID 0 後處理及收竿狀態反覆檢查。原有收藏品復原檢查 123 項與組件生命週期／換餌檢查 18 項通過，尚未遊戲內實測。
+
 # Ices Cosmic Exploration (ICE)
 
 Repo: `https://puni.sh/api/repository/ice`

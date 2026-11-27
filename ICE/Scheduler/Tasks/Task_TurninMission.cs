@@ -1,4 +1,4 @@
-﻿using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Game.ClientState.Conditions;
 using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.WKS;
@@ -21,6 +21,7 @@ namespace ICE.Scheduler.Tasks
 
         public static void Enqueue()
         {
+            if (CosmicHelper.CurrentLunarMission != 0) PreviousMissionId = CosmicHelper.CurrentLunarMission;
             P.TaskManager.Enqueue(() => TurninMission(), "Turning in the mission to the moon gods", Utils.TaskConfig);
             P.TaskManager.Enqueue(() => JobSwapCheck(), "Checking to see if you need to swap jobs");
             P.TaskManager.Enqueue(() => GoldCheck(), "Checking if Gold Check Task needs to be completed");
@@ -230,6 +231,7 @@ namespace ICE.Scheduler.Tasks
 
         public static bool? JobSwapCheck()
         {
+            if (PreviousMissionId == 0) return true;
             if (C.CosmicAgendaMode)
                 return true;
 
@@ -254,6 +256,13 @@ namespace ICE.Scheduler.Tasks
 
         public static unsafe bool? GoldCheck()
         {
+            if (PreviousMissionId == 0 || !CosmicHelper.SheetMissionDict.ContainsKey(PreviousMissionId)
+                || !C.MissionConfig.ContainsKey(PreviousMissionId))
+            {
+                IceLogging.Debug("No recorded mission metadata; skipping medal bookkeeping", "Mission Lifecycle");
+                return FinishPostMission();
+            }
+
             var managerPtr = WKSManager.Instance();
             if (managerPtr == null) return false;
 
@@ -298,6 +307,11 @@ namespace ICE.Scheduler.Tasks
                 C.Save();
             }
 
+            return FinishPostMission();
+        }
+
+        private static bool? FinishPostMission()
+        {
             IceLogging.Info("Gold Check is complete, and checking to see what state we need to be in post cleanup");
             if (Mission_Settings.StopAfterCurrent)
             {
@@ -346,6 +360,7 @@ namespace ICE.Scheduler.Tasks
 
         public static void UpdateScoreInfo()
         {
+            if (PreviousMissionId == 0) { PreviousScore = 0; return; }
             var multiplier = 1;
             var turnin = Mission_Settings.TurninState;
             if (turnin == TurninState.Gold)

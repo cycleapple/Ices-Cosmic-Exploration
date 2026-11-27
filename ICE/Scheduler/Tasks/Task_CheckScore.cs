@@ -1,4 +1,4 @@
-﻿using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Game.ClientState.Conditions;
 using ECommons.GameHelpers;
 using ICE.Config;
 using ICE.Utilities.Cosmic_Helper;
@@ -13,8 +13,18 @@ namespace ICE.Scheduler.Tasks
 {
     internal static class Task_CheckScore
     {
+        internal static bool RecoverMissingMission()
+        {
+            if (CosmicHelper.CurrentLunarMission != 0) return false;
+            IceLogging.Info("任務已結束，離開分數檢查並處理後續任務。", "Mission Lifecycle");
+            P.TaskManager.Tasks.Clear();
+            SchedulerMain.State = IceState.TurninMission;
+            return true;
+        }
+
         public static void Enqueue()
         {
+            if (RecoverMissingMission()) return;
             var Id = CosmicHelper.CurrentLunarMission;
             var mission = CosmicHelper.SheetMissionDict[Id];
 
@@ -51,6 +61,7 @@ namespace ICE.Scheduler.Tasks
 
         public static unsafe bool? Fish()
         {
+            if (RecoverMissingMission()) return true;
             string handle = "[Score Check: Fish]";
 
             static bool MinRequirementsMet(uint id, WKSMissionInfomation missionInfo)
@@ -307,6 +318,12 @@ namespace ICE.Scheduler.Tasks
                 // Addon wasn't visiable/ready. Opening it up.
                 if (GenericHelpers.TryGetAddonMaster<WKSHud>("WKSHud", out var moonHud))
                 {
+                    if (Svc.Condition[ConditionFlag.Gathering])
+                    {
+                        if (!Svc.Condition[ConditionFlag.Fishing] && !Svc.Condition[ConditionFlag.ExecutingGatheringAction]
+                            && EzThrottler.Throttle("Put away rod for mission HUD", 1000)) Task_DualClass.StopFishing();
+                        return false;
+                    }
                     if (EzThrottler.Throttle("Opening the moon hud", 1000))
                     {
                         moonHud.Mission();
@@ -320,6 +337,7 @@ namespace ICE.Scheduler.Tasks
 
         public static unsafe bool? Crafts()
         {
+            if (RecoverMissingMission()) return true;
             string tag = "Check Score: Crafts";
             IceLogging.Verbose("Checking score progress with crafts", tag);
             if (GenericHelpers.TryGetAddonMaster<WKSMissionInfomation>("WKSMissionInfomation", out var missionInfo) && missionInfo.IsAddonReady)
@@ -524,6 +542,7 @@ namespace ICE.Scheduler.Tasks
 
         public static unsafe bool? Gather()
         {
+            if (RecoverMissingMission()) return true;
             if (GenericHelpers.TryGetAddonMaster<WKSMissionInfomation>("WKSMissionInfomation", out var missionInfo) && missionInfo.IsAddonReady)
             {
                 if (missionInfo.Addon ->AtkValuesCount > 4) // Really just here to make sure that the addon atkValues are fully loaded...
@@ -760,6 +779,7 @@ namespace ICE.Scheduler.Tasks
 
         public static unsafe bool? DualClass()
         {
+            if (RecoverMissingMission()) return true;
             if (GenericHelpers.TryGetAddonMaster<WKSMissionInfomation>("WKSMissionInfomation", out var missionInfo) && missionInfo.IsAddonReady)
             {
                 if (missionInfo.Addon->AtkValuesCount > 4) // Really just here to make sure that the addon atkValues are fully loaded...

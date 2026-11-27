@@ -38,6 +38,9 @@ namespace ICE.Scheduler
 
         internal static void Tick()
         {
+            var currentMission = CosmicHelper.CurrentLunarMission;
+            if (State != Idle && currentMission != 0)
+                Task_TurninMission.PreviousMissionId = currentMission;
             if (Throttles.GenericThrottle && P.TaskManager.NumQueuedTasks == 0 && State != Idle)
             {
                 switch (State)

@@ -1,4 +1,4 @@
-﻿using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Game.ClientState.Conditions;
 using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
@@ -34,6 +34,7 @@ namespace ICE.Scheduler.Tasks
 
         private static unsafe bool? FishingCheck()
         {
+            if (Task_CheckScore.RecoverMissingMission()) return true;
             if (_fishingDebug == null)
             {
                 _fishingDebug = new FishingDebug();
@@ -72,7 +73,7 @@ namespace ICE.Scheduler.Tasks
                         {
                             if (PlayerHelper.GetItemCount(baitId, out var count) && count > 0)
                             {
-                                P.AutoHook.SwapBaitById(baitId);
+                                CosmicFishingBait.EnsureEquipped();
                                 IceLogging.Debug($"Telling it to equip bait ID: {baitId}", handle);
                                 return false;
                             }
@@ -109,6 +110,7 @@ namespace ICE.Scheduler.Tasks
                 P.TaskManager.Tasks.Clear();
                 return true;
             }
+            else if (!CosmicFishingBait.EnsureEquipped()) return false;
             else if (CosmicHelper.CurrentMissionInfo.Attributes.HasFlag(MissionAttributes.Collectables) && !PlayerHelper.HasStatusId(805))
             {
                 if (EzThrottler.Throttle("Log Throttle for fishing"))
@@ -152,15 +154,21 @@ namespace ICE.Scheduler.Tasks
                 else if (EzThrottler.Throttle("Starting to fish", 1000))
                 {
                     IceLogging.Debug("Telling it to start fishing", handle);
-                    P.AutoHook.SetPluginState(true);
+                    if (!Utils.HasPlugin("MissFisher") && P.AutoHook.Installed) P.AutoHook.SetPluginState(true);
                     ActionManager.Instance()->UseAction(ActionType.Action, 289);
                 }
                 return false;
             }
             else
             {
+                if (!Svc.Condition[ConditionFlag.Fishing])
+                {
+                    if (ActionManager.Instance() != null && ActionManager.Instance()->GetActionStatus(ActionType.Action, 289) == 0 && EzThrottler.Throttle("Cast while holding rod", 1000))
+                        ActionManager.Instance()->UseAction(ActionType.Action, 289);
+                    return false;
+                }
                 // Means we are fishing, all we need to do is enable autohook then wait for us to get the amount of fish we need
-                P.AutoHook.SetPluginState(true);
+                if (!Utils.HasPlugin("MissFisher") && P.AutoHook.Installed) P.AutoHook.SetPluginState(true);
                 IceLogging.Info("We're starting to fish. So kicking it over to checking the fish items", handle);
                 P.TaskManager.Insert(() => WaitToStartFishing(), "Waiting till we actually start fishing", Utils.TaskConfig);
                 return true;
@@ -169,6 +177,7 @@ namespace ICE.Scheduler.Tasks
 
         private static unsafe bool? WaitToStartFishing()
         {
+            if (Task_CheckScore.RecoverMissingMission()) return true;
             if (Svc.Condition[ConditionFlag.Fishing])
             {
                 IceLogging.Info("We've started fishing, just going to wait for it to finish", "[Fishing: Waiting]");
@@ -188,6 +197,7 @@ namespace ICE.Scheduler.Tasks
         private static int collectableCounter = 0;
         private static unsafe bool? FinishFishing()
         {
+            if (Task_CheckScore.RecoverMissingMission()) return true;
             if (!Svc.Condition[ConditionFlag.Fishing])
             {
                 IceLogging.Info("We're done fishing, time to go back to the score check", "[Fishing: Finished]");
