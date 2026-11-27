@@ -43,7 +43,10 @@ namespace ICE.Scheduler.Tasks
                     Mission_Settings.TurninState = TurninState.None;
 
                     // Log the results
-                    if (C.MissionConfig.TryGetValue(Task_TurninMission.PreviousMissionId, out var config))
+                    var maxDurationSeconds = TimeSpan.MaxValue.TotalSeconds;
+                    if (C.MissionConfig.TryGetValue(Task_TurninMission.PreviousMissionId, out var config)
+                        && config.BestTime >= 0 && config.BestTime <= maxDurationSeconds
+                        && config.AverageTime >= 0 && config.AverageTime <= maxDurationSeconds)
                     {
                         IceLogging.Info($"Mission [{Task_TurninMission.PreviousMissionId}] [{CosmicHelper.SheetMissionDict[Task_TurninMission.PreviousMissionId].Name}] completed in {duration:mm\\:ss\\.ff} | Best: {TimeSpan.FromSeconds(config.BestTime):mm\\:ss\\.ff} | Avg: {TimeSpan.FromSeconds(config.AverageTime):mm\\:ss\\.ff}", $"{tag} [Mission Timer]");
                     }

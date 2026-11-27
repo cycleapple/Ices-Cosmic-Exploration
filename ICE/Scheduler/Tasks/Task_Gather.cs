@@ -36,6 +36,9 @@ namespace ICE.Scheduler.Tasks
 
         public static void Enqueue()
         {
+            if (Task_CheckScore.RecoverMissingMission())
+                return;
+
             if (!Svc.Condition[ConditionFlag.Gathering])
                 ResetCollectableWatchdog();
 

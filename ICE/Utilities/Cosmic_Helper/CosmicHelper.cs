@@ -39,7 +39,7 @@ public static unsafe partial class CosmicHelper
     public static readonly int MinimumLevel = 10;
     public static readonly int MaximumLevel = Player.MaxLevel;
 
-    public const int DefaultRelicStageTarget = 9;
+    public const int DefaultRelicStageTarget = 14;
 
     public static bool IsRelicAtMaxStage(WKSResearchModule* research, byte toolClassId)
     {

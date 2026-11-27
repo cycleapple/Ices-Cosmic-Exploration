@@ -22,6 +22,9 @@ namespace ICE.Scheduler.Tasks
 
         public static void Enqueue()
         {
+            if (Task_CheckScore.RecoverMissingMission())
+                return;
+
             Task_CheckScore.Enqueue();
             P.TaskManager.Enqueue(() => CheckMaterials(), "Checking status for dual craft missions", Utils.TaskConfig);
         }
