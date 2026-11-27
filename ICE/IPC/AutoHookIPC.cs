@@ -46,6 +46,7 @@ namespace ICE.IPC
 
         public void Ah_State(bool state)
         {
+            if (Utils.HasPlugin("MissFisher") || !Installed) return;
             bool stateEnabled = GetPluginState();
             bool autoStartEnabled = GetAutoStartFishing();
 

@@ -42,6 +42,7 @@ namespace ICE.Scheduler.Tasks
 
         private static unsafe bool? FishCheckV2()
         {
+            if (Task_CheckScore.RecoverMissingMission()) return true;
             string handle = "Fishing Task: State Check";
             if (Svc.Condition[ConditionFlag.Fishing])
             {
@@ -111,6 +112,8 @@ namespace ICE.Scheduler.Tasks
                     P.AutoHook.Ah_State(false);
                     return true;
                 }
+
+                if (!CosmicFishingBait.EnsureEquipped()) return false;
 
                 if (CosmicHelper.CurrentMissionInfo.Attributes.HasFlag(MissionAttributes.Collectables) && !PlayerHelper.HasStatusId(805))
                 {
@@ -197,6 +200,7 @@ namespace ICE.Scheduler.Tasks
 
         private static unsafe bool? FishingCheck()
         {
+            if (Task_CheckScore.RecoverMissingMission()) return true;
             if (_fishingDebug == null)
             {
                 _fishingDebug = new FishingDebug();
@@ -225,7 +229,7 @@ namespace ICE.Scheduler.Tasks
                         {
                             if (PlayerHelper.GetItemCount(baitId, out var count) && count > 0)
                             {
-                                P.AutoHook.SwapBaitById(baitId);
+                                CosmicFishingBait.EnsureEquipped();
                                 IceLogging.Debug($"Telling it to equip bait ID: {baitId}", handle);
                                 return false;
                             }
@@ -306,7 +310,7 @@ namespace ICE.Scheduler.Tasks
                 {
                     IceLogging.Debug("Telling it to start fishing", handle);
                     // ActionManager.Instance()->UseAction(ActionType.Action, 289);
-                    Svc.Commands.ProcessCommand("/ahstart");
+                    ActionManager.Instance()->UseAction(ActionType.Action, 289);
                 }
                 else if (EzThrottler.Throttle("Adding counter for bait not equipped"))
                 {
@@ -320,7 +324,7 @@ namespace ICE.Scheduler.Tasks
                             {
                                 if (PlayerHelper.GetItemCount(baitId, out var count) && count > 0)
                                 {
-                                    P.AutoHook.SwapBaitById(baitId);
+                                    CosmicFishingBait.EnsureEquipped();
                                     IceLogging.Debug($"Telling it to equip bait ID: {baitId}", handle);
                                     return false;
                                 }
@@ -344,6 +348,7 @@ namespace ICE.Scheduler.Tasks
         private static int collectableCounter = 0;
         private static unsafe bool? FinishFishing()
         {
+            if (Task_CheckScore.RecoverMissingMission()) return true;
             if (!Svc.Condition[ConditionFlag.Fishing])
             {
                 IceLogging.Info("We're done fishing, time to go back to the score check", "[Fishing: Finished]");

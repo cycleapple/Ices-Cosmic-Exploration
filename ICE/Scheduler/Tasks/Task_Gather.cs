@@ -987,7 +987,7 @@ namespace ICE.Scheduler.Tasks
 
             if (!PlayerHelper.CustomIsBusy)
             {
-                IceLogging.Debug("Cordial Checkers", tag);
+                if (EzThrottler.Throttle("Cordial check diagnostic", 5000)) IceLogging.Debug("Cordial Checkers", tag);
                 if (C.AutoCordial)
                 {
                     if (C.CordialMinRank > 0 && GetCurrentMissionRank() < C.CordialMinRank)

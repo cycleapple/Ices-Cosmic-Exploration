@@ -11,8 +11,18 @@ namespace ICE.Scheduler.Tasks
 {
     internal static class Task_CheckScore
     {
+        internal static bool RecoverMissingMission()
+        {
+            if (CosmicHelper.CurrentLunarMission != 0) return false;
+            IceLogging.Info("任務已結束，離開分數檢查並處理後續任務。", "Mission Lifecycle");
+            P.TaskManager.Tasks.Clear();
+            SchedulerMain.State = IceState.TurninMission;
+            return true;
+        }
+
         public static void Enqueue()
         {
+            if (RecoverMissingMission()) return;
             var Id = CosmicHelper.CurrentLunarMission;
             var mission = CosmicHelper.SheetMissionDict[Id];
 
@@ -49,6 +59,7 @@ namespace ICE.Scheduler.Tasks
 
         public static unsafe bool? Fish()
         {
+            if (RecoverMissingMission()) return true;
             string tag = "[Task_Check Score: Fish]";
             var currentMission = CosmicHelper.CurrentLunarMission;
 
@@ -187,6 +198,12 @@ namespace ICE.Scheduler.Tasks
             }
             else if (GenericHelpers.TryGetAddonMaster<WKSHud>(out var moonHud) && moonHud.IsAddonReady)
             {
+                if (Svc.Condition[ConditionFlag.Gathering])
+                {
+                    if (!Svc.Condition[ConditionFlag.Fishing] && !Svc.Condition[ConditionFlag.ExecutingGatheringAction]
+                        && EzThrottler.Throttle("Put away rod for mission HUD", 1000)) Task_DualClass.StopFishing();
+                    return false;
+                }
                 if (EzThrottler.Throttle("Opening the moon hud", 1000))
                 {
                     moonHud.Mission();
@@ -198,6 +215,7 @@ namespace ICE.Scheduler.Tasks
         }
         public static bool? Craft_V2()
         {
+            if (RecoverMissingMission()) return true;
             string tag = "[Check Score: Craft]";
 
             var currentScore = CosmicHandler.GetScore();
@@ -336,6 +354,7 @@ namespace ICE.Scheduler.Tasks
         }
         public static bool? Gather_V2()
         {
+            if (RecoverMissingMission()) return true;
             string tag = "[Check Score: Gather]";
 
             var currentScore = CosmicHandler.GetScore();
@@ -464,6 +483,7 @@ namespace ICE.Scheduler.Tasks
         }
         public static unsafe bool? DualClass()
         {
+            if (RecoverMissingMission()) return true;
             string tag = "Score Check: Dual Class";
 
             if (GenericHelpers.TryGetAddonMaster<WKSMissionInfomation>(out var missionInfo) && missionInfo.IsAddonReady)
