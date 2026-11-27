@@ -18,6 +18,18 @@ int checks = 0;
 void Check(bool value, string why) { checks++; if (!value) throw new Exception(why); }
 Check(ice.GetReferencedAssemblies().Single(x => x.Name == "Dalamud").Version!.Major == 13, "Not API13");
 Check(ice.GetName().Name == "ICECandidate", "Candidate would replace stable assembly identity");
+// Exercise the helpers in the packaged assemblies as well as the isolated policy tests.
+var scorePolicy = ice.GetType("ICE.Compat.MissionScorePolicy", true)!.GetMethod("Classify")!;
+Check(scorePolicy.Invoke(null, new object?[]{(uint)500,(uint)100,(uint)200,(uint)500,true})!.ToString()=="Gold", "Compiled exact-gold classification");
+Check(scorePolicy.Invoke(null, new object?[]{(uint)499,(uint)100,(uint)200,(uint)500,true})!.ToString()=="Silver", "Compiled below-gold classification");
+Check(scorePolicy.Invoke(null, new object?[]{null,(uint)100,(uint)200,(uint)500,true})!.ToString()=="None", "Missing HUD became a medal");
+var repairPolicy = ice.GetType("ICE.Compat.RepairEligibility", true)!.GetMethod("NeedsRepair")!;
+Check(!(bool)repairPolicy.Invoke(null,new object[]{(uint)0,true,(uint)0,50f})!,"Compiled empty-slot repair eligibility");
+Check((bool)repairPolicy.Invoke(null,new object[]{(uint)1,true,(uint)11100,50f})!,"Compiled 37-percent repair eligibility");
+var ecommons = AssemblyLoadContext.Default.LoadFromAssemblyPath(Path.Combine(plugin,"ECommons.dll"));
+var parser = ecommons.GetType("ECommons.UIHelpers.AddonMasterImplementations.MissionScoreText",true)!.GetMethod("Parse")!;
+Check(parser.Invoke(null,new object[]{"350 / 500"})==null,"Compiled parser concatenated a ratio");
+Check((uint)parser.Invoke(null,new object[]{"1,500"})! ==1500,"Compiled grouped-score parser");
 var identity = ice.GetType("ICE.Compat.CandidateIdentity", true)!;
 Check((string)identity.GetField("Command")!.GetRawConstantValue()! == "/icecandidate", "Candidate command conflicts with stable");
 Check((string)identity.GetField("InternalName")!.GetRawConstantValue()! == "ICECandidate", "Candidate identity conflicts with stable");

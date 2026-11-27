@@ -273,15 +273,10 @@ namespace ICE.Utilities
             else
                 return CosmicHelper.Status.None;
         }
-        internal static unsafe uint GetScore()
+        internal static uint GetScore()
         {
-            var manager = WKSManager.Instance();
-            if (manager == null) return 0;
-            if (manager->MissionModule == null) return 0;
-
-            // Reinterpret the CurrentMission field as our custom overlay
-            var mission = TcWks.CurrentMission(manager)   /* porting-note(api13): see ICE/Compat/TcWksManagerState.cs */;
-            return mission->EffectiveScore;
+            return GenericHelpers.TryGetAddonMaster<WKSMissionInfomation>("WKSMissionInfomation", out var info) && info.IsAddonReady
+                ? info.CurrentScore ?? 0 : 0;
         }
 
     }

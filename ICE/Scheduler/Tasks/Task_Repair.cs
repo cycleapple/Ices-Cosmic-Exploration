@@ -1,4 +1,7 @@
-﻿using Dalamud.Game.ClientState.Conditions;
+using ECommons.Automation.UIInput;
+using FFXIVClientStructs.FFXIV.Client.UI;
+using ICE.Compat;
+using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.Types;
 using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game;
@@ -10,14 +13,18 @@ namespace ICE.Scheduler.Tasks
 {
     internal static class Task_Repair
     {
+        private static readonly RepairSweepTracker Sweep = new();
+        public static void ResetProgress() => Sweep.Reset();
+
         public static void Enqueue()
         {
+            ResetProgress();
             if (PlayerHelper.AnyNeedsRepair(Char_Info.RepairPercent) && Char_Info.RepairAllGear)
             {
                 P.TaskManager.EnqueueMulti
                 (
                     new(OpenSelfRepair, "Opening the self repair window"),
-                    new(SelfRepair_All, "Executing the self repair"),
+                    new(SelfRepair_All, "Executing the self repair", Utils.TaskConfig),
                     new(CloseRepair, "Closing Self Repair"),
                     new(() => SchedulerMain.State = IceState.GrabMission)
                 );
@@ -29,7 +36,7 @@ namespace ICE.Scheduler.Tasks
                 P.TaskManager.EnqueueMulti
                 (
                     new(OpenSelfRepair, "Opening the self repair window"),
-                    new(SelfRepair, "Executing the self repair"),
+                    new(SelfRepair, "Executing the self repair", Utils.TaskConfig),
                     new(CloseRepair, "Closing Self Repair"),
                     new(() =>  SchedulerMain.State = IceState.GrabMission)
                 );
@@ -140,27 +147,7 @@ namespace ICE.Scheduler.Tasks
             }
             else if (GenericHelpers.TryGetAddonMaster<Repair>("Repair", out var repair) && repair.IsAddonReady)
             {
-                if (PlayerHelper.NeedsRepair(repairAmount) || (PlayerHelper.AnyNeedsRepair(99.9f) && Char_Info.RepairAllGear))
-                {
-                    if (GenericHelpers.TryGetAddonMaster<SelectYesno>("SelectYesno", out var Yesno) && Yesno.IsAddonReady)
-                    {
-                        if (FrameThrottler.Throttle("Saying yes to the gil"))
-                            Yesno.Yes();
-                    }
-                    else if (EzThrottler.Throttle("Sending Repair Request", 2000))
-                    {
-                        if (C.RepairAllGear)
-                        {
-                            IceLogging.Debug("Firing off callbacl to repair all", "Self Repair Task: All");
-                            GenericHandlers.FireCallback("Repair", true, 1);
-                        }
-                        else
-                        {
-                            IceLogging.Debug("Repair Callback", "[Self Repair Task]");
-                            repair.RepairAll();
-                        }
-                    }
-                }
+                return RepairVisibleWindow(Char_Info.RepairAllGear, true);
             }
             else if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("SelectIconString", out var iconString) && GenericHelpers.IsAddonReady(iconString))
             {
@@ -200,87 +187,65 @@ namespace ICE.Scheduler.Tasks
                 ActionManager.Instance()->UseAction(ActionType.GeneralAction, 6);
             return false;
         }
-        public unsafe static bool? SelfRepair()
+        public static bool? SelfRepair() => RepairVisibleWindow(false, false);
+        public static bool? SelfRepair_All() => RepairVisibleWindow(true, false);
+
+        private static unsafe bool? RepairVisibleWindow(bool all, bool vendor)
         {
-            if (!PlayerHelper.NeedsRepair(Char_Info.RepairPercent))
+            if (Svc.Condition[ConditionFlag.Occupied39]) return false;
+            bool needsRepair = all ? PlayerHelper.AnyNeedsRepair(Char_Info.RepairPercent)
+                                   : PlayerHelper.NeedsRepair(Char_Info.RepairPercent);
+            if (!needsRepair) return true;
+            if (Svc.Condition[ConditionFlag.Mounted])
             {
-                return true;
-            }
-            else if (Svc.Condition[ConditionFlag.Mounted])
-            {
-                if (EzThrottler.Throttle("Attempting to dismount for repairing"))
-                {
-                    IceLogging.Debug("Dismounting for self repair", "[Self Repair Task]");
+                if (EzThrottler.Throttle("Dismount for repair", 1000))
                     ActionManager.Instance()->UseAction(ActionType.GeneralAction, 9);
-                }
+                return false;
             }
-            else if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("SelectYesno", out var addon) && GenericHelpers.IsAddonReady(addon))
+            if (!GenericHelpers.TryGetAddonMaster<Repair>("Repair", out var repair) || !repair.IsAddonReady)
+                return false;
+            if (GenericHelpers.TryGetAddonMaster<SelectYesno>("SelectYesno", out var yesno) && yesno.IsAddonReady)
             {
-                if (FrameThrottler.Throttle("SelectYesnoThrottle", 300))
-                {
-                    IceLogging.Debug("SelectYesno Callback", "Self Repair Task");
-                    ECommons.Automation.Callback.Fire(addon, true, 0);
-                }
+                if (EzThrottler.Throttle("Confirm repair", 1000)) yesno.Yes();
+                return false;
             }
-            else if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("Repair", out var addon2) && GenericHelpers.IsAddonReady(addon2))
+            var stalled = Sweep.IsStalled(PlayerHelper.RepairConditionFingerprint(), Environment.TickCount64);
+            var button = repair.Addon->RepairAllButton;
+            if (stalled || button != null && !button->IsEnabled)
             {
-                if (FrameThrottler.Throttle("Firing off repair request", 300))
+                if (all)
                 {
-                    IceLogging.Debug("Repair Callback", "[Self Repair Task]");
-                    ECommons.Automation.Callback.Fire(addon2, true, 0);
+                    var node = repair.Addon->AtkUnitBase.GetNodeById(14);
+                    var next = node == null ? null : node->GetAsAtkComponentButton();
+                    if (next != null && next->IsEnabled && EzThrottler.Throttle("Advance repair category", 1000))
+                    {
+                        if (Sweep.Advance())
+                        {
+                            next->ClickAddonButton((AtkComponentBase*)repair.Addon, 2);
+                            IceLogging.Debug("Moving to next repair category", "Repair");
+                            return false;
+                        }
+                        return StopFailedRepair(vendor);
+                    }
                 }
+                if (stalled) return StopFailedRepair(vendor);
+                return false;
+            }
+            if (EzThrottler.Throttle("Repair visible category", 1000))
+            {
+                repair.RepairAll();
+                IceLogging.Debug("Repairing current equipment category", "Repair");
             }
             return false;
         }
-        public unsafe static bool? SelfRepair_All()
+
+        private static bool? StopFailedRepair(bool vendor)
         {
-            string tag = "Self Repair: All";
-
-            if (!PlayerHelper.AnyNeedsRepair(Char_Info.RepairPercent))
-            {
-                if (Svc.Condition[ConditionFlag.Occupied39])
-                {
-                    if (EzThrottler.Throttle("Waiting for repair"))
-                        IceLogging.Verbose("Waiting for us to finish repairs", tag);
-
-                    return false;
-                }
-                else
-                {
-                    IceLogging.Debug("All gear has been repaired, continuing", tag);
-                    return true;
-                }
-            }
-            else if (Svc.Condition[ConditionFlag.Mounted])
-            {
-                if (EzThrottler.Throttle("Attempting to dismount for repairing"))
-                {
-                    IceLogging.Debug("Dismounting for self repair", tag);
-                    ActionManager.Instance()->UseAction(ActionType.GeneralAction, 9);
-                }
-            }
-            else if (Svc.Condition[ConditionFlag.Occupied39])
-            {
-                if (EzThrottler.Throttle("Waiting for repair"))
-                    IceLogging.Verbose("Waiting for us to finish repairs", tag);
-            }
-            else if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("SelectYesno", out var addon) && GenericHelpers.IsAddonReady(addon))
-            {
-                if (FrameThrottler.Throttle("SelectYesnoThrottle", 300))
-                {
-                    IceLogging.Debug("SelectYesno Callback", tag);
-                    ECommons.Automation.Callback.Fire(addon, true, 0);
-                }
-            }
-            else if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("Repair", out var addon2) && GenericHelpers.IsAddonReady(addon2))
-            {
-                if (FrameThrottler.Throttle("Firing off repair request", 300))
-                {
-                    IceLogging.Debug("Repair Callback", tag);
-                    ECommons.Automation.Callback.Fire(addon2, true, 1);
-                }
-            }
-            return false;
+            IceLogging.ChatInfo(vendor
+                ? "修理後仍有裝備低於門檻，已停止。請確認金幣及修理視窗。"
+                : "已檢查修理分類，但仍有裝備低於門檻，已停止。請確認對應製作職業等級及暗物質。", "Repair");
+            SchedulerMain.DisablePlugin();
+            return true;
         }
         public unsafe static bool? CloseRepair()
         {
@@ -291,7 +256,7 @@ namespace ICE.Scheduler.Tasks
                     ECommons.Automation.Callback.Fire(Yesno.Base, true, -1);
                 }
             }
-            // else if (GenericHelpers.TryGetAddonMaster<>)
+
             else if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("Repair", out var repairWindow))
             {
                 if (GenericHelpers.IsAddonReady(repairWindow))
@@ -307,6 +272,7 @@ namespace ICE.Scheduler.Tasks
                     return true;
                 }
             }
+            else return true;
 
             return false;
         }

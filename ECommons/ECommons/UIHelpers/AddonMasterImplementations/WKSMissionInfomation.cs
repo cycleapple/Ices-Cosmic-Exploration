@@ -26,71 +26,17 @@ public partial class AddonMaster
             }
         }
 
-        public uint? CurrentScore
+        private uint? ReadScore(int index)
         {
-            get
-            {
-                if(Addon->AtkValuesCount < 2 || !Addon->AtkValues[2].IsString())
-                    return null;
-
-                var rawValue = MemoryHelper.ReadSeStringNullTerminated((nint)Addon->AtkValues[2].String.Value);
-                if(rawValue == null)
-                    return null;
-
-                if(uint.TryParse(rawValue.TextValue, NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out var result))
-                    return result;
-
-                var cleanedValue = System.Text.RegularExpressions.Regex.Replace(rawValue.TextValue, @"[^\d]", "");
-                if(uint.TryParse(cleanedValue, out result))
-                    return result;
-
+            if (Addon == null || Addon->AtkValues == null || Addon->AtkValuesCount <= index
+                || !Addon->AtkValues[index].IsString() || Addon->AtkValues[index].String.Value == null)
                 return null;
-            }
+            return MissionScoreText.Parse(MemoryHelper.ReadSeStringNullTerminated((nint)Addon->AtkValues[index].String.Value)?.GetText());
         }
 
-        public uint? SilverScore
-        {
-            get
-            {
-                if(Addon->AtkValuesCount < 2 || !Addon->AtkValues[3].IsString())
-                    return null;
-
-                var rawValue = MemoryHelper.ReadSeStringNullTerminated((nint)Addon->AtkValues[3].String.Value);
-                if(rawValue == null)
-                    return null;
-
-                if(uint.TryParse(rawValue.TextValue, NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out var result))
-                    return result;
-
-                var cleanedValue = System.Text.RegularExpressions.Regex.Replace(rawValue.TextValue, @"[^\d]", "");
-                if(uint.TryParse(cleanedValue, out result))
-                    return result;
-
-                return null;
-            }
-        }
-
-        public uint? GoldScore
-        {
-            get
-            {
-                if(Addon->AtkValuesCount < 2 || !Addon->AtkValues[4].IsString())
-                    return null;
-
-                var rawValue = MemoryHelper.ReadSeStringNullTerminated((nint)Addon->AtkValues[4].String.Value);
-                if(rawValue == null)
-                    return null;
-
-                if(uint.TryParse(rawValue.TextValue, NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out var result))
-                    return result;
-
-                var cleanedValue = System.Text.RegularExpressions.Regex.Replace(rawValue.TextValue, @"[^\d]", "");
-                if(uint.TryParse(cleanedValue, out result))
-                    return result;
-
-                return null;
-            }
-        }
+        public uint? CurrentScore => ReadScore(2);
+        public uint? SilverScore => ReadScore(3);
+        public uint? GoldScore => ReadScore(4);
 
         public uint? CriticalScore
         {

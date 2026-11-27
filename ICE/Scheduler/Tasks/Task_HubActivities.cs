@@ -1,4 +1,4 @@
-﻿using ECommons.GameHelpers;
+using ECommons.GameHelpers;
 using ICE.Utilities.Cosmic_Helper;
 using System;
 using System.Collections.Generic;
@@ -27,7 +27,8 @@ namespace ICE.Scheduler
                 (
                     new(() => IceLogging.Info("Starting repair task at the npc", "Task_HubActivities")),
                     new(Task_Repair.Repair_PathTo, "Pathing to the repair NPC"),
-                    new(Task_Repair.RepairAtNpc, "Repairing at the NPC Vendor"),
+                    new(Task_Repair.ResetProgress, "Resetting repair progress"),
+                    new(Task_Repair.RepairAtNpc, "Repairing at the NPC Vendor", Utils.TaskConfig),
                     new(Task_Repair.CloseRepair, "Closing the repair window")
                 );
             }

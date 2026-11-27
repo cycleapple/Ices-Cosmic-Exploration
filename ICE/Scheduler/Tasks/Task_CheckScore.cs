@@ -534,29 +534,22 @@ namespace ICE.Scheduler.Tasks
         }
         public static unsafe MissionRank CurrentRank()
         {
-            var managerPtr = WKSManager.Instance();
-            if (managerPtr == null) return MissionRank.None;
-
-            var raw = TcWks.CurrentMission(managerPtr)->Rank;
-
-            // porting-note(TC game 7.20): callers compare MissionRank ordinally, so an out-of-range
-            // read is worse than useless -- it reads as "better than None" and Gather_V2 clears its
-            // bronze gate, reports the mission after one node, and the game silently refuses. That
-            // is what a wrong offset cost on 2026-08-04; the offset is now pinned in TcMissionState,
-            // so this is a tripwire rather than a workaround. If it ever fires, the record moved
-            // again and the dump says where.
-            if (raw is not (MissionRank.None or MissionRank.Bronze or MissionRank.Silver
-                            or MissionRank.Gold or MissionRank.Failed))
+            if (!GenericHelpers.TryGetAddonMaster<WKSMissionInfomation>("WKSMissionInfomation", out var info) || !info.IsAddonReady)
             {
-                if (EzThrottler.Throttle("Bad rank sample", 5000))
-                {
-                    IceLogging.Warning($"rank read out of range ({(int)raw}) -- treating as None; the current-mission record has moved on this game version", "[TcWks]");
-                    TcWks.LogRecordSample(managerPtr, $"bad rank {(int)raw}");
-                }
+                if (EzThrottler.Throttle("Open mission score HUD", 1000)
+                    && GenericHelpers.TryGetAddonMaster<WKSHud>("WKSHud", out var hud) && hud.IsAddonReady)
+                    hud.Mission();
                 return MissionRank.None;
             }
-
-            return raw;
+            var missionId = CosmicHelper.CurrentLunarMission;
+            if (!CosmicHelper.SheetMissionDict.TryGetValue(missionId, out var mission)) return MissionRank.None;
+            var canReport = info.ReportResultsButton != null && info.ReportResultsButton->IsEnabled;
+            var rank = MissionScorePolicy.Classify(info.CurrentScore, mission.BronzeScore,
+                info.SilverScore is > 0 ? info.SilverScore : mission.SilverScore,
+                info.GoldScore is > 0 ? info.GoldScore : mission.GoldScore, canReport);
+            if (EzThrottler.Throttle("Mission HUD score diagnostics", 2000))
+                IceLogging.Debug($"Mission {missionId}: HUD score={info.CurrentScore}, silver={info.SilverScore}, gold={info.GoldScore}, rank={rank}, goal={C.MissionConfig.GetValueOrDefault(missionId)?.TurninGoal}", "[Score Check]");
+            return rank == MissionRank.None && info.CurrentScore.HasValue && CosmicHandler.IsMissionTimedOut() ? MissionRank.Failed : rank;
         }
     }
 }

@@ -211,6 +211,12 @@ namespace ICE.Scheduler.Tasks
                     }
                     else
                     {
+                        // A cleared gather task does not cancel an in-flight navmesh route.
+                        if (P.Navmesh.Installed && P.Navmesh.IsRunning())
+                        {
+                            if (EzThrottler.Throttle("Stop gather route for turn-in", 1000)) P.Navmesh.Stop();
+                            return false;
+                        }
                         // porting-note(TC): every guard below returns false with no logging, so a
                         // turn-in that never fires is completely silent in dalamud.log. One throttled
                         // line naming the holding guard turns that into a one-shot diagnosis.
@@ -282,28 +288,13 @@ namespace ICE.Scheduler.Tasks
         }
         private static unsafe void ReportMission()
         {
-            if (EzThrottler.Throttle("Previous Score Set"))
-                PreviousScore = ScoreCheck();
-
-            var WKSInstance = WKSManager.Instance();
-
-            // porting-note(TC): ReportMission is a CS [MemberFunction] that returns nothing and gives
-            // no failure signal, so a game-side refusal is indistinguishable from success from here.
-            // Snapshot the inputs the game validates against, so a report that never lands says why.
-            if (EzThrottler.Throttle("Report Mission diag", 2000))
+            if (GenericHelpers.TryGetAddonMaster<WKSMissionInfomation>("WKSMissionInfomation", out var info) && info.IsAddonReady)
             {
-                var missionInfoOpen = GenericHelpers.TryGetAddonMaster<WKSMissionInfomation>("WKSMissionInfomation", out _);
-                IceLogging.Info(
-                    $"calling ReportMission -- mission={CosmicHelper.CurrentLunarMission} rank={Task_CheckScore.CurrentRank()} " +
-                    $"score={PreviousScore} turninState={Mission_Settings.TurninState} nodeTotal={Mission_Settings.nodeTotal} " +
-                    $"WKSMissionInfomation={missionInfoOpen} wksManager={(WKSInstance == null ? "null" : "ok")} " +
-                    $"missionModule={(WKSInstance == null || WKSInstance->MissionModule == null ? "null" : "ok")}", "[Mission Turnin]");
+                PreviousScore = ScoreCheck();
+                info.Report();
             }
-
-            if (WKSInstance == null || WKSInstance->MissionModule == null)
-                return;
-
-            WKSInstance->MissionModule->ReportMission();
+            else if (GenericHelpers.TryGetAddonMaster<WKSHud>("WKSHud", out var hud) && hud.IsAddonReady)
+                hud.Mission();
         }
         public static bool? JobSwapCheck()
         {

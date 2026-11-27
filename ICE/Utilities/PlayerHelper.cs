@@ -120,14 +120,14 @@ public class PlayerHelper
         for (var i = 0; i < equipped->Size; i++)
         {
             var item = equipped->GetInventorySlot(i);
-            if (item == null)
+            if (item == null || item->ItemId == 0)
                 continue;
 
             var itemCondition = Convert.ToInt32(Convert.ToDouble(item->Condition) / 30000.0 * 100.0);
 
-            if (itemCondition <= below)
+            if (RepairEligibility.NeedsRepair(item->ItemId, Svc.Data.GetExcelSheet<Item>().GetRowOrDefault(item->ItemId)?.ClassJobRepair.RowId > 0, item->Condition, below))
             {
-                IceLogging.Debug($"Found an item that needed repair. Condition: {itemCondition}");
+                if (EzThrottler.Throttle("Repair needs diagnostic", 2000)) IceLogging.Debug($"Found an item that needed repair. Condition: {itemCondition}");
                 return true;
             }
         }
@@ -180,14 +180,14 @@ public class PlayerHelper
             for (var i = 0; i < inventory->Size; i++)
             {
                 var item = inventory->GetInventorySlot(i);
-                if (item == null)
+                if (item == null || item->ItemId == 0)
                     continue;
 
                 var itemCondition = Convert.ToInt32(Convert.ToDouble(item->Condition) / 30000.0 * 100.0);
 
-                if (itemCondition <= below)
+                if (RepairEligibility.NeedsRepair(item->ItemId, Svc.Data.GetExcelSheet<Item>().GetRowOrDefault(item->ItemId)?.ClassJobRepair.RowId > 0, item->Condition, below))
                 {
-                    IceLogging.Debug($"Found an item that needed repair. Condition: {itemCondition}", tag);
+                    if (EzThrottler.Throttle("All repair needs diagnostic", 2000)) IceLogging.Debug($"Found an item that needed repair. Condition: {itemCondition}", tag);
                     return true;
                 }
             }
@@ -196,6 +196,28 @@ public class PlayerHelper
 
         IceLogging.Debug("Repair all check has concluded, no item can be repaired", tag);
         return false;
+    }
+
+    public static unsafe ulong RepairConditionFingerprint()
+    {
+        ulong value = 1469598103934665603;
+        var manager = InventoryManager.Instance();
+        if (manager == null) return value;
+        var inventories = new[]{InventoryType.EquippedItems, InventoryType.ArmoryMainHand, InventoryType.ArmoryOffHand,
+            InventoryType.ArmoryHead, InventoryType.ArmoryBody, InventoryType.ArmoryHands, InventoryType.ArmoryLegs,
+            InventoryType.ArmoryFeets, InventoryType.ArmoryEar, InventoryType.ArmoryNeck, InventoryType.ArmoryWrist, InventoryType.ArmoryRings};
+        foreach (var type in inventories)
+        {
+            var inventory = manager->GetInventoryContainer(type);
+            if (inventory == null || !inventory->IsLoaded) continue;
+            for (var i = 0; i < inventory->Size; i++)
+            {
+                var item = inventory->GetInventorySlot(i);
+                if (item != null && item->ItemId != 0)
+                    value = unchecked((value ^ ((ulong)item->ItemId << 16 | item->Condition)) * 1099511628211);
+            }
+        }
+        return value;
     }
 
     public class ManipInfo
