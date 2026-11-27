@@ -3,7 +3,7 @@
   "Author": "Ice",
   "Name": "Ice's Cosmic Exploration（新版測試版）",
   "Punchline": "宇宙探索新版基底測試版，與正式版分開安裝。",
-  "Description": "以新版 1.0 基底移植至 API13，含核心繁中及舊設定匯入。1.0.0.8 修正回報後不接任務、任務 ID 0 錯誤及 MF 換餌依賴；保留獎牌判定與修理修正。使用 /icecandidate，執行前停用正式版 ICE。尚未完成遊戲內驗證。",
+  "Description": "以新版 1.0 基底移植至 API13，含核心繁中及舊設定匯入。1.0.0.9 補上工具培養宇宙計畫的研究交付判定、API13 分析階段及交付職業修正。保留 MF 換餌與任務接續修正。使用 /icecandidate，執行前停用正式版 ICE。尚未完成遊戲內驗證。",
   "ApplicableVersion": "any",
   "Tags": [
     "Gatherers"

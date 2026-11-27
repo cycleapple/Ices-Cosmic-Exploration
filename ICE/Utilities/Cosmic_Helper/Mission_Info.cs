@@ -177,11 +177,9 @@ public static partial class CosmicHelper
 
             var score = wks->Scores[arrayIndex];
             var currentStage = researchModule->CurrentStages[arrayIndex];
-            // Cap next stage by current hub (Auxesia allows higher than old flat 17).
-            var maxStage = CosmicMoonRegistry.GetMaxRelicStage((uint)Svc.ClientState.TerritoryType);
-            var nextStage = currentStage >= maxStage
-                ? maxStage
-                : (byte)(currentStage + 1);
+            // GetNeededAnalysis is authoritative on API13, as in the stable version.
+            // A positive requirement means an analysis is pending, even at a nominal moon cap.
+            var nextStage = currentStage;
 
             // Mastery Score. Because ofc it's stored as a fucking item
             var masteryScore = 0;
@@ -215,6 +213,8 @@ public static partial class CosmicHelper
                     Max = researchModuleFuncs->GetMaxAnalysis(toolClassId, type),
                 };
             }
+
+            entry.Stage_Next = RelicTurninPolicy.NextStage(currentStage, entry.CurrentExp.Values.Select(x => x.Needed).ToArray());
 
             cosmicClassInfo[jobId] = entry;
         }

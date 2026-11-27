@@ -1,4 +1,4 @@
-﻿using ECommons.GameHelpers;
+using ECommons.GameHelpers;
 using ICE.Utilities.Cosmic_Helper;
 using System;
 using System.Collections.Generic;
@@ -28,7 +28,7 @@ namespace ICE.Scheduler.Tasks
         public static bool? RegisterJob()
         {
             IceLogging.Verbose("Registering what job to turn in on");
-            TurninJob = (uint)Player.Job;
+            TurninJob = Mission_Settings.SelectedJob is >= 8 and <= 18 ? Mission_Settings.SelectedJob : (uint)Player.Job;
 
             return true;
         }
@@ -54,12 +54,12 @@ namespace ICE.Scheduler.Tasks
                     return true;
                 }
             }
-            else if ((uint)Player.Job != Mission_Settings.SelectedJob)
+            else if ((uint)Player.Job != TurninJob)
             {
                 if (EzThrottler.Throttle("Swapping jobs", 1000))
                 {
                     IceLogging.Verbose($"Telling the game to swap you to jobID: {Mission_Settings.SelectedJob}");
-                    GearsetHandler.TaskClassChange((Job)Mission_Settings.SelectedJob);
+                    GearsetHandler.TaskClassChange((Job)TurninJob);
                 }
                 return false;
             }
@@ -167,6 +167,12 @@ namespace ICE.Scheduler.Tasks
 
             if (EzThrottler.Throttle("Throttle job unlock message", 1000))
                 IceLogging.Debug($"Amount of jobs unlocked: {jobUnlocked.Where(x => x.Value).Count()}");
+            if (!jobUnlocked.TryGetValue(TurninJob, out var unlocked) || !unlocked)
+            {
+                IceLogging.Error($"無法交付研究資料：職業 {TurninJob} 尚未解鎖。", "Relic Turnin");
+                SchedulerMain.DisablePlugin();
+                return true;
+            }
             uint selectedEntry = 0;
             foreach (var jobId in jobUnlocked)
             {
@@ -185,6 +191,11 @@ namespace ICE.Scheduler.Tasks
                 if (EzThrottler.Throttle($"Selecting jobId: {TurninJob}"))
                 {
                     IceLogging.Debug($"Selecting Entry: {selectedEntry} for job: {TurninJob} to turnin relic");
+                    if (selectedEntry >= selectIconString.Entries.Length)
+                    {
+                        IceLogging.Warning($"研究交付選單尚未包含職業 {TurninJob}（項目數 {selectIconString.Entries.Length}），等待更新。", "Relic Turnin");
+                        return false;
+                    }
                     selectIconString.Entries[selectedEntry].Select();
                 }
             }

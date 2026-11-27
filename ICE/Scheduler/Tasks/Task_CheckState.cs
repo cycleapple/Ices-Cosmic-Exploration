@@ -1,4 +1,4 @@
-﻿using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Game.ClientState.Conditions;
 using ECommons.GameHelpers;
 using ICE.Sounds;
 using ICE.Utilities.Cosmic_Helper;
@@ -9,6 +9,7 @@ namespace ICE.Scheduler.Tasks
 {
     internal static class Task_CheckState
     {
+        private static int activeRelicGoalTarget;
         public static void Enqueue()
         {
 
@@ -43,6 +44,7 @@ namespace ICE.Scheduler.Tasks
 
             IceLogging.Verbose("We've started fresh from start (or atleast was in a state to start). So we're going to see where we need to go from here", tag);
 
+            activeRelicGoalTarget = 0;
             var currentMode = C.SelectedMode;
             var currentMissionId = CosmicHelper.CurrentLunarMission;
             if (CosmicHelper.CurrentLunarMission != 0)
@@ -503,6 +505,13 @@ namespace ICE.Scheduler.Tasks
                     };
                     IceLogging.Info($"Priority has been found to achieve: {goal}. Going to aim to complete this goal", tag);
                     IceLogging.Debug($"[Goal Check] {goal}: {progress} (achieved={achieved})", tag);
+                    activeRelicGoalTarget = goal switch
+                    {
+                        PlaylistOptions.SelectedRelicLv => entry.SelectedRelicLevel,
+                        PlaylistOptions.ToolMaxExp => int.MaxValue,
+                        _ when CosmicMoonRegistry.IsMaxRelicPlaylistGoal(goal) => CosmicMoonRegistry.GetMaxRelicGoal(goal),
+                        _ => 0,
+                    };
                     Mission_Settings.Mode = entry.SelectedMode;
                     Mission_Settings.SelectedJob = entry.SelectedJob;
                     P.TaskManager.Enqueue(() => HubActivityCheck(), "Checking for reason to go to hub");
@@ -607,40 +616,15 @@ namespace ICE.Scheduler.Tasks
             {
                 BuyItems = true;
             }
-            if (C.TurninRelic)
+            var relicJob = Mission_Settings.SelectedJob;
+            if (relicProgress.TryGetValue(relicJob, out var relicInfo))
             {
-                var jobId = Mission_Settings.SelectedJob;
-                var relicInfo = relicProgress[jobId];
-
-                bool isUpgradable = relicInfo.Stage_Current < relicInfo.Stage_Next;
-                IceLogging.Verbose("Reporting Relic Info Progress", tag);
-                IceLogging.Verbose($"Job: [{CosmicHelper.GetJobName(jobId)} | {jobId}]", tag);
-                IceLogging.Verbose($"Current Stage: [{relicInfo.Stage_Current}] | Next Stage [{relicInfo.Stage_Next}]");
-
-                if (isUpgradable)
-                {
-                    var totalExpCount = relicInfo.CurrentExp.Count();
-                    IceLogging.Verbose($"Total Exp Types: {relicInfo.CurrentExp.Count()}");
-                    if (totalExpCount != 0)
-                    {
-                        bool canTurnin = true;
-                        foreach (var exp in relicInfo.CurrentExp)
-                        {
-                            IceLogging.Verbose($"Kind [{exp.Key}] | Current: [{exp.Value.Current}] / Needed: [{exp.Value.Needed}] | Max: [{exp.Value.Max}]", tag);
-                            canTurnin &= exp.Value.Current >= exp.Value.Needed;
-                        }
-                        TurninRelic = isUpgradable && canTurnin;
-                        IceLogging.Verbose($"Are we expecting to turnin the relic? | [{TurninRelic}]", tag);
-                    }
-                    else
-                    {
-                        if (EzThrottler.Throttle("Force update exp"))
-                        {
-                            IceLogging.Verbose("We seem... to be missing the exp? Which is odd. So going to force an update?", tag);
-                        }
-                        return false;
-                    }
-                }
+                var samples = relicInfo.CurrentExp.Values.ToArray();
+                TurninRelic = RelicTurninPolicy.ShouldTurnin(relicInfo.Stage_Current, relicInfo.Stage_Next,
+                    samples.Select(x => x.Current).ToArray(), samples.Select(x => x.Needed).ToArray(),
+                    C.TurninRelic, activeRelicGoalTarget);
+                IceLogging.Info($"研究交付檢查：職業={relicJob}, 階段={relicInfo.Stage_Current}, 下一階段={relicInfo.Stage_Next}, 自動交付={C.TurninRelic}, 計畫目標={activeRelicGoalTarget}, 交付={TurninRelic}; "
+                    + string.Join(", ", relicInfo.CurrentExp.Select(x => $"{x.Key}:{x.Value.Current}/{x.Value.Needed}")), "Relic Turnin");
             }
 
             if (BuyDrones || GambaWheel || BuyItems || RepairVendor || TurninRelic)

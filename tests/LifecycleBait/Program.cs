@@ -49,7 +49,40 @@ Check(Select(999,47686)==47686,"Replace exhausted/unsuitable selected bait");
 Check(Select(0)==0,"No owned bait does not invent a bait");
 Check(Select(0,0,47686)==47686,"Ignore zero IDs");
 Check(Select(999,47686,999)==999,"Preserve non-first suitable bait");
-Console.WriteLine($"PASS: {checks} compiled lifecycle/bait checks for {ice.GetName().Name}");
+if (ice.GetType("ICE.Compat.RelicTurninPolicy") is { } relicPolicy)
+{
+ var selectedJob=settings.GetField("SelectedJob",BindingFlags.NonPublic|BindingFlags.Static)!;
+ selectedJob.SetValue(null,(uint)18);
+ var relicTask=ice.GetType("ICE.Scheduler.Tasks.Task_RelicTurnin",true)!;
+ Check((bool)relicTask.GetMethod("RegisterJob")!.Invoke(null,null)!,"Record tool target before job swap");
+ Check((uint)relicTask.GetField("TurninJob")!.GetValue(null)! ==18,"Turn in the selected fisher research, not a temporary battle job");
+ var next=relicPolicy.GetMethod("NextStage")!;
+ Check((int)next.Invoke(null,new object[]{2,new int[]{3450,3400,3250,2250,100}})! ==3,"API13 positive analysis needs define next stage");
+ Check((int)next.Invoke(null,new object[]{9,new int[]{3450}})! ==10,"Nominal moon cap cannot mask pending analysis");
+ Check((int)next.Invoke(null,new object[]{9,new int[]{0,0}})! ==9,"No pending analysis is a completed stage");
+ Check((int)next.Invoke(null,new object[]{0,Array.Empty<int>()})! ==0,"Unloaded data cannot invent another stage");
+ var decide=relicPolicy.GetMethod("ShouldTurnin")!;
+ bool Relic(int stage,int unlocked,int[] current,int[] needed,bool auto,int target)
+     =>(bool)decide.Invoke(null,new object[]{stage,unlocked,current,needed,auto,target})!;
+ int[] current=[3649,3424,3362,2424,100], needed=[3450,3400,3250,2250,100];
+ Check(Relic(2,3,current,needed,true,0),"Screenshot data meets analysis requirements before inventory cap");
+ Check(Relic(2,3,current,needed,false,14),"Agenda tool-stage goal must turn in without general auto toggle");
+ Check(Relic(2,3,current,needed,false,int.MaxValue),"Tool-exp goal advances unlocked stages");
+ Check(!Relic(2,3,current,needed,false,0),"Standard manual turn-in preference preserved");
+ Check(!Relic(2,3,current,needed,false,2),"Already reached agenda stage does not force another turn-in");
+ Check(!Relic(3,3,current,needed,true,14),"Unavailable next stage cannot be reported");
+ Check(!Relic(4,3,current,needed,true,14),"Stale unlocked stage is not an upgrade");
+ Check(!Relic(2,3,[3649,3424,3362,2249,100],needed,true,0),"One incomplete requirement must continue gathering");
+ Check(Relic(2,3,needed,needed,true,0),"Exact needed values suffice without max overflow");
+ Check(!Relic(2,3,[],[],true,14),"Unloaded analysis never appears complete");
+ Check(!Relic(2,3,[0,0],[0,0],true,14),"No positive requirements is not a turn-in");
+ Check(!Relic(2,3,[10],[10,10],true,14),"Incomplete snapshot rejected");
+ Check(!Relic(2,3,[-1],[10],true,14),"Negative snapshot rejected");
+ Check(!Relic(2,3,[10],[-1],true,14),"Invalid requirement rejected");
+ Check(Relic(2,3,[10,0],[10,0],false,3),"Unused analysis types do not block a real requirement");
+ Check(!Relic(-1,3,current,needed,true,14),"Invalid stage rejected");
+}
+Console.WriteLine($"PASS: {checks} compiled lifecycle/bait/relic checks for {ice.GetName().Name}");
 public class NullService:DispatchProxy {
  protected override object? Invoke(MethodInfo? method, object?[]? args)=>method!.ReturnType==typeof(void)?null:method.ReturnType.IsValueType?Activator.CreateInstance(method.ReturnType):null;
 }
